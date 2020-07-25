@@ -47,14 +47,16 @@ func processCustomTag(customTag map[string]string, field reflect.StructField, mo
 	entity := structFieldToEntity(field, model)
 	entityID := reflections.GetIDValue(entity)
 
-	uintVal := uint64(entityID.(uint))
+	setUintValue(foreignKey, entityID.(uint), model)
 
-	obj := reflect.Indirect(reflect.ValueOf(model))
-	obj.FieldByName(foreignKey).SetUint(uintVal)
-
-	fmt.Println("fieldValue: ", entity)
 	result := dataaccess.FindByID(entity, entityID)
 	fmt.Println("result FIND BY ID: ", result)
 
 	println("__________END processCustomTag____________")
+}
+
+func setUintValue(fieldName string, value uint, model entities.InterfaceEntity) {
+	uintVal := uint64(value)
+	obj := reflect.Indirect(reflect.ValueOf(model))
+	obj.FieldByName(fieldName).SetUint(uintVal)
 }
