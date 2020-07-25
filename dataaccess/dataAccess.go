@@ -32,9 +32,10 @@ func dbOperation(operation func()) {
 		defer databaseConnection.Close()
 		databaseConnection.SingularTable(true)
 		println("success init DB")
-		println("operation BDGINS")
+
+		println("*****operation BEGINS*****")
 		operation()
-		println("operation ENDS")
+		println("*****operation ENDS*****")
 
 	}
 	println("_______________________________")

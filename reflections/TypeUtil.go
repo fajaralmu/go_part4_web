@@ -34,19 +34,22 @@ func GetFieldValue(fieldName string, model entities.InterfaceEntity) interface{}
 	return value.Interface()
 }
 
-func GetJoinColumnFields(model entities.InterfaceEntity) []reflect.StructField {
+func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField {
 
 	var result []reflect.StructField
 
 	println("====ValidateJoinColumn====")
-	t := reflect.TypeOf(model)
+	model := Dereference(_model)
+	entity := model.Interface().(entities.InterfaceEntity)
+	t := reflect.TypeOf(entity)
 	// r := reflect.ValueOf(model)
-	// fmt.Println(" t.Kind(): ", t.Kind(), "r:", r.Kind())
+	fmt.Println(" t.Kind(): ", t.Kind(), "entity: ", reflect.TypeOf(entity)) //, "r:", r.Kind())
 	if t.Kind() == reflect.Struct {
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
-			fieldValue := GetFieldValue(structField.Name, model)
-			isStructType := isPointerToStruct(structField, model)
+
+			fieldValue := GetFieldValue(structField.Name, entity)
+			isStructType := isPointerToStruct(structField, entity)
 
 			if isStructType {
 				result = append(result, structField)
@@ -60,8 +63,24 @@ func GetJoinColumnFields(model entities.InterfaceEntity) []reflect.StructField {
 	return result
 }
 
+func GetIDValue(model entities.InterfaceEntity) interface{} {
+
+	return GetFieldValue("ID", model)
+
+}
+
 func isStruct(field reflect.StructField) bool {
 	return strings.Contains(field.Type.PkgPath(), "entities") && field.Type.Kind() == reflect.Struct
+}
+
+func Dereference(model interface{}) reflect.Value {
+	fieldVal := reflect.ValueOf(model)
+
+	if fieldVal.Kind() == reflect.Ptr {
+		// fieldVal.Set(reflect.New(fieldVal.Type().Elem()))
+		return fieldVal.Elem()
+	}
+	return fieldVal
 }
 
 func isPointerToStruct(field reflect.StructField, model entities.InterfaceEntity) bool {

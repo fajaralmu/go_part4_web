@@ -21,14 +21,15 @@ func main() {
 	userRole.ID = 18
 	user := entities.User{
 
-		Username:    "Fajar2",
-		DisplayName: "El Fajr2",
+		Username:    "Fajar_5",
+		DisplayName: "El Fajr Part5",
 		Password:    "12345",
-		RoleID:      18,
-		Role:        userRole,
+		// RoleID:      18,
+		Role: userRole,
 	}
 
-	validator.ValidateEntity(user)
+	validator.ValidateEntity(&user)
+	println("USER ROLE ID: ", user.RoleID)
 	dataaccess.CreateNew(&user)
 
 }

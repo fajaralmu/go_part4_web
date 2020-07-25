@@ -34,7 +34,7 @@ type User struct {
 	Username    string `gorm:"unique;not null"`
 	DisplayName string `gorm:"not null"`
 	Password    string `gorm:"not null"`
-	RoleID      int
+	RoleID      uint16
 	Role        *UserRole `gorm:"foreignkey:role_id" custom:"foreignKey:RoleID"`
 }
 
