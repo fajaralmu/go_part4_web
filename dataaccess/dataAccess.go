@@ -49,18 +49,14 @@ func autoMigrate(model interface{}) {
 
 func addNewRecord(model entities.InterfaceEntity) {
 	databaseConnection.NewRecord(model)
-	// tableName := model.TableName()
-	// // modelMap := make(map[string]interface{}) //, 5)
-	// // modelMap = map[string]interface{}{
-
-	// // 	"Code":   "dddd",
-	// // 	"Access": "33333",
-	// // 	"Name":   "TEST",
-	// // }
-	// println("tableName: ", tableName)
 
 	databaseConnection.Create(model)
 	println("model created")
+}
+func updateRecord(model entities.InterfaceEntity) {
+
+	databaseConnection.Save(model)
+	println("model saved")
 }
 
 //FindByID find model by ID
@@ -81,6 +77,20 @@ func CreateNew(model entities.InterfaceEntity) interface{} {
 	dbOperation(func() {
 		autoMigrate(model)
 		addNewRecord(model)
+		// res2 := databaseConnection.NewRecord(model)
+		// fmt.Println("PK is blank :", res2)
+
+	})
+
+	return model
+}
+
+//Save update db record
+func Save(model entities.InterfaceEntity) interface{} {
+
+	dbOperation(func() {
+		autoMigrate(model)
+		updateRecord(model)
 		// res2 := databaseConnection.NewRecord(model)
 		// fmt.Println("PK is blank :", res2)
 

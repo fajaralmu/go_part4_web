@@ -45,10 +45,16 @@ func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField 
 	// r := reflect.ValueOf(model)
 	fmt.Println(" t.Kind(): ", t.Kind(), "entity: ", reflect.TypeOf(entity)) //, "r:", r.Kind())
 	if t.Kind() == reflect.Struct {
+	loop:
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
 
 			fieldValue := GetFieldValue(structField.Name, entity)
+
+			if isNil(fieldValue) {
+				println(structField.Name, "is nil")
+				continue loop
+			}
 			isStructType := isPointerToStruct(structField, entity)
 
 			if isStructType {
@@ -61,6 +67,10 @@ func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField 
 		fmt.Println("not a struct")
 	}
 	return result
+}
+
+func isNil(val interface{}) bool {
+	return val == nil || (reflect.ValueOf(val).Kind() == reflect.Ptr && reflect.ValueOf(val).IsNil())
 }
 
 func GetIDValue(model entities.InterfaceEntity) interface{} {
