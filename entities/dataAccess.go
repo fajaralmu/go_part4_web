@@ -53,16 +53,16 @@ func autoMigrate(model interface{}) {
 
 func addNewRecord(model InterfaceEntity) {
 	databaseConnection.NewRecord(model)
-	tableName := reflections.GetStructTableName(model)
-	// modelMap := make(map[string]interface{}) //, 5)
-	// modelMap = map[string]interface{}{
+	// tableName := model.TableName()
+	// // modelMap := make(map[string]interface{}) //, 5)
+	// // modelMap = map[string]interface{}{
 
-	// 	"code":   "dddd",
-	// 	"access": "33333",
-	// 	"name":   "TEST",
-	// }
-
-	databaseConnection.Table(tableName).Create(&model)
+	// // 	"Code":   "dddd",
+	// // 	"Access": "33333",
+	// // 	"Name":   "TEST",
+	// // }
+	// println("tableName: ", tableName)
+	databaseConnection.Create(model)
 	println("model created")
 }
 

@@ -9,6 +9,7 @@ func main() {
 
 	entities.InitDatabase()
 
-	userRole := entities.UserRole{Code: "01", Name: "Regular"}
-	entities.CreateNew(userRole)
+	var userRole *entities.UserRole
+	userRole = &entities.UserRole{Code: "01", Name: "Regular"}
+	entities.CreateNew(&userRole)
 }
