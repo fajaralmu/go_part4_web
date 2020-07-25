@@ -1,11 +1,30 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 )
 
+//InterfaceEntity is Entity Interface
+type InterfaceEntity interface {
+}
+
+//BaseEntity is the entity
+type BaseEntity struct {
+	InterfaceEntity
+	gorm.Model
+	ID           int
+	CreatedDate  time.Time
+	ModifiedDate time.Time
+	Deleted      bool
+	Color        string
+	FontColor    string
+}
+
 //User is the entity
 type User struct {
+	InterfaceEntity
 	gorm.Model
 	Username    string `gorm:"unique;not null"`
 	DisplayName string `gorm:"not null"`
@@ -13,25 +32,18 @@ type User struct {
 	Role        UserRole
 }
 
-func (User) TableName() string {
-	return "user"
-}
-
 //UserRole is the entity
 type UserRole struct {
+	InterfaceEntity
 	gorm.Model
 	Name   string `gorm:"unique"`
 	Access string
 	Code   string `gorm:"unique"`
 }
 
-//TableName for user role
-func (UserRole) TableName() string {
-	return "user_role"
-}
-
 //Menu is the entity
 type Menu struct {
+	InterfaceEntity
 	gorm.Model
 	Code        string `gorm:"unique"`
 	Name        string `gorm:"unique"`
@@ -41,12 +53,9 @@ type Menu struct {
 	IconURL     string
 }
 
-func (Menu) TableName() string {
-	return "menu"
-}
-
 //Page is the entity
 type Page struct {
+	InterfaceEntity
 	gorm.Model
 	Code        string `gorm:"unique"`
 	Name        string `gorm:"unique"`
@@ -58,12 +67,9 @@ type Page struct {
 	Sequence    int
 }
 
-func (Page) TableName() string {
-	return "page"
-}
-
 //Profile is the entity
 type Profile struct {
+	InterfaceEntity
 	gorm.Model
 	Name             string
 	APPCode          string `gorm:"unique"`
@@ -77,20 +83,13 @@ type Profile struct {
 	BackgroundURL    string
 }
 
-func (Profile) TableName() string {
-	return "profile"
-}
-
 //RegisteredRequest is the entity
 type RegisteredRequest struct {
+	InterfaceEntity
 	gorm.Model
 	RequestID string
 	Value     string
 	Referrer  string
 	UserAgent string
 	IPAddress string
-}
-
-func (RegisteredRequest) TableName() string {
-	return "registered_request"
 }
