@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/fajaralmu/go_part4_web/reflections"
@@ -63,6 +64,7 @@ func addNewRecord(model entities.InterfaceEntity) {
 
 //FindByID find model by ID
 func FindByID(model entities.InterfaceEntity, id interface{}) entities.InterfaceEntity {
+	fmt.Println("FindByID type: ", reflect.TypeOf(model), "ID: ", id)
 	dbOperation(func() {
 		databaseConnection.Find(model, id)
 	})

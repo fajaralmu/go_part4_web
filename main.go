@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/fajaralmu/go_part4_web/dataaccess"
 	"github.com/fajaralmu/go_part4_web/entities"
-	"github.com/fajaralmu/go_part4_web/reflections"
+	"github.com/fajaralmu/go_part4_web/validator"
 )
 
 func main() {
@@ -16,12 +14,21 @@ func main() {
 	// var userRole *entities.UserRole
 	// userRole := entities.UserRole{Code: "02", Name: "Regular 2"}
 	// entities.CreateNew(&userRole)
-	var userRole2 entities.UserRole
-	dataaccess.FindByID(&userRole2, 17)
-	fmt.Println("userRole2: ", userRole2)
+	// var userRole2 entities.UserRole
+	// dataaccess.FindByID(&userRole2, 17)
+	// fmt.Println("userRole2: ", userRole2)
+	userRole := &entities.UserRole{}
+	userRole.ID = 18
+	user := entities.User{
 
-	user := entities.User{Username: "Fajar2", DisplayName: "El Fajr2", Password: "12345"}
-	reflections.GetJoinColumnFields(user)
+		Username:    "Fajar2",
+		DisplayName: "El Fajr2",
+		Password:    "12345",
+		RoleID:      18,
+		Role:        userRole,
+	}
+
+	validator.ValidateEntity(user)
 	dataaccess.CreateNew(&user)
 
 }

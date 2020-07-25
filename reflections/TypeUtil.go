@@ -27,7 +27,11 @@ func isUpperCase(str string) bool {
 func GetFieldValue(fieldName string, model entities.InterfaceEntity) interface{} {
 
 	r := reflect.ValueOf(model)
-	return reflect.Indirect(r).FieldByName(fieldName)
+	value := reflect.Indirect(r).FieldByName(fieldName)
+
+	// fmt.Println("value: ", value, "value interface: ", value.Interface())
+
+	return value.Interface()
 }
 
 func GetJoinColumnFields(model entities.InterfaceEntity) []reflect.StructField {
@@ -42,12 +46,13 @@ func GetJoinColumnFields(model entities.InterfaceEntity) []reflect.StructField {
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
 			fieldValue := GetFieldValue(structField.Name, model)
-			isStructType := isStruct(structField)
+			isStructType := isPointerToStruct(structField, model)
 
 			if isStructType {
 				result = append(result, structField)
 			}
-			fmt.Println("type:", structField.Type, "name: ", structField.Name, "value:", fieldValue, "isStructType: ", isStructType)
+			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValue, "\nisPointerToStruct: ", isStructType)
+			fmt.Println("__________________")
 		}
 	} else {
 		fmt.Println("not a struct")
@@ -56,8 +61,41 @@ func GetJoinColumnFields(model entities.InterfaceEntity) []reflect.StructField {
 }
 
 func isStruct(field reflect.StructField) bool {
-	fmt.Println("field.Type: ", field.Type)
-	return field.Type.Kind() == reflect.Struct
+	return strings.Contains(field.Type.PkgPath(), "entities") && field.Type.Kind() == reflect.Struct
+}
+
+func isPointerToStruct(field reflect.StructField, model entities.InterfaceEntity) bool {
+
+	fieldValue := GetFieldValue(field.Name, model)
+	fieldVal := reflect.ValueOf(fieldValue)
+	var fieldValDereference reflect.Value
+
+	if fieldVal.Kind() == reflect.Ptr {
+		// fieldVal.Set(reflect.New(fieldVal.Type().Elem()))
+		fieldValDereference = fieldVal.Elem()
+		// fmt.Println("fieldValDeref: ", reflect.TypeOf(fieldValDereference.Interface()))
+		return reflect.TypeOf(fieldValDereference.Interface()).Kind() == reflect.Struct
+	} else {
+		fieldValDereference = fieldVal
+	}
+
+	return false
+}
+func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, bool) {
+
+	result := map[string]string{}
+	value, ok := field.Tag.Lookup(tagName)
+
+	if !ok {
+		return result, false
+	}
+
+	tagValues := strings.Split(value, ";")
+	for _, item := range tagValues {
+		keyVal := strings.Split(item, ":")
+		result[keyVal[0]] = keyVal[1]
+	}
+	return result, true
 }
 
 // func convertBytes(b []byte) string {
