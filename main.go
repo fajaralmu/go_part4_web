@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/fajaralmu/go_part4_web/dataaccess"
 	"github.com/fajaralmu/go_part4_web/entities"
-	"github.com/fajaralmu/go_part4_web/validator"
+	"github.com/fajaralmu/go_part4_web/repository"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	// dataaccess.FindByID(&userRole2, 17)
 	// fmt.Println("userRole2: ", userRole2)
 	userRole := &entities.UserRole{}
-	userRole.ID = 18
+	userRole.ID = 1811
 	user := entities.User{
 
 		Username:    "Fajar_5",
@@ -28,8 +28,7 @@ func main() {
 		Role: userRole,
 	}
 
-	validator.ValidateEntity(&user)
+	repository.CreateNew(&user)
 	println("USER ROLE ID: ", user.RoleID)
-	dataaccess.CreateNew(&user)
 
 }

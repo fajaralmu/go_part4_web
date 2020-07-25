@@ -15,6 +15,8 @@ func ValidateEntity(model entities.InterfaceEntity) bool {
 
 	structFields := reflections.GetJoinColumnFields(model)
 	fmt.Println("structFields size: ", len(structFields))
+	valid := true
+loop:
 	for _, field := range structFields {
 
 		customTag, ok := reflections.GetMapOfTag(field, "custom")
@@ -24,13 +26,17 @@ func ValidateEntity(model entities.InterfaceEntity) bool {
 			continue
 		}
 
-		processCustomTag(customTag, field, model)
+		customTagResult := processCustomTag(customTag, field, model)
+		if !customTagResult {
+			valid = false
+			break loop
+		}
 
 	}
 
 	println("_________ END VALIDATION ___________")
 
-	return true
+	return valid
 }
 
 func structFieldToEntity(field reflect.StructField, model entities.InterfaceEntity) entities.InterfaceEntity {
@@ -39,20 +45,29 @@ func structFieldToEntity(field reflect.StructField, model entities.InterfaceEnti
 	return entity
 }
 
-func processCustomTag(customTag map[string]string, field reflect.StructField, model entities.InterfaceEntity) {
+func processCustomTag(customTag map[string]string, field reflect.StructField, model entities.InterfaceEntity) bool {
 
 	println("__________-processCustomTag____________")
 
 	foreignKey := customTag["foreignKey"]
+	foreignKeyOk := processForeignKey(foreignKey, field, model)
+
+	println("__________END processCustomTag (", foreignKeyOk, ")____________")
+	return foreignKeyOk
+}
+
+func processForeignKey(foreignKey string, field reflect.StructField, model entities.InterfaceEntity) bool {
+	println("begin process foreign key")
 	entity := structFieldToEntity(field, model)
 	entityID := reflections.GetIDValue(entity)
 
 	setUintValue(foreignKey, entityID.(uint), model)
 
-	result := dataaccess.FindByID(entity, entityID)
+	result, ok := dataaccess.FindByID(entity, entityID)
 	fmt.Println("result FIND BY ID: ", result)
+	println("end process foreign key")
 
-	println("__________END processCustomTag____________")
+	return ok
 }
 
 func setUintValue(fieldName string, value uint, model entities.InterfaceEntity) {

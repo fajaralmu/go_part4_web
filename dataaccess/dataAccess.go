@@ -64,12 +64,15 @@ func addNewRecord(model entities.InterfaceEntity) {
 }
 
 //FindByID find model by ID
-func FindByID(model entities.InterfaceEntity, id interface{}) entities.InterfaceEntity {
+func FindByID(model entities.InterfaceEntity, id interface{}) (entities.InterfaceEntity, bool) {
 	fmt.Println("FindByID type: ", reflect.TypeOf(model), "ID: ", id)
+	count := 0
 	dbOperation(func() {
-		databaseConnection.Find(model, id)
+		databaseConnection.Find(model, id).Count(&count)
+
 	})
-	return model
+	println("count: ", count)
+	return model, count > 0
 }
 
 //CreateNew adds new db record
