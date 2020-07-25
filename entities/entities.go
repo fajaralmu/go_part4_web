@@ -26,10 +26,10 @@ type BaseEntity struct {
 type User struct {
 	InterfaceEntity
 	gorm.Model
-	Username    string `gorm:"unique;not null"`
-	DisplayName string `gorm:"not null"`
-	Password    string `gorm:"not null"`
-	Role        UserRole
+	Username    string   `gorm:"unique;not null"`
+	DisplayName string   `gorm:"not null"`
+	Password    string   `gorm:"not null"`
+	Role        UserRole `gorm:"foreignkey:role_id"`
 }
 
 //UserRole is the entity

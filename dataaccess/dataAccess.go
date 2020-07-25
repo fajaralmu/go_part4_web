@@ -1,8 +1,9 @@
-package entities
+package dataaccess
 
 import (
 	"fmt"
 
+	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/fajaralmu/go_part4_web/reflections"
 	"github.com/jinzhu/gorm"
 
@@ -38,20 +39,13 @@ func dbOperation(operation func()) {
 	println("_______________________________")
 }
 
-func (u BaseEntity) getTableName() string {
-
-	res := reflections.GetStructTableName(u)
-	println("result: ", res)
-	return res
-}
-
 func autoMigrate(model interface{}) {
 	println("will AutoMigrate ", reflections.GetStructType(model).Name())
 	databaseConnection.AutoMigrate(model)
 	println("AutoMigrated")
 }
 
-func addNewRecord(model InterfaceEntity) {
+func addNewRecord(model entities.InterfaceEntity) {
 	databaseConnection.NewRecord(model)
 	// tableName := model.TableName()
 	// // modelMap := make(map[string]interface{}) //, 5)
@@ -62,12 +56,21 @@ func addNewRecord(model InterfaceEntity) {
 	// // 	"Name":   "TEST",
 	// // }
 	// println("tableName: ", tableName)
+
 	databaseConnection.Create(model)
 	println("model created")
 }
 
+//FindByID find model by ID
+func FindByID(model entities.InterfaceEntity, id interface{}) entities.InterfaceEntity {
+	dbOperation(func() {
+		databaseConnection.Find(model, id)
+	})
+	return model
+}
+
 //CreateNew adds new db record
-func CreateNew(model InterfaceEntity) interface{} {
+func CreateNew(model entities.InterfaceEntity) interface{} {
 
 	dbOperation(func() {
 		autoMigrate(model)
