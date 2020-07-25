@@ -25,6 +25,7 @@ type UserRole struct {
 	Code   string `gorm:"unique"`
 }
 
+//TableName for user role
 func (UserRole) TableName() string {
 	return "user_role"
 }

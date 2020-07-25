@@ -3,6 +3,7 @@ package entities
 import (
 	"fmt"
 
+	"github.com/fajaralmu/go_part4_web/reflections"
 	"github.com/jinzhu/gorm"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +20,7 @@ func InitDatabase() {
 }
 
 func dbOperation(operation func()) {
+	println("_______________________________")
 	println("will init DB")
 	var err error
 	databaseConnection, err = gorm.Open("mysql", "root@(localhost:3306)/base_app_go?charset=utf8&parseTime=True&loc=Local")
@@ -27,9 +29,12 @@ func dbOperation(operation func()) {
 	} else {
 		defer databaseConnection.Close()
 		println("success init DB")
+		println("operation BDGINS")
 		operation()
+		println("operation ENDS")
 
 	}
+	println("_______________________________")
 }
 
 //CreateNew adds new db record
@@ -37,11 +42,12 @@ func CreateNew(model interface{}) interface{} {
 
 	dbOperation(func() {
 		println("will create model")
-		res := databaseConnection.AutoMigrate(model)
-		fmt.Println("PK is blank :", res)
-		databaseConnection.Create(&model)
+		databaseConnection.NewRecord(model)
+		tableName := reflections.GetStructTableName(model)
+		println("TabelName: ", tableName)
+		databaseConnection.Table(tableName).Create(&model)
 		println("model created")
-		res2 := databaseConnection.NewRecord(&model)
+		res2 := databaseConnection.NewRecord(model)
 		fmt.Println("PK is blank :", res2)
 	})
 
