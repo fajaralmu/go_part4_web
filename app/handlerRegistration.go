@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/gorilla/mux"
@@ -39,10 +40,25 @@ func getEntities(w http.ResponseWriter, r *http.Request) {
 	var request entities.WebRequest
 	_ = json.NewDecoder(r.Body).Decode(&request)
 	response := Filter(request)
-	writeJSONResponse(w, response)
+	writeWebResponse(w, response)
 }
 
 /////////////////////////////////////////
+
+func webResponse(code string, message string) entities.WebResponse {
+	return entities.WebResponse{Code: code, Message: message, Date: time.Now()}
+}
+
+func writeWebResponse(w http.ResponseWriter, webResponse entities.WebResponse) {
+	webResponse.Date = time.Now()
+	if (webResponse.Code) == "" {
+		webResponse.Code = "00"
+	}
+	if webResponse.Message == "" {
+		webResponse.Message = "success"
+	}
+	writeJSONResponse(w, webResponse)
+}
 
 func writeJSONResponse(w http.ResponseWriter, obj interface{}) {
 	w.Header().Set("Content-Type", "application/json")
