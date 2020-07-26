@@ -49,7 +49,7 @@ func testFilter() {
 			"Username":    "Fajar",
 			"DisplayName": "Fajr2",
 		},
-	}, false)
+	})
 
 	fmt.Println("list size: ", len(resulstList), "count: ", count)
 }

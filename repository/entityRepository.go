@@ -73,13 +73,13 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 }
 
 //Filter searches in DB by given parameters
-func Filter(models interface{}, filter entities.Filter, exact bool) ([]interface{}, int) {
+func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	//	models := toSliceOfInterfaceEntity(sliceOfModel)
 	fmt.Println("model type: ", reflect.TypeOf(models))
 
 	var list []interface{}
 	totalData := 0
-	if exact {
+	if filter.Exact {
 		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit)
 
 	} else {

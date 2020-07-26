@@ -18,11 +18,12 @@ func Filter(request entities.WebRequest) entities.WebResponse {
 	createdSlice := reflections.CreateNewType(entityType)
 	fmt.Println("--createdSlice--: ", createdSlice)
 
-	list, totalData := repository.Filter(createdSlice, filter, true)
+	list, totalData := repository.Filter(createdSlice, filter)
 
 	response := entities.WebResponse{
 		ResultList: list,
 		TotalData:  totalData,
 	}
+	fmt.Println("RESPONSE: ", response)
 	return response
 }
