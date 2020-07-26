@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 
 	"github.com/fajaralmu/go_part4_web/dataaccess"
@@ -37,7 +39,13 @@ func main2() {
 
 func main() {
 	println("____start____")
-	testDelete()
+	testFindById()
+}
+
+func testFindById() {
+	res := repository.FindByID(&entities.User{}, 99)
+
+	fmt.Println("res: ", res)
 }
 
 func testUpdate() {

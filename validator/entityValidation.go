@@ -80,3 +80,8 @@ func setUintValue(fieldName string, value uint, model entities.InterfaceEntity) 
 func RemoveID(model entities.InterfaceEntity) {
 	setUintValue("ID", 0, model)
 }
+
+//SetID set ID field of the model
+func SetID(model entities.InterfaceEntity, id uint) {
+	setUintValue("ID", id, model)
+}

@@ -31,6 +31,7 @@ func dbOperation(operation func()) {
 	} else {
 		defer databaseConnection.Close()
 		databaseConnection.SingularTable(true)
+		databaseConnection.LogMode(true)
 		println("success init DB")
 
 		println("*****operation BEGINS*****")
@@ -59,7 +60,7 @@ func updateRecord(model entities.InterfaceEntity) {
 	println("model saved")
 }
 
-//FindByID find model by ID
+//FindByID find model by ID, model must have ID
 func FindByID(model entities.InterfaceEntity, id interface{}) (entities.InterfaceEntity, bool) {
 	fmt.Println("FindByID type: ", reflect.TypeOf(model), "ID: ", id)
 	count := 0
@@ -111,6 +112,11 @@ func Delete(model entities.InterfaceEntity) interface{} {
 func deleteModel(model entities.InterfaceEntity) {
 	databaseConnection.Delete(model)
 	println("model deleted")
+}
+
+func deleteModelPermanently(model entities.InterfaceEntity) {
+	databaseConnection.Unscoped().Delete(model)
+	println("model deleted permanently")
 }
 
 /**
