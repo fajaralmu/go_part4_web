@@ -91,12 +91,26 @@ func Save(model entities.InterfaceEntity) interface{} {
 	dbOperation(func() {
 		autoMigrate(model)
 		updateRecord(model)
-		// res2 := databaseConnection.NewRecord(model)
-		// fmt.Println("PK is blank :", res2)
 
 	})
 
 	return model
+}
+
+//Delete removes from record, if has DeletedAt field ti deletes softly
+func Delete(model entities.InterfaceEntity) interface{} {
+
+	dbOperation(func() {
+		// autoMigrate(model)
+		deleteModel(model)
+	})
+
+	return model
+}
+
+func deleteModel(model entities.InterfaceEntity) {
+	databaseConnection.Delete(model)
+	println("model deleted")
 }
 
 /**

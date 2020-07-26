@@ -22,6 +22,17 @@ func CreateNew(model entities.InterfaceEntity) {
 	}
 }
 
+//Delete removes from record
+func Delete(model entities.InterfaceEntity) {
+	existInDB := isExistInDB(model)
+	fmt.Println("existInDB: ", existInDB)
+	if existInDB {
+		dataaccess.Delete(model)
+	} else {
+		println("Record does not exist!")
+	}
+}
+
 //Save updates entity
 func Save(model entities.InterfaceEntity) {
 

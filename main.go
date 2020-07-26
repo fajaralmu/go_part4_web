@@ -37,10 +37,10 @@ func main2() {
 
 func main() {
 	println("____start____")
-	updateTest()
+	testDelete()
 }
 
-func updateTest() {
+func testUpdate() {
 	user := entities.User{
 		Model:       gorm.Model{ID: 45},
 		Username:    "Fajar_55000",
@@ -50,4 +50,11 @@ func updateTest() {
 	}
 	repository.CreateNew(&user)
 
+}
+
+func testDelete() {
+	user := entities.User{
+		Model: gorm.Model{ID: 4225},
+	}
+	repository.Delete(&user)
 }
