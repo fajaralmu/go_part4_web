@@ -72,18 +72,15 @@ func FindByID(model entities.InterfaceEntity, id interface{}) (entities.Interfac
 	return model, count > 0
 }
 
-//Filter queries
+//FilterLike queries by like clause
 func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
 	count := 0
-	// var result []entities.InterfaceEntity
-	// reflections.GetStructTableName(model)
-	fmt.Println("type: ", reflect.TypeOf(result))
 	reflections.EvaluateFilterMap(filter)
-	whereClauses := reflections.CreateLikeQueryString(filter)
-	fmt.Println("whereClauses: ", whereClauses)
+	offset := page * limit
 
 	dbOperation(func() {
-		offset := page * limit
+
+		whereClauses := reflections.CreateLikeQueryString(filter)
 		if limit > 0 {
 			databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
 		} else {
@@ -91,6 +88,29 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 		}
 
 		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
+
+	})
+	result = reflections.ToInterfaceSlice(result)
+	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
+	return result.([]interface{}), count
+
+}
+
+//FilterLike queries by like clause
+func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
+	count := 0
+	reflections.EvaluateFilterMap(filter)
+	offset := page * limit
+
+	dbOperation(func() {
+
+		if limit > 0 {
+			databaseConnection.Offset(offset).Limit(limit).Find(result, filter)
+		} else {
+			databaseConnection.Offset(offset).Find(result, filter)
+		}
+
+		databaseConnection.Where(filter).Find(result).Count(&count)
 
 	})
 	result = reflections.ToInterfaceSlice(result)

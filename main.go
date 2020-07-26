@@ -52,7 +52,7 @@ func testFilter() {
 			"Username":    "Fajar",
 			"DisplayName": "Fajr2",
 		},
-	})
+	}, true)
 }
 
 func testFindById() {
