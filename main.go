@@ -39,7 +39,20 @@ func main2() {
 
 func main() {
 	println("____start____")
-	testFindById()
+	testFilter()
+}
+
+func testFilter() {
+	user := []entities.User{}
+
+	repository.Filter(&user, entities.Filter{
+		Page:  0,
+		Limit: 3,
+		FieldsFilter: map[string]interface{}{
+			"Username":    "Fajar",
+			"DisplayName": "Fajr2",
+		},
+	})
 }
 
 func testFindById() {

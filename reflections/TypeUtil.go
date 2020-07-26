@@ -34,6 +34,23 @@ func GetFieldValue(fieldName string, model entities.InterfaceEntity) interface{}
 	return value.Interface()
 }
 
+//ToInterfaceSlice converts war slice to slice of interface
+func ToInterfaceSlice(object interface{}) []interface{} {
+
+	rawSlice := Dereference(object).Interface()
+	result := []interface{}{}
+	s := reflect.ValueOf(rawSlice)
+	// rawSlice = Dereference()
+	switch reflect.TypeOf(rawSlice).Kind() {
+	case reflect.Slice:
+
+		for i := 0; i < s.Len(); i++ {
+			item := s.Index(i).Interface()
+			result = append(result, item)
+		}
+	}
+	return result
+}
 func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField {
 
 	var result []reflect.StructField

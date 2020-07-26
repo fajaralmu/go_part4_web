@@ -72,6 +72,33 @@ func FindByID(model entities.InterfaceEntity, id interface{}) (entities.Interfac
 	return model, count > 0
 }
 
+//Filter queries
+func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
+	count := 0
+	// var result []entities.InterfaceEntity
+	// reflections.GetStructTableName(model)
+	fmt.Println("type: ", reflect.TypeOf(result))
+	reflections.EvaluateFilterMap(filter)
+	whereClauses := reflections.CreateLikeQueryString(filter)
+	fmt.Println("whereClauses: ", whereClauses)
+
+	dbOperation(func() {
+		offset := page * limit
+		if limit > 0 {
+			databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
+		} else {
+			databaseConnection.Offset(offset).Find(result, whereClauses...)
+		}
+
+		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
+
+	})
+	result = reflections.ToInterfaceSlice(result)
+	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
+	return result.([]interface{}), count
+
+}
+
 //CreateNew adds new db record
 func CreateNew(model entities.InterfaceEntity) interface{} {
 

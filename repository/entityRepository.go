@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/dataaccess"
 	"github.com/fajaralmu/go_part4_web/entities"
@@ -69,4 +70,10 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 		return result
 	}
 	return nil
+}
+
+func Filter(models interface{}, filter entities.Filter) {
+	//	models := toSliceOfInterfaceEntity(sliceOfModel)
+	list, count := dataaccess.FilterLike(models, filter.FieldsFilter, filter.Page, filter.Limit)
+	fmt.Println("List size: ", reflect.TypeOf(list), " count result: ", count)
 }
