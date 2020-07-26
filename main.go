@@ -42,12 +42,12 @@ func main() {
 
 func updateTest() {
 	user := entities.User{
-		Model:       gorm.Model{ID: 99},
-		Username:    "Fajar_0000",
-		DisplayName: "El Fajr Part00000",
+		Model:       gorm.Model{ID: 45},
+		Username:    "Fajar_55000",
+		DisplayName: "El Fajr Part550000",
 		Password:    "12345",
 		RoleID:      18,
 	}
-	repository.Save(&user)
+	repository.CreateNew(&user)
 
 }

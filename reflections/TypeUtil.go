@@ -73,6 +73,7 @@ func isNil(val interface{}) bool {
 	return val == nil || (reflect.ValueOf(val).Kind() == reflect.Ptr && reflect.ValueOf(val).IsNil())
 }
 
+//GetIDValue return `ID` field value
 func GetIDValue(model entities.InterfaceEntity) interface{} {
 
 	return GetFieldValue("ID", model)
@@ -83,6 +84,7 @@ func isStruct(field reflect.StructField) bool {
 	return strings.Contains(field.Type.PkgPath(), "entities") && field.Type.Kind() == reflect.Struct
 }
 
+//Dereference from ptr to pointedTo
 func Dereference(model interface{}) reflect.Value {
 	fieldVal := reflect.ValueOf(model)
 

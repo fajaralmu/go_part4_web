@@ -75,3 +75,8 @@ func setUintValue(fieldName string, value uint, model entities.InterfaceEntity) 
 	obj := reflect.Indirect(reflect.ValueOf(model))
 	obj.FieldByName(fieldName).SetUint(uintVal)
 }
+
+//RemoveID removes `ID` value
+func RemoveID(model entities.InterfaceEntity) {
+	setUintValue("ID", 0, model)
+}
