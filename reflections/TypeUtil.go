@@ -17,21 +17,7 @@ func GetStructType(object interface{}) reflect.Type {
 func GetStructTableName(object interface{}) string {
 	typeName := GetStructType(object)
 
-	return camelCaseToSnakeCase(typeName.Name())
-}
-
-func isUpperCase(str string) bool {
-	return strings.ToUpper(str) == str
-}
-
-func GetFieldValue(fieldName string, model entities.InterfaceEntity) interface{} {
-
-	r := reflect.ValueOf(model)
-	value := reflect.Indirect(r).FieldByName(fieldName)
-
-	// fmt.Println("value: ", value, "value interface: ", value.Interface())
-
-	return value.Interface()
+	return ToSnakeCase(typeName.Name())
 }
 
 //ToInterfaceSlice converts war slice to slice of interface
@@ -129,50 +115,10 @@ func isPointerToStruct(field reflect.StructField, model entities.InterfaceEntity
 
 	return false
 }
-func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, bool) {
 
-	result := map[string]string{}
-	value, ok := field.Tag.Lookup(tagName)
+//CreateNewType generate new Type of given type
+func CreateNewType(t reflect.Type) interface{} {
+	fmt.Println("CreateNewType: ", t)
 
-	if !ok {
-		return result, false
-	}
-
-	tagValues := strings.Split(value, ";")
-	for _, item := range tagValues {
-		keyVal := strings.Split(item, ":")
-		result[keyVal[0]] = keyVal[1]
-	}
-	return result, true
-}
-
-// func convertBytes(b []byte) string {
-// 	s := make([]string, len(b))
-// 	for i := range b {
-// 		s[i] = strconv.Itoa(int(b[i]))
-// 	}
-// 	return strings.Join(s, ",")
-// }
-
-func camelCaseToSnakeCase(camelCased string) string {
-
-	var result string
-
-	for i, char := range camelCased {
-
-		_char := string(char)
-		if i > 0 && isUpperCase(_char) {
-			result += "_"
-
-		}
-		_charStr := strings.ToLower(_char)
-		if 0 == i {
-			result += strings.ToLower(_char)
-		} else {
-			result += (_charStr)
-		}
-
-	}
-
-	return result
+	return reflect.New(t).Interface()
 }

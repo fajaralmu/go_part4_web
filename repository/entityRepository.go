@@ -72,17 +72,21 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 	return nil
 }
 
-func Filter(models interface{}, filter entities.Filter, exact bool) {
+//Filter searches in DB by given parameters
+func Filter(models interface{}, filter entities.Filter, exact bool) ([]interface{}, int) {
 	//	models := toSliceOfInterfaceEntity(sliceOfModel)
+	fmt.Println("model type: ", reflect.TypeOf(models))
+
 	var list []interface{}
-	count := 0
+	totalData := 0
 	if exact {
-		list, count = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit)
+		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit)
 
 	} else {
-		list, count = dataaccess.FilterLike(models, filter.FieldsFilter, filter.Page, filter.Limit)
+		list, totalData = dataaccess.FilterLike(models, filter.FieldsFilter, filter.Page, filter.Limit)
 
 	}
 
-	fmt.Println("List size: ", reflect.TypeOf(list), " count result: ", count)
+	fmt.Println("List size: ", reflect.TypeOf(list), " count result: ", totalData)
+	return list, totalData
 }

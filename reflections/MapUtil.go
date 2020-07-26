@@ -7,7 +7,7 @@ func EvaluateFilterMap(filter map[string]interface{}) {
 
 	for key, value := range filter {
 		fmt.Println("key: ", key, "value: ", value)
-		newKey := camelCaseToSnakeCase(key)
+		newKey := ToSnakeCase(key)
 		delete(filter, key)
 
 		filter[newKey] = value

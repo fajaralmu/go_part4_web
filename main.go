@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
+	"github.com/fajaralmu/go_part4_web/app"
 	"github.com/fajaralmu/go_part4_web/dataaccess"
 	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/fajaralmu/go_part4_web/repository"
@@ -15,12 +16,6 @@ func main2() {
 
 	dataaccess.InitDatabase()
 
-	// var userRole *entities.UserRole
-	// userRole := entities.UserRole{Code: "02", Name: "Regular 2"}
-	// entities.CreateNew(&userRole)
-	// var userRole2 entities.UserRole
-	// dataaccess.FindByID(&userRole2, 17)
-	// fmt.Println("userRole2: ", userRole2)
 	userRole := &entities.UserRole{}
 	userRole.ID = 1811
 	user := entities.User{
@@ -39,23 +34,27 @@ func main2() {
 
 func main() {
 	println("____start____")
-	testFilter()
+	app.Init()
+	app.Run()
+	// testFilter()
 }
 
 func testFilter() {
-	user := []entities.User{}
+	var user *[]entities.User = &[]entities.User{}
 
-	repository.Filter(&user, entities.Filter{
+	resulstList, count := repository.Filter(user, entities.Filter{
 		Page:  0,
 		Limit: 3,
 		FieldsFilter: map[string]interface{}{
 			"Username":    "Fajar",
 			"DisplayName": "Fajr2",
 		},
-	}, true)
+	}, false)
+
+	fmt.Println("list size: ", len(resulstList), "count: ", count)
 }
 
-func testFindById() {
+func testFindByID() {
 	res := repository.FindByID(&entities.User{}, 99)
 
 	fmt.Println("res: ", res)

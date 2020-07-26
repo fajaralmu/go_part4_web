@@ -96,7 +96,7 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 
 }
 
-//FilterLike queries by like clause
+//FilterMatch queries by equals clause
 func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
 	count := 0
 	reflections.EvaluateFilterMap(filter)
