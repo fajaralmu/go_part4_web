@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -8,7 +9,7 @@ import (
 
 //InterfaceEntity is Entity Interface
 type InterfaceEntity interface {
-	TheValue() interface{}
+	Validate() interface{}
 }
 
 //BaseEntity is the entity
@@ -23,7 +24,7 @@ type BaseEntity struct {
 	FontColor    string
 }
 
-func (u BaseEntity) TheValue() interface{} {
+func (u BaseEntity) Validate() interface{} {
 	return u
 }
 
@@ -38,7 +39,11 @@ type User struct {
 	Role        *UserRole `gorm:"foreignkey:role_id" custom:"foreignKey:RoleID"`
 }
 
-func (u User) TheValue() interface{} {
+func (u User) Validate() interface{} {
+	fmt.Println("Validating User")
+	if u.Role == nil {
+		u.Role = &UserRole{}
+	}
 	return u
 }
 
@@ -51,7 +56,7 @@ type UserRole struct {
 	Code   string `gorm:"unique"`
 }
 
-func (u UserRole) TheValue() interface{} {
+func (u UserRole) Validate() interface{} {
 	return u
 }
 
@@ -67,7 +72,7 @@ type Menu struct {
 	IconURL     string
 }
 
-func (u Menu) TheValue() interface{} {
+func (u Menu) Validate() interface{} {
 	return u
 }
 
@@ -85,7 +90,7 @@ type Page struct {
 	Sequence    int
 }
 
-func (u Page) TheValue() interface{} {
+func (u Page) Validate() interface{} {
 	return u
 }
 
@@ -105,7 +110,7 @@ type Profile struct {
 	BackgroundURL    string
 }
 
-func (u Profile) TheValue() interface{} {
+func (u Profile) Validate() interface{} {
 	return u
 }
 
@@ -120,6 +125,6 @@ type RegisteredRequest struct {
 	IPAddress string
 }
 
-func (u RegisteredRequest) TheValue() interface{} {
+func (u RegisteredRequest) Validate() interface{} {
 	return u
 }

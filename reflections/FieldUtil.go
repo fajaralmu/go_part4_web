@@ -20,11 +20,12 @@ func GetFieldValue(fieldName string, model interface{}) (interface{}, bool) {
 }
 
 func SetFieldValue(fieldName string, fieldValue interface{}, model interface{}) {
-	fmt.Println("value: ", fieldValue, reflect.TypeOf(model))
+	fmt.Println("SET", fieldName, "value: ", fieldValue, reflect.TypeOf(model))
+
 	r := reflect.ValueOf(model)
-	// value := reflect.Indirect(r).FieldByName(fieldName)
-	val := reflect.ValueOf(fieldValue)
-	r.Set(val)
+	value := reflect.Indirect(r).FieldByName(fieldName)
+	//val := reflect.ValueOf(fieldValue)
+	value.Set(reflect.ValueOf(fieldValue))
 }
 
 func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, bool) {

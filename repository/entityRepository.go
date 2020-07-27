@@ -92,7 +92,8 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	fmt.Println("List size: ", reflect.TypeOf(list), " count result: ", totalData)
 
 	for _, item := range list {
-		validated := item //validateResultObject(item.(entities.InterfaceEntity))
+		validatedItem := item.(entities.InterfaceEntity).Validate()
+		validated := validateResultObject(validatedItem.(entities.InterfaceEntity))
 		validatedList = append(validatedList, validated)
 	}
 
@@ -115,7 +116,10 @@ func validateResultObject(model entities.InterfaceEntity) interface{} {
 
 		foreignEntity, exist := processForeignKey(customTag["foreignKey"], field, model)
 		if exist {
-			reflections.SetFieldValue(field.Name, foreignEntity, model)
+			fmt.Println("reflect.TypeOf(model)", reflect.TypeOf(model))
+			modelPtr := reflections.CreateNewType(reflect.TypeOf(model))
+			reflections.SetFieldValue(field.Name, foreignEntity, modelPtr)
+
 		}
 	}
 	return model
@@ -136,18 +140,10 @@ func processForeignKey(foreignKey string, field reflect.StructField, model entit
 		return nil, false
 	}
 
-	fmt.Println("foreignKeyID: ", foreignKeyID, "entity:", entity)
-	entityInstance := reflections.CreateNewTypeNotPointer(reflect.TypeOf(entity))
-	//reflect.New(reflect.TypeOf(entityInstance))
-
-	fmt.Println("entityInstance type: ", entityInstance, reflect.TypeOf(entityInstance))
-
 	result, ok := dataaccess.FindByID(entity, foreignKeyID)
 	fmt.Println("result FIND BY ID: ", result)
 	println("end process foreign key")
-	if ok {
-		reflections.SetFieldValue(field.Name, result, model)
-	}
+
 	return result, ok
 }
 

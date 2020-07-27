@@ -61,7 +61,7 @@ func updateRecord(model entities.InterfaceEntity) {
 }
 
 //FindByID find model by ID, model must have ID
-func FindByID(model entities.InterfaceEntity, id interface{}) (entities.InterfaceEntity, bool) {
+func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool) {
 	fmt.Println("FindByID type: ", reflect.TypeOf(model), "ID: ", id)
 	count := 0
 	dbOperation(func() {
@@ -69,7 +69,7 @@ func FindByID(model entities.InterfaceEntity, id interface{}) (entities.Interfac
 
 	})
 	println("count: ", count)
-	return model, count > 0
+	return model.(entities.InterfaceEntity), count > 0
 }
 
 //FilterLike queries by like clause
