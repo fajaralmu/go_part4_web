@@ -37,7 +37,7 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 	}
 	return result
 }
-func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField {
+func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []reflect.StructField {
 
 	var result []reflect.StructField
 
@@ -52,9 +52,9 @@ func GetJoinColumnFields(_model entities.InterfaceEntity) []reflect.StructField 
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
 
-			fieldValue := GetFieldValue(structField.Name, entity)
+			fieldValue, _ := GetFieldValue(structField.Name, entity)
 
-			if isNil(fieldValue) {
+			if skipNull && isNil(fieldValue) {
 				println(structField.Name, "is nil")
 				continue loop
 			}
@@ -79,7 +79,8 @@ func isNil(val interface{}) bool {
 //GetIDValue return `ID` field value
 func GetIDValue(model entities.InterfaceEntity) interface{} {
 
-	return GetFieldValue("ID", model)
+	res, _ := GetFieldValue("ID", model)
+	return res
 
 }
 
@@ -100,23 +101,32 @@ func Dereference(model interface{}) reflect.Value {
 
 func isPointerToStruct(field reflect.StructField, model entities.InterfaceEntity) bool {
 
-	fieldValue := GetFieldValue(field.Name, model)
+	fieldValue, _ := GetFieldValue(field.Name, model)
 	fieldVal := reflect.ValueOf(fieldValue)
-	var fieldValDereference reflect.Value
+	// var fieldValDereference reflect.Value
 
 	if fieldVal.Kind() == reflect.Ptr {
-		// fieldVal.Set(reflect.New(fieldVal.Type().Elem()))
-		fieldValDereference = fieldVal.Elem()
-		// fmt.Println("fieldValDeref: ", reflect.TypeOf(fieldValDereference.Interface()))
-		return reflect.TypeOf(fieldValDereference.Interface()).Kind() == reflect.Struct
+
+		// fieldValDereference = fieldVal.Elem()
+		newVal := CreateNewTypeNotPointer(field.Type)
+		newType := reflect.TypeOf(newVal)
+		newTypeStr := newType.String()
+		fromEntitiesPackage := strings.HasPrefix(newTypeStr, "*entities")
+		fmt.Println("****newType: ", newType, newType.String())
+		fmt.Println("fromEntitiesPackage: ", fromEntitiesPackage)
+		return fromEntitiesPackage
 	} else {
-		fieldValDereference = fieldVal
+		// fieldValDereference = fieldVal
 	}
 
 	return false
 }
 
-//CreateNewType generate new Type of given type
+func CreateNewTypeNotPointer(t reflect.Type) interface{} {
+	return reflect.Indirect(reflect.New(t)).Interface()
+}
+
+//CreateNewType generate new Type pointer pointing TO given type
 func CreateNewType(t reflect.Type) interface{} {
 	fmt.Println("CreateNewType: ", t)
 

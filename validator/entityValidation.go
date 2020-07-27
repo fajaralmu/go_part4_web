@@ -13,7 +13,7 @@ import (
 func ValidateEntity(model entities.InterfaceEntity) bool {
 	println("***ValidateEntity***")
 
-	structFields := reflections.GetJoinColumnFields(model)
+	structFields := reflections.GetJoinColumnFields(model, true)
 	fmt.Println("structFields size: ", len(structFields))
 	valid := true
 loop:
@@ -40,7 +40,7 @@ loop:
 }
 
 func structFieldToEntity(field reflect.StructField, model entities.InterfaceEntity) entities.InterfaceEntity {
-	fieldValue := reflections.GetFieldValue(field.Name, model)
+	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
 	entity := fieldValue.(entities.InterfaceEntity)
 	return entity
 }

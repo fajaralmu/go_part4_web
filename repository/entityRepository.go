@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/dataaccess"
@@ -78,6 +79,7 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	fmt.Println("model type: ", reflect.TypeOf(models))
 
 	var list []interface{}
+	var validatedList []interface{}
 	totalData := 0
 	if filter.Exact {
 		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit)
@@ -88,5 +90,69 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	}
 
 	fmt.Println("List size: ", reflect.TypeOf(list), " count result: ", totalData)
-	return list, totalData
+
+	for _, item := range list {
+		validated := item //validateResultObject(item.(entities.InterfaceEntity))
+		validatedList = append(validatedList, validated)
+	}
+
+	return validatedList, totalData
+}
+
+func validateResultObject(model entities.InterfaceEntity) interface{} {
+	println("__validateResultObject__")
+	structFields := reflections.GetJoinColumnFields(model, false)
+	fmt.Println("structFields size: ", len(structFields))
+
+	for _, field := range structFields {
+
+		customTag, ok := reflections.GetMapOfTag(field, "custom")
+
+		if !ok {
+			println("NO Custom Tag")
+			continue
+		}
+
+		foreignEntity, exist := processForeignKey(customTag["foreignKey"], field, model)
+		if exist {
+			reflections.SetFieldValue(field.Name, foreignEntity, model)
+		}
+	}
+	return model
+}
+
+func processForeignKey(foreignKey string, field reflect.StructField, model entities.InterfaceEntity) (interface{}, bool) {
+	log.Println("begin process foreign key: ", foreignKey)
+
+	if "" == foreignKey {
+		return nil, false
+	}
+	fmt.Println("model: ", reflect.TypeOf(model))
+
+	entity := structFieldToEntity(field, model)
+	foreignKeyID, zero := reflections.GetFieldValue(foreignKey, model)
+
+	if zero {
+		return nil, false
+	}
+
+	fmt.Println("foreignKeyID: ", foreignKeyID, "entity:", entity)
+	entityInstance := reflections.CreateNewTypeNotPointer(reflect.TypeOf(entity))
+	//reflect.New(reflect.TypeOf(entityInstance))
+
+	fmt.Println("entityInstance type: ", entityInstance, reflect.TypeOf(entityInstance))
+
+	result, ok := dataaccess.FindByID(entity, foreignKeyID)
+	fmt.Println("result FIND BY ID: ", result)
+	println("end process foreign key")
+	if ok {
+		reflections.SetFieldValue(field.Name, result, model)
+	}
+	return result, ok
+}
+
+func structFieldToEntity(field reflect.StructField, model interface{}) entities.InterfaceEntity {
+	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
+	entity := fieldValue.(entities.InterfaceEntity)
+	return entity
 }

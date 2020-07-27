@@ -1,20 +1,30 @@
 package reflections
 
 import (
+	"fmt"
+	"log"
 	"reflect"
 	"strings"
-
-	"github.com/fajaralmu/go_part4_web/entities"
 )
 
-func GetFieldValue(fieldName string, model entities.InterfaceEntity) interface{} {
-
+func GetFieldValue(fieldName string, model interface{}) (interface{}, bool) {
+	log.Printf("GetFieldValue [%v] FROM MODEL: %v \n", fieldName, reflect.TypeOf(model))
+	//fmt.Println("MODEL : ", model)
 	r := reflect.ValueOf(model)
 	value := reflect.Indirect(r).FieldByName(fieldName)
+	isZero := !value.IsValid() || value.IsZero()
 
-	// fmt.Println("value: ", value, "value interface: ", value.Interface())
+	fmt.Println("value interface: ", value.Interface(), " isZero: ", isZero)
 
-	return value.Interface()
+	return value.Interface(), isZero
+}
+
+func SetFieldValue(fieldName string, fieldValue interface{}, model interface{}) {
+	fmt.Println("value: ", fieldValue, reflect.TypeOf(model))
+	r := reflect.ValueOf(model)
+	// value := reflect.Indirect(r).FieldByName(fieldName)
+	val := reflect.ValueOf(fieldValue)
+	r.Set(val)
 }
 
 func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, bool) {

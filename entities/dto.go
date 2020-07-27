@@ -19,5 +19,6 @@ type WebResponse struct {
 	Code       string
 	Message    string
 	ResultList interface{}
+	Result     interface{}
 	TotalData  int
 }
