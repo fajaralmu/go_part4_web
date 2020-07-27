@@ -37,6 +37,8 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 	}
 	return result
 }
+
+//GetJoinColumnFields return fields having tag "custom" and tagKey: "foreign key"
 func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []reflect.StructField {
 
 	var result []reflect.StructField
@@ -45,8 +47,7 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 	model := Dereference(_model)
 	entity := model.Interface().(entities.InterfaceEntity)
 	t := reflect.TypeOf(entity)
-	// r := reflect.ValueOf(model)
-	fmt.Println(" t.Kind(): ", t.Kind(), "entity: ", reflect.TypeOf(entity)) //, "r:", r.Kind())
+
 	if t.Kind() == reflect.Struct {
 	loop:
 		for i := 0; i < t.NumField(); i++ {
@@ -55,15 +56,15 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 			fieldValue, _ := GetFieldValue(structField.Name, entity)
 
 			if skipNull && isNil(fieldValue) {
-				println(structField.Name, "is nil")
+				println(structField.Name, "is nil, will continue")
 				continue loop
 			}
-			isStructType := isPointerToStruct(structField, entity)
+			isStructType := isJoinColumn(structField, entity)
 
 			if isStructType {
 				result = append(result, structField)
 			}
-			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValue, "\nisPointerToStruct: ", isStructType)
+			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValue, "is join column: ", isStructType)
 			fmt.Println("__________________")
 		}
 	} else {
@@ -99,36 +100,25 @@ func Dereference(model interface{}) reflect.Value {
 	return fieldVal
 }
 
-func isPointerToStruct(field reflect.StructField, model entities.InterfaceEntity) bool {
+func isJoinColumn(field reflect.StructField, model entities.InterfaceEntity) bool {
+	customTag, ok := GetMapOfTag(field, "custom")
 
-	fieldValue, _ := GetFieldValue(field.Name, model)
-	fieldVal := reflect.ValueOf(fieldValue)
-	// var fieldValDereference reflect.Value
-
-	if fieldVal.Kind() == reflect.Ptr {
-
-		// fieldValDereference = fieldVal.Elem()
-		newVal := CreateNewTypeNotPointer(field.Type)
-		newType := reflect.TypeOf(newVal)
-		newTypeStr := newType.String()
-		fromEntitiesPackage := strings.HasPrefix(newTypeStr, "*entities")
-		fmt.Println("****newType: ", newType, newType.String())
-		fmt.Println("fromEntitiesPackage: ", fromEntitiesPackage)
-		return fromEntitiesPackage
-	} else {
-		// fieldValDereference = fieldVal
+	if !ok {
+		println("NO Custom Tag")
+		return false
 	}
 
-	return false
+	return customTag["foreignKey"] != ""
 }
 
+//CreateNewTypeNotPointer generate new type
 func CreateNewTypeNotPointer(t reflect.Type) interface{} {
 	return reflect.Indirect(reflect.New(t)).Interface()
 }
 
 //CreateNewType generate new Type pointer pointing TO given type
 func CreateNewType(t reflect.Type) interface{} {
-	fmt.Println("CreateNewType: ", t)
+	fmt.Println("Initialize new pointer pointing to type : ", t)
 
 	return reflect.New(t).Interface()
 }

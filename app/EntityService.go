@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/fajaralmu/go_part4_web/repository"
 
@@ -12,7 +13,9 @@ import (
 
 func AddEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	fieldValue, _ := reflections.GetFieldValue(entityName, request)
+	log.Println("request: ", request)
+	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
+	fmt.Println("Will Create Entity: ", fieldValue)
 	repository.CreateNew(fieldValue.(entities.InterfaceEntity))
 	fmt.Println("created Entity: ", fieldValue)
 	response := entities.WebResponse{

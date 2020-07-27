@@ -32,7 +32,7 @@ func (u BaseEntity) Validate() interface{} {
 type User struct {
 	InterfaceEntity
 	gorm.Model
-	Username    string `gorm:"unique;not null"`
+	Username    string `gorm:"unique;not null" custom:"name:username"`
 	DisplayName string `gorm:"not null"`
 	Password    string `gorm:"not null"`
 	RoleID      uint16

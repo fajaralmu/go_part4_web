@@ -12,7 +12,9 @@ type Filter struct {
 }
 
 type WebRequest struct {
-	Filter Filter
+	Filter    Filter
+	User_role *UserRole
+	User      *User
 }
 type WebResponse struct {
 	Date       time.Time
