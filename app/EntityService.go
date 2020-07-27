@@ -13,7 +13,7 @@ import (
 
 func AddEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	log.Println("request: ", request)
+	log.Println("entityName: ", entityName, "request: ", request)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 	fmt.Println("Will Create Entity: ", fieldValue)
 	repository.CreateNew(fieldValue.(entities.InterfaceEntity))

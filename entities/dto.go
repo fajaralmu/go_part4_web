@@ -15,6 +15,9 @@ type WebRequest struct {
 	Filter    Filter
 	User_role *UserRole
 	User      *User
+	Profile   *Profile
+	Menu      *Menu
+	Page      *Page
 }
 type WebResponse struct {
 	Date       time.Time

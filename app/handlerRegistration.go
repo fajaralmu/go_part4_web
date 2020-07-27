@@ -38,7 +38,11 @@ func registerWebPages() {
 func getEntities(w http.ResponseWriter, r *http.Request) {
 
 	var request entities.WebRequest
-	_ = json.NewDecoder(r.Body).Decode(&request)
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		writeErrorMsgBadRequest(w, err.Error())
+		return
+	}
 	response := Filter(request)
 	writeWebResponse(w, response)
 }
@@ -46,7 +50,11 @@ func getEntities(w http.ResponseWriter, r *http.Request) {
 func addEntities(w http.ResponseWriter, r *http.Request) {
 
 	var request entities.WebRequest
-	_ = json.NewDecoder(r.Body).Decode(&request)
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		writeErrorMsgBadRequest(w, err.Error())
+		return
+	}
 	response := AddEntity(request)
 	writeWebResponse(w, response)
 }
@@ -78,7 +86,8 @@ func writeResponseHeaders(w http.ResponseWriter) {
 
 }
 
-func writeErrorMsg(w http.ResponseWriter, msg string) {
-	w.WriteHeader(404)
-	writeJSONResponse(w, entities.WebResponse{Code: "404", Message: msg})
+func writeErrorMsgBadRequest(w http.ResponseWriter, msg string) {
+	writeResponseHeaders(w)
+	w.WriteHeader(400)
+	writeJSONResponse(w, webResponse("400", msg))
 }
