@@ -41,14 +41,14 @@ func Save(model entities.InterfaceEntity) {
 	existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
 
-	if existInDB {
+	if !existInDB {
 		CreateNew(model)
 
 	} else {
 
 		ok := validator.ValidateEntity(model)
 		if ok {
-			println("saving model")
+			fmt.Println("saving model: ", model)
 			dataaccess.Save(model)
 		} else {
 			println("Entity Invalid!")
@@ -58,7 +58,8 @@ func Save(model entities.InterfaceEntity) {
 
 func isExistInDB(model entities.InterfaceEntity) bool {
 	ID := reflections.GetIDValue(model)
-	_, ok := dataaccess.FindByID(model, ID)
+	duplicate := reflections.CreateNewTypeNotPointer(reflect.TypeOf(model))
+	_, ok := dataaccess.FindByID(duplicate, ID)
 	return ok
 }
 

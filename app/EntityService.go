@@ -11,13 +11,28 @@ import (
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
+func UpdateEnity(request entities.WebRequest) entities.WebResponse {
+	entityName := request.Filter.EntityName
+	log.Println("entityName: ", entityName)
+	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
+
+	repository.Save(fieldValue.(entities.InterfaceEntity))
+	fmt.Println("SAVED Entity: ", fieldValue)
+
+	response := entities.WebResponse{
+		Result: fieldValue,
+	}
+	return response
+}
+
 func AddEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	log.Println("entityName: ", entityName, "request: ", request)
+	log.Println("entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
-	fmt.Println("Will Create Entity: ", fieldValue)
+
 	repository.CreateNew(fieldValue.(entities.InterfaceEntity))
 	fmt.Println("created Entity: ", fieldValue)
+
 	response := entities.WebResponse{
 		Result: fieldValue,
 	}
