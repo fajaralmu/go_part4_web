@@ -77,6 +77,15 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 	return nil
 }
 
+//FilterByKey get list of obj by key match given value
+func FilterByKey(models interface{}, key string, val interface{}) []interface{} {
+	var list []interface{}
+	list, _ = dataaccess.FilterMatch(models, map[string]interface{}{
+		key: val,
+	}, 0, 0)
+	return list
+}
+
 //Filter searches in DB by given parameters
 func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	//	models := toSliceOfInterfaceEntity(sliceOfModel)

@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1256">
 <title>{{.Title}}</title>
-<link rel="icon" href="/static/img/favico.ico" 	type="image/x-icon">
+<link rel="icon" href="/static/img/favicon.ico" 	type="image/x-icon">
 
 <link rel="stylesheet" type="text/css"
 	href="/static/css/shop.css?version=1" />
@@ -87,9 +87,14 @@
 	<div id="loading-div"></div>
 	<div class="container">
 		<div>
-			{{template "head" . }}
+			{{template "head" .Header }}
 		</div>
-		<div>
+		<div> 
+			{{if eq .PageCode ""}}
+				{{template "notFound"}}
+			{{else}} 
+				{{.Content}}
+			{{end}}
 			<!-- <jsp:include page="${pageUrl == null? 'error/notfound': pageUrl}.jsp"></jsp:include> -->
 		</div>
 		<div></div>
