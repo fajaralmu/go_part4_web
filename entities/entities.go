@@ -108,6 +108,8 @@ type Profile struct {
 	Website          string
 	IconURL          string
 	BackgroundURL    string
+	Color            string
+	FontColor        string
 }
 
 func (u Profile) Validate() interface{} {
