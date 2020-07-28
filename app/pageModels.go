@@ -6,6 +6,8 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/fajaralmu/go_part4_web/repository"
+
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
@@ -16,6 +18,7 @@ type footer struct {
 
 type header struct {
 	Profile entities.Profile
+	Pages   []entities.Page
 }
 
 type pageData struct {
@@ -41,6 +44,7 @@ func (pageData *pageData) setScriptPath(paths ...string) {
 func (pageData *pageData) setHeaderFooter() {
 	pageData.Header = header{
 		Profile: pageData.Profile,
+		Pages:   getPages(),
 	}
 	pageData.Footer = footer{
 		Year:    getCurrentYr(),
@@ -50,8 +54,26 @@ func (pageData *pageData) setHeaderFooter() {
 
 func (pageData *pageData) prepareWebData() {
 	pageData.Profile = getProfile()
+
 	pageData.setHeaderFooter()
 	pageData.parseContent()
+}
+
+func getPages() []entities.Page {
+	filter := entities.Filter{}
+	list, count := repository.Filter(&[]entities.Page{}, filter)
+	fmt.Println("Total Pages: ", count)
+	return toSliceOfPage(list)
+}
+
+func toSliceOfPage(list []interface{}) []entities.Page {
+
+	pages := []entities.Page{}
+
+	for _, item := range list {
+		pages = append(pages, item.(entities.Page))
+	}
+	return pages
 }
 
 func (pageData *pageData) parseContent() {

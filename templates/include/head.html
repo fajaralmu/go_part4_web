@@ -9,15 +9,15 @@
 
 	<div>
 		<!-- <ul class="nav nav-tabs"> -->
-	<!--	<ul class="nav  flex-column">
+	 	<ul class="nav  flex-column">
 
-			Account Menu
+			<!-- Account Menu
 			<c:if test="${loggedUser == null  }">
 				<li class="nav-item "><a
 					class="nav-link  ${page == 'login' ? 'active':'' }"
 					href="<spring:url value="/account/login"/>">Log In </a></li>
 			</c:if>
-			<c:if test="${loggedUser != null }">
+			<c:if test="${loggedUser != null }"> -->
 				<div class="dropdown">
 					<button class="btn btn-primary dropdown-toggle" type="button"
 						data-toggle="dropdown">
@@ -25,28 +25,27 @@
 					</button>
 					<div class="dropdown-menu">
 						<a class="dropdown-item"
-							href="<spring:url value="/management/profile"/>">Profile</a> <a
-							class="dropdown-item" href="<spring:url value="/account/logout"/>" onclick="logout()">Logout</a>
+							href="/management/profile">Profile</a> <a
+							class="dropdown-item" href="/account/logout"  onclick="logout()">Logout</a>
 					</div>
 				</div>
-			</c:if>
+			<!-- </c:if> -->
 
-			<%--  
+			<!-- <%--  
 			<c:if test="${loggedUser != null }">
 				<li class="nav-item"><a
 					class="nav-link ${page == 'dashboard' ? 'active':'' }"
 					href="<spring:url value="/admin/home"/>">Dashboard</a></li> 
-			</c:if> --%>
+			</c:if> --%> -->
 
-			<c:forEach var="pageItem" items="${pages}">
+			{{range .Pages}}
 				<li class="nav-item page-li"  ><a
-					class="nav-link pagelink" id="${pageItem.code }"
-					menupage="${pageItem.isMenuPage() }"
-					href="<spring:url value="${pageItem.link }"/>">${pageItem.name }</a></li>
+					class="nav-link pagelink" id="{{.Code}}"
+					menupage="{{.NONMenuPage}}"
+					href="{{.Link}}"  >{{.Name}}</a></li> 
+			{{end}}
 
-			</c:forEach>
-
-		</ul>-->
+		</ul> 
 	</div>
 </div>
 <script type="text/javascript">
