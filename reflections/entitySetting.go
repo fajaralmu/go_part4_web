@@ -49,15 +49,18 @@ type EntityElement struct {
 //private
 func (e *EntityElement) init() {
 	fieldTag, fieldTagOK := GetMapOfTag(e.Field, "custom") //field.getAnnotation(FormField.class);
+
+	log.Printf("Custom fieldTag [%v] : %v  \n", fieldTagOK, fieldTag)
 	if fieldTagOK {
 		e.FormField = fieldTag
 	} else {
-		e.FormField = map[string]string{}
+		e.FormField = nil
+		return
 	}
 	// baseField = field.getAnnotation(BaseField.class);
 
 	e.IDField = e.Field.Name == "ID"
-	e.SkipBaseField = true // !idField && (baseField != null && ignoreBaseField);
+	e.SkipBaseField = false // true // !idField && (baseField != null && ignoreBaseField);
 
 	e.Identity = e.IDField
 	e.HasJoinColumn = e.FormField["foreignKey"] != ""
@@ -100,8 +103,11 @@ func (e *EntityElement) Build() bool {
 
 func (e *EntityElement) doBuild() bool {
 
-	var formFieldIsNullOrSkip bool = (e.FormField == nil || e.SkipBaseField)
-	if formFieldIsNullOrSkip {
+	var formFieldIsNull bool = (e.FormField == nil) // || e.SkipBaseField)
+
+	log.Printf("formFieldIsNullOrSkip: %v %v", formFieldIsNull, e.FormField)
+
+	if formFieldIsNull {
 		return false
 	}
 
@@ -125,8 +131,7 @@ func (e *EntityElement) doBuild() bool {
 	e.Identity = (e.IDField)
 	e.LableName = extractCamelCase(lableName)
 	e.Required = e.FormField["required"] == "TRUE"
-	// e.Type =
-	// setType(determinedFieldType.value);
+	e.Type = determinedFieldType
 	e.Multiple = e.FormField["multiple"] == "TRUE"
 	e.ClassName = e.Field.Type.Name()
 	e.ShowDetail = e.FormField["showDetail"] == "TRUE"
@@ -143,7 +148,7 @@ func (e *EntityElement) checkDetailField() {
 	if len(detailFieldVals) > 0 {
 		e.DetailFields = (strings.Join(detailFieldVals, "~"))
 	}
-	if e.FormField["showDetail"] != "TRUE" {
+	if e.FormField["showDetail"] == "TRUE" {
 		e.OptionItemName = e.FormField["optionItemName"]
 		e.DetailField = (true)
 	}

@@ -33,6 +33,8 @@ func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, 
 	result := map[string]string{}
 	value, ok := field.Tag.Lookup(tagName)
 
+	log.Printf("Lookup tagName %v, ok: %v \n", tagName, ok)
+
 	if !ok {
 		return result, false
 	}

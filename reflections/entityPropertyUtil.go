@@ -7,6 +7,7 @@ import (
 
 //CreateEntityProperty creates entity field properties
 func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]interface{}) EntityProperty {
+	log.Println("~~~~~~~~~~CreateEntityProperty~~~~~~~~~~~")
 	// if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 	// 	return null
 	// }
@@ -26,7 +27,7 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	// try {
 
 	var fieldList []reflect.StructField = getDeclaredFields(clazz)
-
+	log.Printf("field LIST size: %v \n", len(fieldList))
 	// if (isQuestionare) {
 	// 	Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList)
 	// 	fieldList = CollectionUtil.mapOfListToList(groupedFields)
@@ -49,8 +50,11 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 			IsGrouped:       entityProperty.IsQuestionare,
 		}
 		entityElement.init()
+		elementBuilt := entityElement.Build()
 
-		if false == entityElement.Build() {
+		log.Printf("elementBuilt [%v]: %v \n", field.Name, elementBuilt)
+
+		if false == elementBuilt {
 			continue
 		}
 		if entityElement.DetailField {
@@ -61,6 +65,8 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 		entityElements = append(entityElements, entityElement)
 	}
 
+	log.Printf("entityElements size: %v \n", len(entityElements))
+	log.Printf("fieldNames: %v ", fieldNames)
 	entityProperty.Alias = clazz.Name() //(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value())
 	entityProperty.Editable = true      //(dto.editable())
 	entityProperty.setElementJsonList()
