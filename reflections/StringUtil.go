@@ -39,13 +39,16 @@ func isUpperCase(str string) bool {
 func ToSnakeCase(camelCased string) string {
 
 	var result string
+	var currentUpperCase bool = false
 
 	for i, char := range camelCased {
 
 		_char := string(char)
-		if i > 0 && isUpperCase(_char) {
+		if i > 0 && isUpperCase(_char) && currentUpperCase == false {
+			currentUpperCase = true
 			result += "_"
-
+		} else {
+			currentUpperCase = false
 		}
 		_charStr := strings.ToLower(_char)
 		if 0 == i {
@@ -53,7 +56,6 @@ func ToSnakeCase(camelCased string) string {
 		} else {
 			result += (_charStr)
 		}
-
 	}
 
 	return result

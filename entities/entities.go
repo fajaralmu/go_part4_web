@@ -68,8 +68,8 @@ type Menu struct {
 	Name        string `gorm:"unique"`
 	Description string
 	URL         string `gorm:"unique"`
-	MenuPageID  uint16
-	MenuPage    *Page `gorm:"foreignkey:menu_page_id" custom:"foreignKey:MenuPageID"`
+	PageID      uint16
+	MenuPage    *Page `gorm:"foreignkey:page_id" custom:"foreignKey:PageID"`
 	IconURL     string
 	Color       string
 	FontColor   string
@@ -91,6 +91,7 @@ type Page struct {
 	Description string
 	ImageURL    string
 	Sequence    int
+	Menus       []Menu `gorm:"-"`
 }
 
 func (u Page) Validate() interface{} {

@@ -31,6 +31,7 @@ type pageData struct {
 	Header                header
 	AdditionalStylePaths  []string
 	AdditionalScriptPaths []string
+	Page                  entities.Page
 }
 
 func (pageData *pageData) setStylePath(paths ...string) {
@@ -81,8 +82,9 @@ func (pageData *pageData) parseContent() {
 	tmpl2, _ := template.ParseFiles("./templates/pages/" + pageData.PageCode + ".html")
 	var tpl bytes.Buffer
 
-	e := tmpl2.ExecuteTemplate(&tpl, pageData.PageCode, pageData.Header)
+	e := tmpl2.ExecuteTemplate(&tpl, pageData.PageCode, pageData)
 	if e == nil {
+
 		fmt.Println("Success parsing ", pageData.PageCode)
 		pageData.Content = tpl.String()
 	} else {
