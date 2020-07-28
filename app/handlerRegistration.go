@@ -19,6 +19,7 @@ func registerAPIs() {
 	router.HandleFunc("/api/entities", getEntities).Methods("POST")
 	router.HandleFunc("/api/entities/add", addEntities).Methods("POST")
 	router.HandleFunc("/api/entities/update", updateEntities).Methods("POST")
+	router.HandleFunc("/api/entities/delete", deleteEntities).Methods("POST")
 	// router.HandleFunc("/api/books", createBook).Methods("POST")
 	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
@@ -45,6 +46,18 @@ func getEntities(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response := Filter(request)
+	writeWebResponse(w, response)
+}
+
+func deleteEntities(w http.ResponseWriter, r *http.Request) {
+
+	var request entities.WebRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		writeErrorMsgBadRequest(w, err.Error())
+		return
+	}
+	response := Delete(request)
 	writeWebResponse(w, response)
 }
 

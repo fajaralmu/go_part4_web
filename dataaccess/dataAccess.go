@@ -146,14 +146,13 @@ func Save(model entities.InterfaceEntity) interface{} {
 }
 
 //Delete removes from record, if has DeletedAt field ti deletes softly
-func Delete(model entities.InterfaceEntity) interface{} {
+func Delete(model entities.InterfaceEntity) {
 
 	dbOperation(func() {
 		// autoMigrate(model)
 		deleteModel(model)
 	})
 
-	return model
 }
 
 func deleteModel(model entities.InterfaceEntity) {

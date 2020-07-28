@@ -25,6 +25,20 @@ func UpdateEnity(request entities.WebRequest) entities.WebResponse {
 	return response
 }
 
+func Delete(request entities.WebRequest) entities.WebResponse {
+	entityName := request.Filter.EntityName
+	log.Println("entityName: ", entityName)
+	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
+
+	deleted := repository.Delete(fieldValue.(entities.InterfaceEntity))
+	fmt.Println("Deleted Entity: ", deleted)
+
+	response := entities.WebResponse{
+		Result: deleted,
+	}
+	return response
+}
+
 func AddEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
 	log.Println("entityName: ", entityName)
