@@ -28,7 +28,7 @@ func main2() {
 	}
 
 	repository.CreateNew(&user)
-	println("USER ROLE ID: ", user.RoleID)
+	println("USER ROLE ID: ", user.UserRoleID)
 
 }
 
@@ -66,7 +66,7 @@ func testUpdate() {
 		Username:    "Fajar_55000",
 		DisplayName: "El Fajr Part550000",
 		Password:    "12345",
-		RoleID:      18,
+		UserRoleID:  18,
 	}
 	repository.CreateNew(&user)
 

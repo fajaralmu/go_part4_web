@@ -5,7 +5,8 @@ import (
 	"reflect"
 )
 
-func createEntityProperty(clazz reflect.Type, additionalObjectList map[string][]interface{}) EntityProperty {
+//CreateEntityProperty creates entity field properties
+func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]interface{}) EntityProperty {
 	// if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 	// 	return null
 	// }

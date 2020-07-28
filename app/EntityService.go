@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/repository"
 
@@ -53,6 +54,7 @@ func AddEntity(request entities.WebRequest) entities.WebResponse {
 	return response
 }
 
+//Filter returns entities by given keywords
 func Filter(request entities.WebRequest) entities.WebResponse {
 
 	filter := request.Filter
@@ -64,8 +66,9 @@ func Filter(request entities.WebRequest) entities.WebResponse {
 	list, totalData := repository.Filter(createdSlice, filter)
 
 	response := entities.WebResponse{
-		ResultList: list,
-		TotalData:  totalData,
+		ResultList:     list,
+		TotalData:      totalData,
+		AdditionalData: reflections.CreateEntityProperty(reflect.TypeOf(entities.User{}), map[string][]interface{}{}),
 	}
 	fmt.Println("RESPONSE: ", response)
 	return response

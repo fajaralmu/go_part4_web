@@ -7,48 +7,9 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Validate validates model properties //
-func (u BaseEntity) Validate() interface{} {
-	return u
-}
-
-// Validate validates model properties //
-func (u User) Validate() interface{} {
-	fmt.Println("Validating User")
-	if u.Role == nil {
-		u.Role = &UserRole{}
-	}
-	return u
-}
-
-// Validate validates model properties //
-func (u UserRole) Validate() interface{} {
-	return u
-}
-
-// Validate validates model properties //
-func (u Menu) Validate() interface{} {
-	return u
-}
-
-// Validate validates model properties //
-func (u Page) Validate() interface{} {
-	return u
-}
-
-// Validate validates model properties //
-func (u Profile) Validate() interface{} {
-	return u
-}
-
-// Validate validates model properties //
-func (u RegisteredRequest) Validate() interface{} {
-	return u
-}
-
 //InterfaceEntity is InterfaceEntity
 type InterfaceEntity interface {
-	Validate()
+	Validate() interface{}
 }
 
 //BaseEntity is the entity
@@ -109,6 +70,7 @@ type Page struct {
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.BMP"`
 	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan Ke"`
+	Menus       []Menu `gorm:"-"`
 }
 
 //Profile is the entity
@@ -136,4 +98,45 @@ type RegisteredRequest struct {
 	Referrer  string
 	UserAgent string
 	IPAddress string
+}
+
+//IMplementations//////////
+
+// Validate validates model properties //
+func (u BaseEntity) Validate() interface{} {
+	return u
+}
+
+// Validate validates model properties //
+func (u User) Validate() interface{} {
+	fmt.Println("Validating User")
+	if u.Role == nil {
+		u.Role = &UserRole{}
+	}
+	return u
+}
+
+// Validate validates model properties //
+func (u UserRole) Validate() interface{} {
+	return u
+}
+
+// Validate validates model properties //
+func (u Menu) Validate() interface{} {
+	return u
+}
+
+// Validate validates model properties //
+func (u Page) Validate() interface{} {
+	return u
+}
+
+// Validate validates model properties //
+func (u Profile) Validate() interface{} {
+	return u
+}
+
+// Validate validates model properties //
+func (u RegisteredRequest) Validate() interface{} {
+	return u
 }
