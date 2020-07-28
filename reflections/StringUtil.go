@@ -1,7 +1,9 @@
 package reflections
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -56,6 +58,37 @@ func ToSnakeCase(camelCased string) string {
 		} else {
 			result += (_charStr)
 		}
+	}
+
+	return result
+}
+
+func ToJSONString(i interface{}) string {
+	jsonStr, _ := json.Marshal(i)
+	return string(jsonStr)
+}
+
+func IsNumericValue(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
+}
+
+func extractCamelCase(camelCased string) string {
+
+	var result string = ""
+
+	for i, char := range camelCased {
+		_char := string(char)
+		if isUpperCase(_char) {
+			result += " "
+		}
+		if 0 == i {
+			result += strings.ToUpper(_char)
+
+		} else {
+			result += (_char)
+		}
+
 	}
 
 	return result

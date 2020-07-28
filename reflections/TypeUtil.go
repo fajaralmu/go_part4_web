@@ -20,7 +20,7 @@ func GetStructTableName(object interface{}) string {
 	return ToSnakeCase(typeName.Name())
 }
 
-//ToInterfaceSlice converts war slice to slice of interface
+//ToInterfaceSlice converts var slice to slice of interface
 func ToInterfaceSlice(object interface{}) []interface{} {
 
 	rawSlice := Dereference(object).Interface()
@@ -36,6 +36,33 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 		}
 	}
 	return result
+}
+
+func t(i interface{}) reflect.Type {
+	return reflect.TypeOf(i)
+}
+
+func isNumericType(_type reflect.Type) bool {
+	var res bool = false
+	switch _type {
+	case t(int(0)), t(float32(0)), t(float64(0)), t(int16(0)), t(int32(0)), t(int64(0)),
+		t(uint(0)), t(uint16(0)), t(int32(0)), t(uint8(0)), t(uint64(0)), t(int8(0)):
+		res = true
+
+	default:
+		res = false
+
+	}
+	return res
+}
+
+func getDeclaredFields(t reflect.Type) []reflect.StructField {
+	fields := []reflect.StructField{}
+	for i := 0; i < t.NumField(); i++ {
+		structField := t.Field(i)
+		fields = append(fields, structField)
+	}
+	return fields
 }
 
 //GetJoinColumnFields return fields having tag "custom" and tagKey: "foreign key"

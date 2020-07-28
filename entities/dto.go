@@ -11,6 +11,7 @@ type Filter struct {
 	Exact        bool
 }
 
+//WebRequest is REST API request payload
 type WebRequest struct {
 	Filter    Filter
 	User_role *UserRole
@@ -19,11 +20,14 @@ type WebRequest struct {
 	Menu      *Menu
 	Page      *Page
 }
+
+//WebResponse is REST API response payload
 type WebResponse struct {
-	Date       time.Time
-	Code       string
-	Message    string
-	ResultList interface{}
-	Result     interface{}
-	TotalData  int
+	Date           time.Time
+	Code           string
+	Message        string
+	ResultList     interface{}
+	Result         interface{}
+	TotalData      int
+	AdditionalData interface{}
 }
