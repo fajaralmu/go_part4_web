@@ -19,13 +19,23 @@ type header struct {
 }
 
 type pageData struct {
-	PageCode string
-	Title    string
-	Message  string
-	Content  interface{}
-	Profile  entities.Profile
-	Footer   footer
-	Header   header
+	PageCode              string
+	Title                 string
+	Message               string
+	Content               interface{}
+	Profile               entities.Profile
+	Footer                footer
+	Header                header
+	AdditionalStylePaths  []string
+	AdditionalScriptPaths []string
+}
+
+func (pageData *pageData) setStylePath(paths ...string) {
+	pageData.AdditionalStylePaths = paths
+}
+
+func (pageData *pageData) setScriptPath(paths ...string) {
+	pageData.AdditionalScriptPaths = paths
 }
 
 func (pageData *pageData) setHeaderFooter() {
@@ -39,6 +49,7 @@ func (pageData *pageData) setHeaderFooter() {
 }
 
 func (pageData *pageData) prepareWebData() {
+	pageData.Profile = getProfile()
 	pageData.setHeaderFooter()
 	pageData.parseContent()
 }

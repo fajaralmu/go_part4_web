@@ -32,9 +32,10 @@ func homeRoute(w http.ResponseWriter, r *http.Request) {
 			PageCode: "about",
 			Title:    "Welcome",
 			Message:  "Hello World",
-			Profile:  getProfile(),
 		}
 		pageData.prepareWebData()
+		pageData.setStylePath("about")
+
 		tmpl.ExecuteTemplate(w, "layout", pageData)
 
 	} else {

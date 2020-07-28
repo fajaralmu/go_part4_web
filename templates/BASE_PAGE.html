@@ -22,14 +22,12 @@
 <script src="/static/js/util.js?v=1"></script>
 <script src="/static/js/strings.js?v=1"></script>
 
-<!-- <c:forEach var="stylePath" items="${additionalStylePaths }">
-	<link rel="stylesheet"
-		href="/static/css/pages/${ stylePath.value}.css?version=1" />
-</c:forEach>
-<c:forEach var="scriptPath" items="${additionalScriptPaths }">
-	<script
-		src="/static/js/pages/${scriptPath.value }.js?v=1"></script>
-</c:forEach> -->
+{{range .AdditionalStylePaths}}
+	<link rel="stylesheet" href="/static/css/pages/{{.}}.css?version=1" />
+{{end}}
+{{range .AdditionalScriptPaths}}
+	<script src="/static/js/pages/{{.}}.js?v=1"></script>
+{{end}}
 
 
 <style>
