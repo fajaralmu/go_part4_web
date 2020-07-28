@@ -30,59 +30,11 @@ func registerAPIs() {
 func registerWebPages() {
 
 	log.Println("START Register Web Pages")
-	// router.HandleFunc("/home", app.homeRoute).Methods("GET")
+	router.HandleFunc("/home", homeRoute).Methods("GET")
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
 	router.PathPrefix("/static/").Handler(fs)
 
 	log.Println("END Register Web Pages")
-}
-
-func getEntities(w http.ResponseWriter, r *http.Request) {
-
-	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-		return
-	}
-	response := Filter(request)
-	writeWebResponse(w, response)
-}
-
-func deleteEntities(w http.ResponseWriter, r *http.Request) {
-
-	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-		return
-	}
-	response := Delete(request)
-	writeWebResponse(w, response)
-}
-
-func addEntities(w http.ResponseWriter, r *http.Request) {
-
-	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-		return
-	}
-	response := AddEntity(request)
-	writeWebResponse(w, response)
-}
-
-func updateEntities(w http.ResponseWriter, r *http.Request) {
-
-	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-		return
-	}
-	response := UpdateEnity(request)
-	writeWebResponse(w, response)
 }
 
 /////////////////////////////////////////
@@ -103,7 +55,7 @@ func writeWebResponse(w http.ResponseWriter, webResponse entities.WebResponse) {
 }
 
 func writeJSONResponse(w http.ResponseWriter, obj interface{}) {
-	w.Header().Set("Content-Type", "application/json")
+	writeResponseHeaders(w)
 	json.NewEncoder(w).Encode(obj)
 }
 
