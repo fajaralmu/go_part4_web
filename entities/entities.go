@@ -85,8 +85,8 @@ type Profile struct {
 	Address          string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	Contact          string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	Website          string `custom:"type:FIELD_TYPE_TEXT"`
-	IconURL          string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.BMP"`
-	BackgroundURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultBackground.BMP"`
+	IconURL          string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
+	BackgroundURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultBackground.bmp"`
 	FontColor        string `custom:"type:FIELD_TYPE_COLOR"`
 	Color            string `custom:"type:FIELD_TYPE_COLOR"`
 }

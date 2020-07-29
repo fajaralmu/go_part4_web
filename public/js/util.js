@@ -24,7 +24,7 @@ function infoLoading() {
 		innerHTML:'Please Wait'
 	}); 
 	loadingDiv.appendChild(loadingText); 
-	const imagePath = ctxPath+"/res/img/loading-disk.gif";
+	const imagePath = "/static/img/spinner.gif";
 	const loadingImg = createHtmlTag({
 		tagName: "img",
 		src: imagePath,
