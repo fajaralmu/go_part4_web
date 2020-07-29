@@ -8,7 +8,9 @@ type Filter struct {
 	Page         int
 	Limit        int
 	FieldsFilter map[string]interface{}
-	Exact        bool
+	Exacts       bool
+	OrderBy      string
+	OrderType    string
 }
 
 //WebRequest is REST API request payload

@@ -6,11 +6,11 @@ import "fmt"
 func EvaluateFilterMap(filter map[string]interface{}) {
 
 	for key, value := range filter {
-		fmt.Println("key: ", key, "value: ", value)
 		newKey := ToSnakeCase(key)
 		delete(filter, key)
 
 		filter[newKey] = value
+		fmt.Println("key: ", key, "value: ", value, "newKey: ", newKey)
 
 	}
 	fmt.Println("filter evaluated: ", filter)

@@ -19,6 +19,7 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	isQuestionare := false
 
 	var entityProperty EntityProperty = EntityProperty{
+		IDField:         "ID",
 		IgnoreBaseField: ignoreBaseField,
 		EntityName:      clazz.Name(),
 		IsQuestionare:   isQuestionare,

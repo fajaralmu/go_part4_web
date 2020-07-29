@@ -64,12 +64,12 @@ type Page struct {
 	gorm.Model
 	Code        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
 	Name        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	Authorized  int    `gorm:"not null" custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Authorized (yes:1 or no:0);availableValues:0,1"`
-	NONMenuPage int    `custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Is Non-Menu Page (yes:1 or no:0);availableValues:0,1"`
+	Authorized  int    `json:"string" gorm:"not null" custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Authorized (yes:1 or no:0);availableValues:0,1"`
+	NONMenuPage int    `json:"string" custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Is Non-Menu Page (yes:1 or no:0);availableValues:0,1"`
 	Link        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT;lableName:Link for non menu page"`
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.BMP"`
-	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan Ke"`
+	Sequence    int    `json:"string" custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan Ke"`
 	Menus       []Menu `gorm:"-"`
 }
 

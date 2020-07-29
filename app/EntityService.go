@@ -77,6 +77,6 @@ func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 		Filter:         filter,
 		AdditionalData: reflections.CreateEntityProperty(reflect.TypeOf(entities.User{}), map[string][]interface{}{}),
 	}
-	fmt.Println("RESPONSE: ", response)
+	// fmt.Println("RESPONSE: ", response)
 	return response, nil
 }

@@ -79,16 +79,16 @@ function doDeleteEntity(url, entityName, idField, entityId, callback) {
 		return;
 	}
 	var requestObject = {
-		"entity" : entityName,
-		"filter" : { }
+		
+		"Filter" : {"EntityName" : entityName.toLowerCase() }
 	};
-	requestObject.filter.fieldsFilter = {};
-	requestObject.filter.fieldsFilter[idField] = entityId;
+	requestObject.Filter.FieldsFilter = {};
+	requestObject.Filter.FieldsFilter[idField] = entityId;
 
 	postReq(url, requestObject,
 			function(xhr) {
 				var response = (xhr.data);
-				var code = response.code;
+				var code = response.Code;
 				if (code == "00") {
 					alert("success deleted");
 					callback();
@@ -102,7 +102,7 @@ function doSubmit(url, requestObject, callback){
 	postReq(url,
 			requestObject, function(xhr) {
 				var response = (xhr.data);
-				if (response != null && response.code == "00") {
+				if (response != null && response.Code == "00") {
 					alert("SUCCESS");
 					callback();
 				} else {
@@ -118,7 +118,7 @@ function doGetDetail(url,requestObject, callback){
 			requestObject,
 			function(xhr) {
 				var response = (xhr.data);
-				var entities = response.entities;
+				var entities = response.ResultList;
 				if (entities != null && entities[0] != null) {
 					callback(entities);
 				} else {
@@ -132,7 +132,7 @@ function doGetById(url, requestObject, callback){
 	postReq(url, requestObject,
 			function(xhr) {
 				var response = (xhr.data);
-				var entities = response.entities;
+				var entities = response.ResultList;
 				if (entities != null && entities[0] != null) {
 					callback(entities[0]);
 				} else {
@@ -145,7 +145,7 @@ function doLoadDropDownItems(url, requestObject, callback){
 	postReq(url, requestObject,
 			function(xhr) {
 				var response = (xhr.data);
-				var entities = response.entities;
+				var entities = response.ResultList;
 				if (entities != null && entities[0] != null) {
 					callback(entities);
 

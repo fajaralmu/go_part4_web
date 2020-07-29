@@ -158,19 +158,20 @@
 
 	function getById(entityId, callback) {
 		var requestObject = {
-			"entity" : entityName,
-			"filter" : {
-				"limit" : 1,
-				"page" : 0,
-				"exacts" : true,
-				"contains" : false
+		
+			"Filter" : {
+				"EntityName" : entityName.toLowerCase(),
+				"Limit" : 1,
+				"Page" : 0,
+				"Exacts" : true,
+				"Contains" : false
 
 			}
 		};
-		requestObject.filter.fieldsFilter = {};
-		requestObject.filter.fieldsFilter[this.idField] = entityId;
+		requestObject.Filter.FieldsFilter = {};
+		requestObject.Filter.FieldsFilter[this.idField] = entityId;
 
-		doGetById("/api/entities/", requestObject,callback);
+		doGetById("/api/entities", requestObject,callback);
 		
 	}
 	
@@ -867,7 +868,9 @@
 			if (!confirm("Are You Sure ?")) {
 				return;
 			}
-			var requestObject = {};
+			var requestObject = {
+				Filter: { }
+			};
 			var entity = {};
 			var endPoint = "add";
 			var isNew = true;
@@ -891,8 +894,8 @@
 			}
 			
 			requestObject[entityName] = entity;
-			requestObject.entityObject = entity;
-			requestObject.entity = entityName;
+			// requestObject.entityObject = entity;
+			requestObject.Filter.EntityName = entityName;
 			
 			console.log("request object", requestObject);
 			
