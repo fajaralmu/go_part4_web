@@ -1,100 +1,96 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+{{define "formElement"}}
 <div class="modal fade" id="modal-entity-form" tabindex="-1"
 	role="dialog" aria-labelledby="Entity Form Modal" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalCenterTitle">${title }</h5>
-				<c:if test="${singleRecord == false }">
+				<h5 class="modal-title" id="exampleModalCenterTitle">{{.EntityProperty.EntityName}}</h5>
+				<!-- <c:if test="${singleRecord == false }"> -->
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-				</c:if>
+				<!-- </c:if> -->
 			</div>
 			<div class="modal-body" style="height: 400px; overflow: scroll;">
 				<div id="entity-form">
 
 					<!-- ///////////////ELEMENTS////////////////// -->
-					<c:forEach var="element" items="${entityProperty.elements}">
+					{{range .EntityProperty.Elements}}
+					<!-- <c:forEach var="element" items="${entityProperty.elements}"> -->
 
-						<div id="form_input_${element.id }"
-							groupName="${element.inputGroupname }"
+						<div id="form_input_{{.ID}}"
+							groupName="{{.InputGroupname }}"
 							class="entity-input-form ${element.isGrouped() == 'true' ? 'grouped' : '' }"
-							style="grid-template-columns:  ${entityProperty.getGridTemplateColumns()}">
+							style="grid-template-columns:  20px 80px">
 							<div class="entity-input-label">
-								<label>${element.lableName }</label>
+								<label>{{.LableName }}</label>
 							</div>
 							<div class="entity-input-field">
-								<c:choose>
-									<c:when test="${  element.type == 'fixedlist'}">
+								 
+									 {{ if eq .Type  "FIELD_TYPE_FIXED_LIST"}}
 										<select class="input-field form-control" id="${element.id }"
-											required="${element.required }"
-											identity="${element.identity }"
-											itemValueField="${element.optionValueName}"
-											itemNameField="${element.optionItemName}">
+											required="{{.Required }}"
+											identity="{{.Identity }}"
+											itemValueField="{{.OptionValueName}}"
+											itemNameField="{{.OtionItemName}}">
 
 										</select>
 										<script>
-											managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
-											managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
-											var optionJsonString = "${element.getJsonListString(true)}";
+											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
+											managedEntity["itemField_{{.ID}}"] = "{{.OtionItemName}}";
+											//var optionJsonString = "${element.getJsonListString(true)}";
 
-											const options = JSON
-													.parse(optionJsonString);
+											//const options = JSON .parse(optionJsonString);
+											const options = []
 											for (let i = 0; i < options.length; i++) {
 
 												const optionItem = options[i];
 												const option = createHtmlTag({
 													tagName : 'option',
-													value : optionItem["${element.optionValueName}"],
-													innerHTML : optionItem["${element.optionItemName}"]
+													value : optionItem["{{.OptionValueName}}"],
+													innerHTML : optionItem["{{.OptionItemName}}"]
 												});
 
-												_byId("${element.id }").append(
-														option);
+												_byId("{{.ID}}").append(option);
 											}
 										</script>
-									</c:when>
-									<c:when test="${  element.type == 'dynamiclist'}">
-										<input onkeyup="loadList(this)" name="${element.id }"
-											id="input-${element.id }" class="form-control" type="text" />
+									{{else if eq .Type "FIELD_TYPE_DYNAMIC_LIST"}}
+									 
+										<input onkeyup="loadList(this)" name="{{.ID}}"
+											id="input-{{.ID}}" class="form-control" type="text" />
 										<br />
 										<select style="width: 200px" class="input-field form-control"
-											id="${element.id }" required="${element.required }"
-											multiple="multiple" identity="${element.identity }"
-											itemValueField="${element.optionValueName}"
-											itemNameField="${element.optionItemName}"
-											name=${element.entityReferenceClass}
+											id="{{.ID}}" required="{{.Required}}"
+											multiple="multiple" identity="{{.Identity}}"
+											itemValueField="{{.OptionValueName}}"
+											itemNameField="{{.OptionItemName}}"
+											name="{{.EntityReferenceClass}}"
 											>
 
 										</select>
 										<script>
-											managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
-											managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
+											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
+											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
 										</script>
-									</c:when>
-									<c:when test="${  element.type == 'plainlist'}">
-										<select class="input-field form-control" id="${element.id }"
-											required="${element.required }"
-											identity="${element.identity }" plainlist="true">
-											<c:forEach var="val" items="${element.plainListValues }">
-												<option value="${val }">${val }</option>
-											</c:forEach>
+									{{else if eq .Type "FIELD_TYPE_PLAIN_LIST"}}
+									 
+										<select class="input-field form-control" id="{{.ID}}"
+											required="{{.Required}}"
+											identity="{{.Identity}}" plainlist="true">
+											{{range .PlainListValues}} 
+												<option value="{{.}}}">{{.}}</option>
+										 	{{end}}
 
 										</select>
-									</c:when>
-									<c:when test="${  element.type == 'textarea'}">
-										<textarea class="input-field form-control" id="${element.id }"
-											type="${element.type }" ${element.required?'required':'' }
-											identity="${element.identity }">
+									{{else if eq .Type "FIELD_TYPE_TEXTAREA"}} 
+										<textarea class="input-field form-control" id="{{.ID}}"
+											type="textarea" 
+											identity="{{.Identity}}">
+											<!--${element.required?'required':'' }-->
 									</textarea>
-									</c:when>
-									<c:when test="${  element.showDetail}">
+									{{else  if   .ShowDetail  }}
+									 
 										<input detailfields="${element.detailFields}"
 											showdetail="true" class="input-field" id="${element.id }"
 											type="hidden" name="${element.optionItemName}"
@@ -102,8 +98,9 @@
 
 										<button id="btn-detail-${element.id }" class="btn btn-info"
 											onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
-									</c:when>
-									<c:when
+									 
+									 
+									<!-- <c:when
 										test="${ element.type=='img' && element.multiple == false}">
 										<input class="input-field form-control" id="${element.id }"
 											type="file" ${element.required?'required':'' }
@@ -149,50 +146,51 @@
 										</div>
 										<button id="${element.id }-add-list"
 											onclick="addImageList('${element.id }')">Add</button>
-									</c:when>
-									<c:when test="${ element.identity}">
+									</c:when> -->
+									{{else if  .Identity  }}
+									 
 										<input class="input-field form-control" disabled="disabled"
-											id="${element.id }" type="text"
-											${element.required?'required':'' }
-											identity="${element.identity }" />
-									</c:when>
-									<c:otherwise>
-										<input class="input-field form-control" id="${element.id }"
-											type="${element.type }" ${element.required?'required':'' }
-											identity="${element.identity }" />
-									</c:otherwise>
-								</c:choose>
+											id="{{.ID}}" type="text" 
+											identity="{{.Identity}}" />
+											<!-- ${element.required?'required':'' } -->
+										{{else}}
+										<input class="input-field form-control" id="{{.ID}}"
+											type="{{.Type}}" 
+											identity="{{.Identity}}" />
+										{{end}}	 
+											<!-- ${element.required?'required':'' } -->
+								<!-- </c:choose> -->
 							</div>
 						</div>
-					</c:forEach>
+					{{end}}
 				</div>
 
 				<!-- </div> -->
 			</div>
-			<div class="modal-footer">
-				<c:if test="${entityProperty.editable == true }">
+		  <div class="modal-footer">
+				{{if .EntityProperty.Editable }}
 					<button id="btn-submit" class="btn btn-primary">Save
 						Changes</button>
-					<c:if test="${singleRecord == false }">
+					<!-- <c:if test="${singleRecord == false }"> -->
 						<button class="btn" id="btn-clear">Clear</button>
-					</c:if>
-				</c:if>
-				<c:if test="${singleRecord == false }">
+					<!-- </c:if> -->
+				{{end}}
+				<!-- <c:if test="${singleRecord == false }"> -->
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Close</button>
-				</c:if>
-				<c:if test="${singleRecord == true }">
+				<!-- </c:if> -->
+				<!-- <c:if test="${singleRecord == true }">
 					<a role="button" class="btn btn-secondary"
 						href="<spring:url value="/admin/home" />">Back</a>
-				</c:if>
-			</div>
+				</c:if> -->
+			</div>  
 		</div>
 	</div>
 </div>
 <script>
 	const groupedInputs = getGroupedInputs();
 	const entityForm = _byId('entity-form');
-	var groupNames = "${entityProperty.groupNames}";
+	var groupNames = "{{.EntityProperty.GroupNames}}";
 	
 	function arrangeInputs() {
 		if(!groupedInputs) return;
@@ -275,3 +273,5 @@
 		arrangeInputs();
 	}
 </script>
+
+{{end}}

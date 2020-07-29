@@ -3,7 +3,10 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"reflect"
 	"text/template"
+
+	"github.com/fajaralmu/go_part4_web/reflections"
 
 	"github.com/fajaralmu/go_part4_web/repository"
 	"github.com/gorilla/mux"
@@ -50,6 +53,31 @@ func toSliceOfMenu(menus []interface{}) []entities.Menu {
 		result = append(result, item.(entities.Menu))
 	}
 	return result
+}
+
+func managementRoute(w http.ResponseWriter, r *http.Request) {
+	managementFiles := getWebFiles()
+	managementFiles = append(managementFiles)
+	tmpl, err := template.ParseFiles(managementFiles...)
+	entityProperty := reflections.CreateEntityProperty(reflect.TypeOf(entities.Page{}), nil)
+	if err == nil {
+		pageData := pageData{
+			PageCode:       "entityManagementPage",
+			Title:          "Management Page",
+			Message:        "Manage Models",
+			EntityProperty: entityProperty,
+			AdditionalPages: []string{
+				"./templates/entity-management-component/detail-element.html", "./templates/entity-management-component/form-element.html",
+			},
+		}
+		pageData.prepareWebData()
+
+		tmpl.ExecuteTemplate(w, "layout", pageData)
+
+	} else {
+		writeResponseHeaders(w)
+		writeErrorMsgBadRequest(w, err.Error())
+	}
 }
 
 func commonPageRoute(w http.ResponseWriter, r *http.Request) {

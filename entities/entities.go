@@ -87,6 +87,8 @@ type Profile struct {
 	Website          string `custom:"type:FIELD_TYPE_TEXT"`
 	IconURL          string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.BMP"`
 	BackgroundURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultBackground.BMP"`
+	FontColor        string `custom:"type:FIELD_TYPE_COLOR"`
+	Color            string `custom:"type:FIELD_TYPE_COLOR"`
 }
 
 //RegisteredRequest is the entity

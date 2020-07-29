@@ -32,6 +32,7 @@ func registerWebPages() {
 	log.Println("START Register Web Pages")
 	router.HandleFunc("/home", homeRoute).Methods("GET")
 	router.HandleFunc("/page/{code}", commonPageRoute).Methods("GET")
+	router.HandleFunc("/management", managementRoute).Methods("GET")
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
 	router.PathPrefix("/static/").Handler(fs)
 

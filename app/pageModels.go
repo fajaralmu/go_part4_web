@@ -3,8 +3,11 @@ package app
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"text/template"
 	"time"
+
+	"github.com/fajaralmu/go_part4_web/reflections"
 
 	"github.com/fajaralmu/go_part4_web/repository"
 
@@ -31,7 +34,9 @@ type pageData struct {
 	Header                header
 	AdditionalStylePaths  []string
 	AdditionalScriptPaths []string
+	AdditionalPages       []string
 	Page                  entities.Page
+	EntityProperty        reflections.EntityProperty
 }
 
 func (pageData *pageData) setStylePath(paths ...string) {
@@ -57,7 +62,7 @@ func (pageData *pageData) prepareWebData() {
 	pageData.Profile = getProfile()
 
 	pageData.setHeaderFooter()
-	pageData.parseContent()
+	pageData.parseContent(pageData.AdditionalPages...)
 }
 
 func getPages() []entities.Page {
@@ -77,10 +82,20 @@ func toSliceOfPage(list []interface{}) []entities.Page {
 	return pages
 }
 
-func (pageData *pageData) parseContent() {
+func (pageData *pageData) parseContent(additionalPage ...string) {
 
-	tmpl2, _ := template.ParseFiles("./templates/pages/" + pageData.PageCode + ".html")
+	webPages := []string{
+		"./templates/pages/" + pageData.PageCode + ".html",
+	}
+	webPages = append(webPages, additionalPage...)
+
+	tmpl2, err := template.ParseFiles(webPages...)
 	var tpl bytes.Buffer
+
+	if err != nil {
+		log.Println("tmpl2 ERR: ", err.Error())
+	}
+	log.Println("********pageData.PageCode: ", pageData.PageCode)
 
 	e := tmpl2.ExecuteTemplate(&tpl, pageData.PageCode, pageData)
 	if e == nil {

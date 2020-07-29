@@ -135,6 +135,18 @@ func (e *EntityElement) doBuild() bool {
 	e.Multiple = e.FormField["multiple"] == "TRUE"
 	e.ClassName = e.Field.Type.Name()
 	e.ShowDetail = e.FormField["showDetail"] == "TRUE"
+
+	switch e.Type {
+	case "FIELD_TYPE_TEXT":
+		e.Type = "text"
+	case "FIELD_TYPE_NUMBER":
+		e.Type = "number"
+	case "FIELD_TYPE_COLOR":
+		e.Type = "color"
+	case "FIELD_TYPE_DATE":
+		e.Type = "date"
+	}
+
 	return true
 }
 
