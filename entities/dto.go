@@ -30,4 +30,5 @@ type WebResponse struct {
 	Result         interface{}
 	TotalData      int
 	AdditionalData interface{}
+	Filter         Filter
 }

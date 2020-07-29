@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -55,21 +56,27 @@ func AddEntity(request entities.WebRequest) entities.WebResponse {
 }
 
 //Filter returns entities by given keywords
-func Filter(request entities.WebRequest) entities.WebResponse {
+func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 
 	filter := request.Filter
 	entityType := entityConfigMap[filter.EntityName]
+	var response entities.WebResponse
+
+	if nil == entityType {
+		return response, errors.New("Invalid entityName")
+	}
 
 	createdSlice := reflections.CreateNewType(entityType)
 	fmt.Println("--createdSlice--: ", createdSlice)
 
 	list, totalData := repository.Filter(createdSlice, filter)
 
-	response := entities.WebResponse{
+	response = entities.WebResponse{
 		ResultList:     list,
 		TotalData:      totalData,
+		Filter:         filter,
 		AdditionalData: reflections.CreateEntityProperty(reflect.TypeOf(entities.User{}), map[string][]interface{}{}),
 	}
 	fmt.Println("RESPONSE: ", response)
-	return response
+	return response, nil
 }

@@ -12,14 +12,14 @@
 	var dateElements = {{.EntityProperty.DateElementsJSON}};
 	
 	var fieldNames = {{.EntityProperty.FieldNames}};
-	var optionElements = ${options};
+	var optionElements = [];//${options};
 	var imagesData = {};
 	var idField = "{{.EntityProperty.IDField}}";
 	var editable = {{.EntityProperty.Editable}};
 	var singleRecord = false;//${singleRecord == null ||singleRecord == false ? false:true}
 	var entityIdValue = "${entityId}";
 	var managedEntity = {};
-	var fullImagePath = "${host}/${contextPath}/${imagePath}/";
+	var fullImagePath = "/static/img";// "${host}/${contextPath}/${imagePath}/";
 	//var entityPropJson = ${entityPropJson};
 	
 </script> 
@@ -192,18 +192,18 @@
 			page = this.page;
 		}
 		
-		console.log("Goto Page: ", page);
+		console.log("LOAD ENTITY in Page: ", page);
 		
 		const requestObject = buildRequestObject(page);
-		doLoadEntities("/api/entities/", requestObject, function(response){
+		doLoadEntities("/api/entities", requestObject, function(response){
 			
-			var entities = response.entities;
+			var entities = response.ResultList;
 			if(entities == null){
 				alert("Server Error!");
 				return;
 			}
-			totalData = response.totalData;
-			this.page = response.filter.page;
+			totalData = response.TotalData;
+			this.page = response.Filter.Page;
 			populateTable(entities);
 			updateNavigationButtons();
 		});
@@ -236,16 +236,17 @@
 	
 	function buildRequestObject(page){
 		var requestObject = {
-				"entity" : this.entityName,
-				"filter" : {
-					"limit" : this.limit,
-					"page" : page,
-					"orderBy" : this.orderBy,
-					"orderType" : this.orderType
+				
+				"Filter" : {
+					"EntityName" : this.entityName.toLowerCase(),
+					"Limit" : this.limit,
+					"Page" : page,
+					"OrderBy" : this.orderBy,
+					"OrderType" : this.orderType
 
 				}
 			};
-			requestObject.filter.fieldsFilter = {};
+			requestObject.Filter.FieldsFilter = {};
 			for (let i = 0; i < filterFields.length; i++) {
 				const filterField = filterFields[i];
 				const filterValue = filterField.value;
@@ -256,7 +257,7 @@
 					if(checkBoxExact != null && checkBoxExact.checked){
 						fieldName = fieldName+"[EXACTS]";
 					}
-					requestObject.filter.fieldsFilter[fieldName] = filterValue;
+					requestObject.Filter.FieldsFilter[fieldName] = filterValue;
 				}
 			}
 			return requestObject;
@@ -269,6 +270,8 @@
 	
 	//is image field
 	function isImage(id) {
+		if(!imgElements)
+			return
 		for (var i = 0; i < imgElements.length; i++) {
 			var array_element = imgElements[i];
 			if (id == array_element) {
@@ -280,6 +283,8 @@
 	
 	//is currency field
 	function isCurrency(id) {
+		if(!currencyElements)
+			return
 		for (var i = 0; i < currencyElements.length; i++) {
 			var array_element = currencyElements[i];
 			if (id == array_element) {
@@ -291,6 +296,7 @@
 
 	//is date field
 	function isDate(id) {
+		if(!dateElements) return
 		for (var i = 0; i < dateElements.length; i++) {
 			var array_element = dateElements[i];
 			if (id == array_element) {
@@ -743,15 +749,16 @@
 	function loadMoreDetail(){
 		this.currentDetailOffset++;
 		var requestObject = {
-				'entity' : this.currentDetailEntityName,
-				'filter' : {
-					'limit' : 5,
-					'page' : currentDetailOffset,
-					'orderBy' : null,
-					'contains' : false,
-					'exacts' : true,
-					'orderType' : null,
-					"fieldsFilter" : {}
+				
+				'Filter' : {
+					'EntityName' : this.currentDetailEntityName,
+					'Limit' : 5,
+					'Page' : currentDetailOffset,
+					'OrderBy' : null,
+					'Contains' : false,
+					'Exacts' : true,
+					'OrderType' : null,
+					"FieldsFilter" : {}
 				}
 			};
 			const detailElement = _byId(this.currentDetailEntityName);
@@ -761,7 +768,7 @@
 			
 			console.log("request more detail", requestObject);
 		 
-			doGetDetail("<spring:url value="/api/entity/get" />", requestObject, function(entities){
+			doGetDetail( "/api/entities" , requestObject, function(entities){
 				const bodyRows = createTableBody(detailFields, entities, this.currentDetailOffset*5);
 				 
 				for (var i = 0; i < bodyRows.length; i++) {
@@ -777,15 +784,16 @@
 		this.currentDetailFieldName = field;
 		this.currentDetailOffset = 0;
 		var requestObject = {
-			'entity' : elementId,
-			'filter' : {
-				'limit' : 5,
-				'page' : 0,
-				'orderBy' : null,
-				'contains' : false,
-				'exacts' : true,
-				'orderType' : null,
-				"fieldsFilter" : {}
+			
+			'Filter' : {
+				'EntityName' : elementId,
+				'Limit' : 5,
+				'Page' : 0,
+				'OrderBy' : null,
+				'Contains' : false,
+				'Exacts' : true,
+				'OrderType' : null,
+				"FieldsFilter" : {}
 			}
 		};
 		requestObject.filter.fieldsFilter[entityName] = document
@@ -795,7 +803,7 @@
 		console.log("request", requestObject);
 		detailTable.innerHTML = "";
 
-		doGetDetail("<spring:url value="/api/entity/get" />", requestObject, function(entities){
+		doGetDetail("/api/entities", requestObject, function(entities){
 			populateDetailModal(entities, detailFields);
 		});
 		
@@ -828,7 +836,7 @@
 	}
 	
 	function init(){
-	
+		console.log("init")
 		if(singleRecord){
 			getById(this.entityIdValue, function(entity) {
 				populateForm(entity);
@@ -836,7 +844,9 @@
 		}else{
 		
 			createDataTableHeader();
+			console.log("createdDataTableHeader")
 			setDefaultOption();
+			console.log("setDefaultOption")
 			loadEntity(page);
 		}
 	}
@@ -889,7 +899,7 @@
 			if (!isNew) {
 				endPoint = "update";
 			}
-			doSubmit("<spring:url value="/api/entity/" />" + endPoint, requestObject, function(){
+			doSubmit("/api/entities/" + endPoint, requestObject, function(){
 				if(singleRecord){
 					 
 				}else{
@@ -964,7 +974,7 @@
 		}
 
 		function deleteEntity(entityId) {
-			doDeleteEntity("<spring:url value="/api/entity/delete" />", entityName, idField, entityId, function(){
+			doDeleteEntity("/api/entities/delete"  , entityName, idField, entityId, function(){
 				loadEntity(page);
 			});
 		}

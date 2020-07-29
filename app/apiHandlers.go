@@ -15,8 +15,13 @@ func getEntities(w http.ResponseWriter, r *http.Request) {
 		writeErrorMsgBadRequest(w, err.Error())
 		return
 	}
-	response := Filter(request)
-	writeWebResponse(w, response)
+	response, err := Filter(request)
+	if nil == err {
+		writeWebResponse(w, response)
+	} else {
+		writeErrorMsgBadRequest(w, err.Error())
+	}
+
 }
 
 func deleteEntities(w http.ResponseWriter, r *http.Request) {
