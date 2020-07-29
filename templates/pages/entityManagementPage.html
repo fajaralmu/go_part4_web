@@ -10,6 +10,7 @@
 	var imgElements = {{.EntityProperty.ImageElementsJSON}};
 	var currencyElements = {{.EntityProperty.CurrencyElementsJSON}};
 	var dateElements = {{.EntityProperty.DateElementsJSON}};
+	var numericElements = {{.EntityProperty.NumberElementsJSON}};
 	
 	var fieldNames = {{.EntityProperty.FieldNames}};
 	var optionElements = [];//${options};
@@ -295,6 +296,18 @@
 		return false;
 	}
 
+	//is numeric field
+	function isNumeric(id){
+		if(!numericElements) return
+		for (var i = 0; i < numericElements.length; i++) {
+			var array_element = numericElements[i];
+			if (id == array_element) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//is date field
 	function isDate(id) {
 		if(!dateElements) return
@@ -389,6 +402,7 @@
 			const objectFieldName = managedEntity["itemField_" + fieldName];
 			entityValue = entityValue[objectFieldName];
 		}
+	 
 		
 		//handle date type value
 		else if (isDate(fieldName)) {
@@ -924,6 +938,10 @@
 		function getFinalValueForSubmit(field){
 			var fieldId = field.id;
 			var finalValue = field.value;
+
+			if(field.type == "number"){
+				return parseInt(finalValue)
+			}
 			
 			if (selectNodeAndNotPlainList(field)) { //handle select element
 				const _idField = field.getAttribute("itemValueField");

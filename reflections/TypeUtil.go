@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
@@ -58,9 +60,23 @@ func isNumericType(_type reflect.Type) bool {
 
 func getDeclaredFields(t reflect.Type) []reflect.StructField {
 	fields := []reflect.StructField{}
+	var entityInterface bool = false
 	for i := 0; i < t.NumField(); i++ {
 		structField := t.Field(i)
+		if (structField.Type == reflect.TypeOf(gorm.Model{})) {
+			continue
+		}
+		if structField.Type.String() == "entities.InterfaceEntity" {
+			entityInterface = true
+		}
+
 		fields = append(fields, structField)
+	}
+
+	//ADD gorm model
+	if entityInterface {
+		gormFields := getDeclaredFields(reflect.TypeOf(gorm.Model{}))
+		fields = append(fields, gormFields...)
 	}
 	return fields
 }

@@ -25,7 +25,10 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 		IsQuestionare:   isQuestionare,
 	}
 
-	// try {
+	// // try {
+	// obj := CreateNewTypeNotPointer(clazz)
+	// r := reflect.ValueOf(obj)
+	// v := reflect.Indirect(r).FieldByName("ID").Elem
 
 	var fieldList []reflect.StructField = getDeclaredFields(clazz)
 	log.Printf("field LIST size: %v \n", len(fieldList))
@@ -79,7 +82,7 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	entityProperty.FormInputColumn = 1 //dto.formInputColumn().value)
 	entityProperty.determineIdField()
 
-	log.Println("============ENTITY PROPERTY: {} ", entityProperty)
+	// log.Println("============ENTITY PROPERTY: {} ", entityProperty)
 
 	return entityProperty
 	// } catch (Exception e) {

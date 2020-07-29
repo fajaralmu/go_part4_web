@@ -50,10 +50,21 @@ type EntityElement struct {
 func (e *EntityElement) init() {
 	fieldTag, fieldTagOK := GetMapOfTag(e.Field, "custom") //field.getAnnotation(FormField.class);
 
+	log.Println("e.Field.Name: ", e.Field.Name, "e.Field.Type: ", e.Field.Type)
 	log.Printf("Custom fieldTag [%v] : %v  \n", fieldTagOK, fieldTag)
+
+	/////FOR ID FIELD////
+	if e.Field.Name == "ID" {
+		fieldTag = map[string]string{
+			"type": "FIELD_TYPE_NUMBER",
+		}
+		fieldTagOK = true
+	}
+
 	if fieldTagOK {
 		e.FormField = fieldTag
 	} else {
+
 		e.FormField = nil
 		return
 	}
@@ -136,6 +147,7 @@ func (e *EntityElement) doBuild() bool {
 	e.ClassName = e.Field.Type.Name()
 	e.ShowDetail = e.FormField["showDetail"] == "TRUE"
 
+	//setting field type so can be read by browser
 	switch e.Type {
 	case "FIELD_TYPE_TEXT":
 		e.Type = "text"
@@ -179,8 +191,16 @@ func (e *EntityElement) checkFieldType(fieldType string) {
 
 	} else if fieldType == ("FIELD_TYPE_PLAIN_LIST") {
 		e.processPlainListType()
+
+	} else if fieldType == ("FIELD_TYPE_NUMBER") {
+		e.processNumberType()
 	}
 
+}
+
+func (e *EntityElement) processNumberType() {
+	e.entityProperty.NumberElements = append(e.entityProperty.NumberElements, e.Field.Name)
+	// e.EntityProperty.getCurrencyElements().add(field.getName());
 }
 
 func (e *EntityElement) processCurrencyType() {
@@ -280,9 +300,11 @@ type EntityProperty struct {
 	ImageElementsJSON    string
 	DateElementsJSON     string
 	CurrencyElementsJSON string
+	NumberElementsJSON   string
 	DateElements         []string
 	ImageElements        []string
 	CurrencyElements     []string
+	NumberElements       []string
 	Elements             []EntityElement
 	FieldNameList        []string
 	IgnoreBaseField      bool
@@ -298,6 +320,8 @@ func (e *EntityProperty) setElementJsonList() {
 	e.ImageElementsJSON = string(imgJSON)
 	currJSON, _ := json.Marshal(&e.CurrencyElements)
 	e.CurrencyElementsJSON = string(currJSON)
+	numJSON, _ := json.Marshal(&e.NumberElements)
+	e.NumberElementsJSON = string(numJSON)
 }
 
 func (e *EntityProperty) removeElements(fieldNames ...string) {
