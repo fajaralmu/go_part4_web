@@ -99,23 +99,24 @@
 										<button id="btn-detail-${element.id }" class="btn btn-info"
 											onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
 									 
-									 
+									 {{else if eq .Type "img"}}
+									 <input class="input-field form-control" id="{{.ID}}"
+											type="file" 
+											identity="{{.Identity}}" />
+
+										<button id="{{.ID}}-file-ok-btn"
+											class="btn btn-primary btn-sm"
+											onclick="addImagesData('{{.ID}}')">ok</button>
+
+										<button id="{{.ID}}-file-cancel-btn"
+											class="btn btn-warning btn-sm"
+											onclick="cancelImagesData('{{.ID}}')">cancel</button>
+										<div>
+											<img id="{{.ID}}-display" width="50" height="50" />
+										</div>
 									<!-- <c:when
 										test="${ element.type=='img' && element.multiple == false}">
-										<input class="input-field form-control" id="${element.id }"
-											type="file" ${element.required?'required':'' }
-											identity="${element.identity }" />
-
-										<button id="${element.id }-file-ok-btn"
-											class="btn btn-primary btn-sm"
-											onclick="addImagesData('${element.id}')">ok</button>
-
-										<button id="${element.id }-file-cancel-btn"
-											class="btn btn-warning btn-sm"
-											onclick="cancelImagesData('${element.id}')">cancel</button>
-										<div>
-											<img id="${element.id }-display" width="50" height="50" />
-										</div>
+										
 									</c:when>
 									<c:when
 										test="${ element.type=='img' && element.multiple == true}">

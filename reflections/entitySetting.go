@@ -157,6 +157,8 @@ func (e *EntityElement) doBuild() bool {
 		e.Type = "color"
 	case "FIELD_TYPE_DATE":
 		e.Type = "date"
+	case "FIELD_TYPE_IMAGE":
+		e.Type = "img"
 	}
 
 	return true
