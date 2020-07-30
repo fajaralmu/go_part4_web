@@ -26,6 +26,7 @@ type header struct {
 
 type pageData struct {
 	PageCode              string
+	RequestID             string
 	Title                 string
 	Message               string
 	Content               interface{}
@@ -48,6 +49,7 @@ func (pageData *pageData) setScriptPath(paths ...string) {
 }
 
 func (pageData *pageData) setHeaderFooter() {
+	pageData.RequestID = reflections.RandomNum(15)
 	pageData.Header = header{
 		Profile: pageData.Profile,
 		Pages:   getPages(),

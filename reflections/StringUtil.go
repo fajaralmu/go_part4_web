@@ -6,8 +6,11 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
-	"time"
 )
+
+var arrayOfNums []string = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "0"}
+var arrayOfStrings []string = []string{"a", "b", "c", "e", "d", "f", "g", "h", "i", "j", "k",
+	"l", "m", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 //CreateLikeQueryString generate filter like clause
 func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
@@ -78,11 +81,20 @@ func IsNumericValue(s string) bool {
 	return err == nil
 }
 
+var randomCounter int = 0
+
 //RandomNum generates random Int string with specified length
 func RandomNum(length int) string {
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	res := strconv.Itoa(r1.Intn(length))
+	res := ""
+	numLength := len(arrayOfNums)
+	for i := 0; i < length; i++ {
+		s1 := rand.NewSource(int64(i * randomCounter))
+		r1 := rand.New(s1)
+		res += arrayOfNums[r1.Intn(numLength)]
+
+		randomCounter++
+	}
+	randomCounter += randomCounter * 2
 	return res
 }
 
