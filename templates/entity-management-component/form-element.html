@@ -93,9 +93,9 @@
 									{{else if eq .Type "FIELD_TYPE_TEXTAREA"}} 
 										<textarea class="input-field form-control" id="{{.ID}}"
 											type="textarea" 
-											identity="{{.Identity}}">
-											<!--${element.required?'required':'' }-->
+											identity="{{.Identity}}"> 
 									</textarea>
+									<!--${element.required?'required':'' }-->
 									{{else  if   .ShowDetail  }}
 									 
 										<input detailfields="${element.detailFields}"

@@ -52,7 +52,7 @@ type Menu struct {
 	Name            string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
 	Description     string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	URL             string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	MenuPage        *Page  `custom:"foreignKey:PageID;foreignKeyType:number;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:Name"`
+	MenuPage        *Page  `custom:"foreignKey:PageID;foreignKeyType:number;type:FIELD_TYPE_DYNAMIC_LIST;lableName:Page;optionItemName:Name"`
 	PageID          uint16
 	IconURL         string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
 	Color           string `custom:"type:FIELD_TYPE_COLOR;lableName:Font_Color"`

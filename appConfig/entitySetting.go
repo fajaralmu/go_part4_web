@@ -11,25 +11,25 @@ import (
 )
 
 type EntityElement struct {
-	ID                  string
-	Type                string
-	ClassName           string
-	Identity            bool
-	Required            bool
-	IDField             bool
-	LableName           string
-	Options             []interface{}
-	JSONList            string
-	OptionItemName      string
-	OptionValueName     string
-	OptionValueType     string
-	EntityReferenceName string
-	EtityReferenceClass string
-	Multiple            bool
-	ShowDetail          bool
-	DetailFields        string
-	DefaultValues       []string
-	PlainListValues     []interface{}
+	ID                   string
+	Type                 string
+	ClassName            string
+	Identity             bool
+	Required             bool
+	IDField              bool
+	LableName            string
+	Options              []interface{}
+	JSONList             string
+	OptionItemName       string
+	OptionValueName      string
+	OptionValueType      string
+	EntityReferenceName  string
+	EntityReferenceClass string
+	Multiple             bool
+	ShowDetail           bool
+	DetailFields         string
+	DefaultValues        []string
+	PlainListValues      []interface{}
 
 	IsGrouped        bool
 	InputGroupname   string
@@ -267,7 +267,7 @@ func (e *EntityElement) determineFieldType() string {
 func (e *EntityElement) processJoinColumn(fieldType string) {
 	// log.info("field {} of {} is join column, type: {}", e.Field.Name, fieldType)
 
-	referenceEntityClass := e.Field.Type
+	referenceEntityClass := e.Field.Type.String()
 	// referenceEntityIdField := "ID" // Get EntityUtil.getIdFieldOfAnObject(referenceEntityClass);
 
 	// if (referenceEntityIdField == null) {
@@ -294,7 +294,7 @@ func (e *EntityElement) processJoinColumn(fieldType string) {
 		}
 
 	} else if fieldType == ("FIELD_TYPE_DYNAMIC_LIST") {
-		e.EtityReferenceClass = referenceEntityClass.Name()
+		e.EntityReferenceClass = reflections.ToSnakeCase(reflections.GetWordsAfterLastChar(referenceEntityClass, "."), false)
 	}
 
 	e.OptionValueName = "ID" //(referenceEntityIdField.getName());

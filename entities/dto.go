@@ -15,12 +15,18 @@ type Filter struct {
 
 //WebRequest is REST API request payload
 type WebRequest struct {
-	Filter    Filter
-	User_role *UserRole
-	User      *User
-	Profile   *Profile
-	Menu      *Menu
-	Page      *Page
+	Filter Filter
+
+	//MODEL NAMES
+	//convention:
+	//1. Starts with uppercase
+	//2. Snake case of model type name
+	User_role          *UserRole
+	User               *User
+	Profile            *Profile
+	Menu               *Menu
+	Page               *Page
+	Registered_request *RegisteredRequest
 }
 
 //WebResponse is REST API response payload
