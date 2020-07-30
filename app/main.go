@@ -5,39 +5,33 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/fajaralmu/go_part4_web/appConfig"
 	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/fajaralmu/go_part4_web/reflections"
 	"github.com/gorilla/mux"
 )
 
 var initiated bool = false
-var entityConfigMap map[string]*entityConfig = map[string]*entityConfig{}
 
-type entityConfig struct {
-	name       string
-	listType   reflect.Type
-	singleType reflect.Type
-}
-
-func getEConf(single interface{}, list interface{}) *entityConfig {
+func newEConf(single interface{}, list interface{}) *appConfig.EntityConfig {
 	singleType := reflect.TypeOf(single)
 	log.Println("create CONFIG: ", singleType.Name())
-	return &entityConfig{
-		name:       reflections.ToSnakeCase(singleType.Name()),
-		listType:   reflect.TypeOf(list),
-		singleType: reflect.TypeOf(single),
+	return &appConfig.EntityConfig{
+		Name:       reflections.ToSnakeCase(singleType.Name(), true),
+		ListType:   reflect.TypeOf(list),
+		SingleType: reflect.TypeOf(single),
 	}
 }
 
 func Init() {
 	router = mux.NewRouter()
 	initiated = true
-	putConfig(getEConf(entities.User{}, []entities.User{}),
-		getEConf(entities.UserRole{}, []entities.UserRole{}),
-		getEConf(entities.RegisteredRequest{}, []entities.RegisteredRequest{}),
-		getEConf(entities.Menu{}, []entities.Menu{}),
-		getEConf(entities.Page{}, []entities.Page{}),
-		getEConf(entities.Profile{}, []entities.Profile{}))
+	appConfig.PutConfig(newEConf(entities.User{}, []entities.User{}),
+		newEConf(entities.UserRole{}, []entities.UserRole{}),
+		newEConf(entities.RegisteredRequest{}, []entities.RegisteredRequest{}),
+		newEConf(entities.Menu{}, []entities.Menu{}),
+		newEConf(entities.Page{}, []entities.Page{}),
+		newEConf(entities.Profile{}, []entities.Profile{}))
 }
 
 func Run() {
@@ -62,13 +56,4 @@ func initWebApp() {
 	registerAPIs()
 	registerWebPages()
 	log.Fatal(http.ListenAndServe(":8080", router))
-}
-
-func putConfig(t ...*entityConfig) {
-
-	for _, item := range t {
-		log.Println("put entity Config: ", item.name)
-		entityConfigMap[item.name] = item
-	}
-
 }

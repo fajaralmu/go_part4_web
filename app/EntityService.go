@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 
+	"github.com/fajaralmu/go_part4_web/appConfig"
 	"github.com/fajaralmu/go_part4_web/repository"
 
 	"github.com/fajaralmu/go_part4_web/reflections"
@@ -59,14 +60,14 @@ func AddEntity(request entities.WebRequest) entities.WebResponse {
 func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 
 	filter := request.Filter
-	entityConf := entityConfigMap[filter.EntityName]
+	entityConf := appConfig.GetEntityConf(filter.EntityName)
 	var response entities.WebResponse
 
 	if nil == entityConf {
 		return response, errors.New("Invalid entityName")
 	}
 
-	createdSlice := reflections.CreateNewType(entityConf.listType)
+	createdSlice := reflections.CreateNewType(entityConf.ListType)
 	fmt.Println("--createdSlice--: ", createdSlice)
 
 	list, totalData := repository.Filter(createdSlice, filter)
@@ -75,7 +76,7 @@ func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 		ResultList:     list,
 		TotalData:      totalData,
 		Filter:         filter,
-		AdditionalData: reflections.CreateEntityProperty(reflect.TypeOf(entities.User{}), map[string][]interface{}{}),
+		AdditionalData: appConfig.CreateEntityProperty(reflect.TypeOf(entities.User{})),
 	}
 	// fmt.Println("RESPONSE: ", response)
 	return response, nil

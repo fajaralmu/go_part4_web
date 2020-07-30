@@ -29,20 +29,25 @@
 							<div class="entity-input-field">
 								 
 									 {{ if eq .Type  "FIELD_TYPE_FIXED_LIST"}}
-										<select class="input-field form-control" id="${element.id }"
+										<select class="input-field form-control" id="{{.ID}}"
 											required="{{.Required }}"
 											identity="{{.Identity }}"
 											itemValueField="{{.OptionValueName}}"
-											itemNameField="{{.OtionItemName}}">
+											itemNameField="{{.OptionItemName}}">
 
 										</select>
 										<script>
 											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
-											managedEntity["itemField_{{.ID}}"] = "{{.OtionItemName}}";
-											//var optionJsonString = "${element.getJsonListString(true)}";
+											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
+											var optionJsonString =  "{{.OptionJSONString}}";
 
-											//const options = JSON .parse(optionJsonString);
-											const options = []
+											var options;
+											if(optionJsonString!=""){
+												options = JSON .parse(optionJsonString);
+											}else{
+												options = [];
+											}
+											 
 											for (let i = 0; i < options.length; i++) {
 
 												const optionItem = options[i];

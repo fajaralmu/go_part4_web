@@ -3,10 +3,9 @@ package app
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"text/template"
 
-	"github.com/fajaralmu/go_part4_web/reflections"
+	"github.com/fajaralmu/go_part4_web/appConfig"
 
 	"github.com/fajaralmu/go_part4_web/repository"
 	"github.com/gorilla/mux"
@@ -59,7 +58,17 @@ func managementRoute(w http.ResponseWriter, r *http.Request) {
 	managementFiles := getWebFiles()
 	managementFiles = append(managementFiles)
 	tmpl, err := template.ParseFiles(managementFiles...)
-	entityProperty := reflections.CreateEntityProperty(reflect.TypeOf(entities.Page{}), nil)
+	entityCode := getMuxParam(r, "code")
+	if "" == entityCode {
+		writeErrorMsgBadRequest(w, "Invalid Request")
+		return
+	}
+	entityConf := appConfig.GetEntityConf(entityCode)
+	if nil == entityConf {
+		writeErrorMsgBadRequest(w, "Invalid Request")
+		return
+	}
+	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType)
 	if err == nil {
 		pageData := pageData{
 			PageCode:       "entityManagementPage",

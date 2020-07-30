@@ -1,12 +1,18 @@
-package reflections
+package appConfig
 
 import (
 	"log"
 	"reflect"
+
+	"github.com/fajaralmu/go_part4_web/entities"
+	"github.com/fajaralmu/go_part4_web/reflections"
+
+	"github.com/fajaralmu/go_part4_web/repository"
 )
 
 //CreateEntityProperty creates entity field properties
-func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]interface{}) EntityProperty {
+func CreateEntityProperty(clazz reflect.Type) EntityProperty {
+	additionalObjectList := map[string][]interface{}{}
 	log.Println("~~~~~~~~~~CreateEntityProperty~~~~~~~~~~~")
 	// if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 	// 	return null
@@ -30,7 +36,7 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	// r := reflect.ValueOf(obj)
 	// v := reflect.Indirect(r).FieldByName("ID").Elem
 
-	var fieldList []reflect.StructField = GetDeclaredFields(clazz)
+	var fieldList []reflect.StructField = reflections.GetDeclaredFields(clazz)
 	log.Printf("field LIST size: %v \n", len(fieldList))
 	// if (isQuestionare) {
 	// 	Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList)
@@ -45,6 +51,22 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	fieldToShowDetail := ""
 
 	for _, field := range fieldList {
+
+		customTag, ok := reflections.GetMapOfTag(field, "custom")
+
+		if ok {
+			if customTag["foreignKey"] != "" {
+				entityConf := GetEntityConf(reflections.ToSnakeCase(field.Name, false))
+				if nil == entityConf {
+					println(field.Name, " is not registered in entity cinfig")
+					continue
+				}
+
+				newList := reflections.CreateNewType(entityConf.ListType)
+				list, _ := repository.Filter(newList, entities.Filter{})
+				additionalObjectList[entityConf.Name] = list
+			}
+		}
 
 		entityElement := EntityElement{
 			Field:           field,
@@ -76,8 +98,8 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	entityProperty.setElementJsonList()
 	entityProperty.Elements = entityElements
 	entityProperty.DetailFieldName = (fieldToShowDetail)
-	entityProperty.DateElementsJSON = (ToJSONString(&entityProperty.DateElements))
-	entityProperty.FieldNames = (ToJSONString(&fieldNames))
+	entityProperty.DateElementsJSON = (reflections.ToJSONString(&entityProperty.DateElements))
+	entityProperty.FieldNames = (reflections.ToJSONString(&fieldNames))
 	entityProperty.FieldNameList = (fieldNames)
 	entityProperty.FormInputColumn = 1 //dto.formInputColumn().value)
 	entityProperty.determineIdField()

@@ -1,4 +1,4 @@
-package reflections
+package appConfig
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
 type EntityElement struct {
@@ -28,8 +30,9 @@ type EntityElement struct {
 	DefaultValues       []string
 	PlainListValues     []interface{}
 
-	IsGrouped      bool
-	InputGroupname string
+	IsGrouped        bool
+	InputGroupname   string
+	OptionJSONString string
 
 	DetailField bool
 
@@ -48,7 +51,7 @@ type EntityElement struct {
 
 //private
 func (e *EntityElement) init() {
-	fieldTag, fieldTagOK := GetMapOfTag(e.Field, "custom") //field.getAnnotation(FormField.class);
+	fieldTag, fieldTagOK := reflections.GetMapOfTag(e.Field, "custom") //field.getAnnotation(FormField.class);
 
 	log.Println("e.Field.Name: ", e.Field.Name, "e.Field.Type: ", e.Field.Type)
 	log.Printf("Custom fieldTag [%v] : %v  \n", fieldTagOK, fieldTag)
@@ -140,7 +143,7 @@ func (e *EntityElement) doBuild() bool {
 	e.checkDetailField()
 	e.ID = (e.Field.Name)
 	e.Identity = (e.IDField)
-	e.LableName = extractCamelCase(lableName)
+	e.LableName = reflections.ExtractCamelCase(lableName)
 	e.Required = e.FormField["required"] == "TRUE"
 	e.Type = determinedFieldType
 	e.Multiple = e.FormField["multiple"] == "TRUE"
@@ -159,6 +162,10 @@ func (e *EntityElement) doBuild() bool {
 		e.Type = "date"
 	case "FIELD_TYPE_IMAGE":
 		e.Type = "img"
+	}
+
+	if e.JSONList != "" {
+		e.OptionJSONString = e.GetJsonListString(true)
 	}
 
 	return true
@@ -227,7 +234,7 @@ func (e *EntityElement) processPlainListType() {
 	var availableValues []string
 	if e.FormField["availableValues"] != "" {
 		availableValues = strings.Split(e.FormField["availableValues"], ",")
-		e.PlainListValues = ToInterfaceSlice(&availableValues)
+		e.PlainListValues = reflections.ToInterfaceSlice(&availableValues)
 		// } else if (e.Field.getType().isEnum()) {
 		// 	Object[] enumConstants = field.getType().getEnumConstants();
 		// 	setPlainListValues(Arrays.asList(enumConstants));
@@ -242,7 +249,7 @@ func (e *EntityElement) determineFieldType() string {
 
 	var fieldType string
 
-	if isNumericType(e.Field.Type) {
+	if reflections.IsNumericType(e.Field.Type) {
 		fieldType = "FIELD_TYPE_NUMBER"
 
 	} else if e.Field.Type == reflect.TypeOf(time.Time{}) {

@@ -20,7 +20,7 @@ func GetStructType(object interface{}) reflect.Type {
 func GetStructTableName(object interface{}) string {
 	typeName := GetStructType(object)
 
-	return ToSnakeCase(typeName.Name())
+	return ToSnakeCase(typeName.Name(), true)
 }
 
 //ToInterfaceSlice converts var slice to slice of interface
@@ -45,7 +45,7 @@ func t(i interface{}) reflect.Type {
 	return reflect.TypeOf(i)
 }
 
-func isNumericType(_type reflect.Type) bool {
+func IsNumericType(_type reflect.Type) bool {
 	var res bool = false
 	switch _type {
 	case t(int(0)), t(float32(0)), t(float64(0)), t(int16(0)), t(int32(0)), t(int64(0)),

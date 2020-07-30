@@ -43,7 +43,7 @@ func isUpperCase(str string) bool {
 }
 
 //ToSnakeCase converts camelCased word to snake_cased (ALL LOWERCASE)
-func ToSnakeCase(camelCased string) string {
+func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 
 	var result string
 	var currentUpperCase bool = false
@@ -68,7 +68,11 @@ func ToSnakeCase(camelCased string) string {
 		}
 	}
 
-	return strings.ToLower(result)
+	if lowerCaseResult {
+		return strings.ToLower(result)
+	} else {
+		return result
+	}
 }
 
 func ToJSONString(i interface{}) string {
@@ -98,7 +102,7 @@ func RandomNum(length int) string {
 	return res
 }
 
-func extractCamelCase(camelCased string) string {
+func ExtractCamelCase(camelCased string) string {
 
 	var result string = ""
 

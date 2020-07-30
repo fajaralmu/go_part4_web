@@ -7,6 +7,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/fajaralmu/go_part4_web/appConfig"
 	"github.com/fajaralmu/go_part4_web/reflections"
 
 	"github.com/fajaralmu/go_part4_web/repository"
@@ -37,7 +38,7 @@ type pageData struct {
 	AdditionalScriptPaths []string
 	AdditionalPages       []string
 	Page                  entities.Page
-	EntityProperty        reflections.EntityProperty
+	EntityProperty        appConfig.EntityProperty
 }
 
 func (pageData *pageData) setStylePath(paths ...string) {

@@ -94,7 +94,7 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 				if orderType == "" {
 					orderType = "asc"
 				}
-				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
 				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, whereClauses...)
 			} else {
 				databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
@@ -105,7 +105,7 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 				if orderType == "" {
 					orderType = "asc"
 				}
-				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
 				databaseConnection.Offset(offset).Order(orderClause).Find(result, whereClauses...)
 			} else {
 				databaseConnection.Offset(offset).Find(result, whereClauses...)
@@ -140,7 +140,7 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 				if orderType == "" {
 					orderType = "asc"
 				}
-				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
 				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, filter)
 
 			} else {
@@ -152,7 +152,7 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 				if orderType == "" {
 					orderType = "asc"
 				}
-				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
 				databaseConnection.Offset(offset).Order(orderClause).Find(result, filter)
 			} else {
 				databaseConnection.Offset(offset).Find(result, filter)

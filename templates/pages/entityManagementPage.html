@@ -563,15 +563,21 @@
 	}
 	
 	function isShowDetail(elementField){
-		return elementField.getAttribute("showdetail") == "true";
+		return elementField !=null && elementField.getAttribute("showdetail") == "true";
 	}
 	
 	function isMultipleSelectField(elementField){
-		return elementField.nodeName == "SELECT"
+		return elementField !=null && elementField.nodeName == "SELECT"
 			&& elementField.getAttribute("multiple") == "multiple";
 	}
 	
 	function setFieldOfEntity(entity, fieldName){
+
+		if(_byId(fieldName) == null){
+			console.error("element by id: ", fieldName, "IS NULL")
+			return
+		}
+
 		let entityValue = entity[fieldName];
 		let entityValueAsObject = entityValue;
 		//element
@@ -650,6 +656,7 @@
 				entityValue = entity[nameAttr];
 				elementField.setAttribute(nameAttr, entityValue);
 			}
+			
 			elementField.value = entityValue;
 
 		}
