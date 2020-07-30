@@ -15,7 +15,7 @@ import (
 func CreateNew(model entities.InterfaceEntity) {
 	validator.RemoveID(model)
 
-	ok := validator.ValidateEntity(model)
+	ok := validator.ValidateEntity(model, nil)
 	if ok {
 		println("Creating Model")
 		dataaccess.CreateNew(model)
@@ -26,7 +26,7 @@ func CreateNew(model entities.InterfaceEntity) {
 
 //Delete removes from record
 func Delete(model entities.InterfaceEntity) bool {
-	existInDB := isExistInDB(model)
+	_, existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
 	if existInDB {
 		dataaccess.Delete(model)
@@ -35,13 +35,14 @@ func Delete(model entities.InterfaceEntity) bool {
 		return existInDB
 	}
 
-	return isExistInDB(model)
+	_, stillExist := isExistInDB(model)
+	return stillExist == false
 }
 
 //Save updates entity
 func Save(model entities.InterfaceEntity) {
 
-	existInDB := isExistInDB(model)
+	result, existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
 
 	if !existInDB {
@@ -49,7 +50,7 @@ func Save(model entities.InterfaceEntity) {
 
 	} else {
 
-		ok := validator.ValidateEntity(model)
+		ok := validator.ValidateEntity(model, result)
 		if ok {
 			fmt.Println("saving model: ", model)
 			dataaccess.Save(model)
@@ -59,11 +60,12 @@ func Save(model entities.InterfaceEntity) {
 	}
 }
 
-func isExistInDB(model entities.InterfaceEntity) bool {
+func isExistInDB(model entities.InterfaceEntity) (entities.InterfaceEntity, bool) {
 	ID := reflections.GetIDValue(model)
-	duplicate := reflections.CreateNewTypeNotPointer(reflect.TypeOf(model))
-	_, ok := dataaccess.FindByID(duplicate, ID)
-	return ok
+	duplicate := reflections.Dereference(model).Interface()
+	duplicatePtr := reflections.CreateNewType(reflect.TypeOf(duplicate))
+	obj, ok := dataaccess.FindByID(duplicatePtr, ID)
+	return obj, ok
 }
 
 //FindByID return model from DB with given ID
@@ -114,9 +116,9 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 }
 
 func validateResultObject(model entities.InterfaceEntity) interface{} {
-	println("__validateResultObject__")
+	log.Println("START_VALIDATE_RESULT_OBJECT")
 	structFields := reflections.GetJoinColumnFields(model, false)
-	fmt.Println("structFields size: ", len(structFields))
+	fmt.Println("JOIN COLUMN FIELD size: ", len(structFields))
 
 	for _, field := range structFields {
 
@@ -133,8 +135,13 @@ func validateResultObject(model entities.InterfaceEntity) interface{} {
 			modelPtr := reflections.CreateNewType(reflect.TypeOf(model))
 			reflections.SetFieldValue(field.Name, foreignEntity, modelPtr)
 
+		} else {
+			fmt.Println("processForeignKey of ", field.Name, "returned false")
 		}
 	}
+
+	log.Println("END_VALIDATE_RESULT_OBJECT")
+
 	return model
 }
 
@@ -146,22 +153,15 @@ func processForeignKey(foreignKey string, field reflect.StructField, model entit
 	}
 	fmt.Println("model: ", reflect.TypeOf(model))
 
-	entity := structFieldToEntity(field, model)
+	entity := reflections.StructFieldToEntity(field, model)
 	foreignKeyID, zero := reflections.GetFieldValue(foreignKey, model)
 
 	if zero {
 		return nil, false
 	}
-
 	result, ok := dataaccess.FindByID(entity, foreignKeyID)
 	fmt.Println("result FIND BY ID: ", result)
 	println("end process foreign key")
 
 	return result, ok
-}
-
-func structFieldToEntity(field reflect.StructField, model interface{}) entities.InterfaceEntity {
-	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
-	entity := fieldValue.(entities.InterfaceEntity)
-	return entity
 }

@@ -5,7 +5,16 @@ import (
 	"log"
 	"reflect"
 	"strings"
+
+	"github.com/fajaralmu/go_part4_web/entities"
 )
+
+func StructFieldToEntity(field reflect.StructField, model entities.InterfaceEntity) entities.InterfaceEntity {
+	fieldValue, _ := GetFieldValue(field.Name, model)
+	fmt.Println("structFieldToEntity fieldValue: ", fieldValue)
+	entity := fieldValue.(entities.InterfaceEntity)
+	return entity
+}
 
 func GetFieldValue(fieldName string, model interface{}) (interface{}, bool) {
 	log.Printf("GetFieldValue [%v] FROM MODEL: %v \n", fieldName, reflect.TypeOf(model))

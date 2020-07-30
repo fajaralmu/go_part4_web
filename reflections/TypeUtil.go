@@ -35,6 +35,7 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 
 		for i := 0; i < s.Len(); i++ {
 			item := s.Index(i).Interface()
+			fmt.Println("Result item ", i, ":", item)
 			result = append(result, item)
 		}
 	}
@@ -103,7 +104,7 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 	loop:
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
-
+			fmt.Println("check join column field__________________", structField.Name)
 			fieldValue, _ := GetFieldValue(structField.Name, entity)
 
 			if skipNull && isNil(fieldValue) {

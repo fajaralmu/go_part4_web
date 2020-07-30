@@ -13,8 +13,8 @@ import (
 	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
-//ValidateEntity validates entity field before persisting to DB
-func ValidateEntity(model entities.InterfaceEntity) bool {
+//ValidateEntity validates entity field before Persisting to DB
+func ValidateEntity(model entities.InterfaceEntity, currentRecord entities.InterfaceEntity) bool {
 	println("***ValidateEntity***", reflect.TypeOf(model))
 
 	structFields := reflections.GetDeclaredFields(reflect.TypeOf(reflections.Dereference(model).Interface()))
@@ -29,8 +29,13 @@ loop:
 			println("NO Custom Tag")
 			continue
 		}
-
-		customTagResult := processCustomTag(customTag, field, model)
+		var customTagResult bool
+		if currentRecord != nil && reflect.ValueOf(currentRecord).IsValid() && reflect.ValueOf(currentRecord).IsZero() == false {
+			currentFieldRecord, _ := reflections.GetFieldValue(field.Name, currentRecord)
+			customTagResult = processCustomTag(customTag, field, model, currentFieldRecord)
+		} else {
+			customTagResult = processCustomTag(customTag, field, model, nil)
+		}
 		if !customTagResult {
 			valid = false
 			break loop
@@ -43,13 +48,7 @@ loop:
 	return valid
 }
 
-func structFieldToEntity(field reflect.StructField, model entities.InterfaceEntity) entities.InterfaceEntity {
-	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
-	entity := fieldValue.(entities.InterfaceEntity)
-	return entity
-}
-
-func processCustomTag(customTag map[string]string, field reflect.StructField, model entities.InterfaceEntity) bool {
+func processCustomTag(customTag map[string]string, field reflect.StructField, model entities.InterfaceEntity, currentFieldRecord interface{}) bool {
 
 	println("__________-processCustomTag____________ for ", field.Name)
 
@@ -57,31 +56,31 @@ func processCustomTag(customTag map[string]string, field reflect.StructField, mo
 	foreignKeyOk := processForeignKey(foreignKey, field, model)
 
 	fieldType := customTag["type"]
-	fieldOK := processFieldValue(fieldType, field, model)
+	fieldOK := processFieldValue(fieldType, field, model, currentFieldRecord)
 
 	println("__________END processCustomTag (", foreignKeyOk, fieldOK, ")____________")
 
 	return foreignKeyOk && fieldOK
 }
 
-func processFieldValue(fieldType string, field reflect.StructField, model entities.InterfaceEntity) bool {
-	log.Println("processFieldValue: ", field.Name)
+func processFieldValue(fieldType string, field reflect.StructField, model entities.InterfaceEntity, currentFieldRecord interface{}) bool {
+	log.Println("processFieldValue: ", field.Name, "currentFieldRecord: ", currentFieldRecord)
 	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
-
-	// if !ok {
-	// 	log.Println("Error getting field [", field.Name, "] Value")
-	// 	return false
-	// }
 
 	switch fieldType {
 	case "FIELD_TYPE_IMAGE":
-		if fieldValue != nil {
+		if currentFieldRecord != nil && currentFieldRecord != "" && (fieldValue == "" || fieldValue == nil) {
+			fieldValue = currentFieldRecord
+			reflections.SetFieldValue(field.Name, fieldValue, model)
+
+		} else if fieldValue != nil && fieldValue != "" {
 			code := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
 			code = strings.Replace(code, "*", "", -1)
 			fieldValue = processImg(fieldValue.(string), code)
 			reflections.SetFieldValue(field.Name, fieldValue, model)
+
 		} else {
-			log.Println("IMG VAL is NIL")
+			log.Println("IMG base64data is Empty")
 		}
 
 	}
@@ -99,7 +98,7 @@ func processForeignKey(foreignKey string, field reflect.StructField, model entit
 	if "" == foreignKey {
 		return true
 	}
-	entity := structFieldToEntity(field, model)
+	entity := reflections.StructFieldToEntity(field, model)
 	entityID := reflections.GetIDValue(entity)
 
 	setUintValue(foreignKey, entityID.(uint), model)

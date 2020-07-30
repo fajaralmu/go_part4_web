@@ -48,14 +48,15 @@ type UserRole struct {
 type Menu struct {
 	InterfaceEntity
 	gorm.Model
-	Code        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	Name        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
-	URL         string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	MenuPage    *Page  `custom:"foreignKey:PageID;foreignKeyType:number;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:Name"`
-	PageID      uint16
-
-	IconURL string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
+	Code            string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
+	Name            string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
+	Description     string `custom:"type:FIELD_TYPE_TEXTAREA"`
+	URL             string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
+	MenuPage        *Page  `custom:"foreignKey:PageID;foreignKeyType:number;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:Name"`
+	PageID          uint16
+	IconURL         string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
+	FontColor       string `custom:"type:FIELD_TYPE_COLOR"`
+	BackgroundColor string `custom:"type:FIELD_TYPE_COLOR"`
 }
 
 //Page is the entity
@@ -69,7 +70,7 @@ type Page struct {
 	Link        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT;lableName:Link_for_non_menu_page"`
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
-	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan Ke"`
+	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan_Ke"`
 	Menus       []Menu `gorm:"-"`
 }
 
@@ -125,6 +126,10 @@ func (u UserRole) Validate() interface{} {
 
 // Validate validates model properties //
 func (u Menu) Validate() interface{} {
+	fmt.Println("Validating Menu")
+	if u.MenuPage == nil {
+		u.MenuPage = &Page{}
+	}
 	return u
 }
 

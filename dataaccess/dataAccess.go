@@ -63,6 +63,7 @@ func updateRecord(model entities.InterfaceEntity) {
 //FindByID find model by ID, model must have ID
 func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool) {
 	fmt.Println("FindByID type: ", reflect.TypeOf(model), "ID: ", id)
+	fmt.Println("model: ", model)
 	count := 0
 	dbOperation(func() {
 		databaseConnection.Find(model, id).Count(&count)

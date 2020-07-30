@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/appConfig"
 	"github.com/fajaralmu/go_part4_web/repository"
@@ -73,10 +72,10 @@ func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 	list, totalData := repository.Filter(createdSlice, filter)
 
 	response = entities.WebResponse{
-		ResultList:     list,
-		TotalData:      totalData,
-		Filter:         filter,
-		AdditionalData: appConfig.CreateEntityProperty(reflect.TypeOf(entities.User{})),
+		ResultList: list,
+		TotalData:  totalData,
+		Filter:     filter,
+		//AdditionalData: appConfig.CreateEntityProperty(reflect.TypeOf(entities.User{})),
 	}
 	// fmt.Println("RESPONSE: ", response)
 	return response, nil
