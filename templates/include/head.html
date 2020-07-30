@@ -2,7 +2,7 @@
 {{define "head"}}
 <div class="header" style="height: auto">
 	
-	<div class="page-header" style="color: {{.Profile.Color}} ">
+	<div id="page-header" class="page-header" >
 		<h1>{{.Profile.Name }}</h1>
 		<p>{{.Profile.ShortDescription }}</p>
 	</div>
@@ -51,6 +51,7 @@
 <script type="text/javascript">
 	document.body.style.backgroundColor = " {{.Profile.BackgroundColor}}";
 
+	document.getElementById("page-header").style.color = "{{.Profile.Color}}";
 	var pagesLink = document.getElementsByClassName("pagelink");
 	var pageMenus = {};
 	var ctxPath = "/"
