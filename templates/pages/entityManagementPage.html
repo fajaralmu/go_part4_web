@@ -11,7 +11,7 @@
   var dateElements = JSON.parse("{{.EntityProperty.DateElementsJSON}}");
   var numericElements = JSON.parse("{{.EntityProperty.NumberElementsJSON}}");
 
-  var fieldNames = {{.EntityProperty.FieldNames}};
+  var fieldNames = JSON.parse("{{.EntityProperty.FieldNames}}");
   var optionElements = [];//${options}; //option from URI parameters
   var imagesData = {};
   var idField = "{{.EntityProperty.IDField}}";

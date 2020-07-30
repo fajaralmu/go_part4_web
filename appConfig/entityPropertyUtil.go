@@ -103,7 +103,7 @@ func CreateEntityProperty(clazz reflect.Type) EntityProperty {
 	entityProperty.Elements = entityElements
 	entityProperty.DetailFieldName = (fieldToShowDetail)
 	entityProperty.DateElementsJSON = (reflections.ToJSONString(&entityProperty.DateElements))
-	entityProperty.FieldNames = (reflections.ToJSONString(&fieldNames))
+	entityProperty.FieldNames = sliceOfStringToJSONString(fieldNames)
 	entityProperty.FieldNameList = (fieldNames)
 	entityProperty.FormInputColumn = 1 //dto.formInputColumn().value)
 	entityProperty.determineIdField()
