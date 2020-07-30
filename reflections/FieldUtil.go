@@ -51,7 +51,7 @@ func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, 
 	tagValues := strings.Split(value, ";")
 	for _, item := range tagValues {
 		keyVal := strings.Split(item, ":")
-		result[keyVal[0]] = keyVal[1]
+		result[strings.Trim(keyVal[0], " ")] = strings.Trim(keyVal[1], " ")
 	}
 	return result, true
 }

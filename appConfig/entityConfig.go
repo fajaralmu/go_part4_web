@@ -3,6 +3,7 @@ package appConfig
 import (
 	"log"
 	"reflect"
+	"strings"
 )
 
 var entityConfigMap map[string]*EntityConfig = map[string]*EntityConfig{}
@@ -15,14 +16,16 @@ type EntityConfig struct {
 
 //GetEntityConf returns *entityConfig
 func GetEntityConf(key string) *EntityConfig {
-	return entityConfigMap[key]
+	return entityConfigMap[strings.ToLower(key)]
 }
 
 func PutConfig(t ...*EntityConfig) {
 
 	for _, item := range t {
-		log.Println("put entity Config: ", item.Name)
-		entityConfigMap[item.Name] = item
+
+		lowerCased := strings.ToLower(item.Name)
+		log.Println("put entity Config: ", lowerCased)
+		entityConfigMap[lowerCased] = item
 	}
 
 }

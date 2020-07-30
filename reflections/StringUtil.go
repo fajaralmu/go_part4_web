@@ -3,6 +3,7 @@ package reflections
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -60,19 +61,28 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 		} else {
 			currentUpperCase = false
 		}
+
 		_charStr := strings.ToLower(_char)
-		if 0 == i {
+		if 0 == i && lowerCaseResult {
 			result += strings.ToLower(_char)
 		} else {
-			result += (_charStr)
+			if 0 == i {
+				result += _char
+			} else {
+				result += (_charStr)
+			}
+
 		}
 	}
 
 	if lowerCaseResult {
-		return strings.ToLower(result)
-	} else {
-		return result
+		result = strings.ToLower(result)
 	}
+
+	log.Println("SNAKE CASER camelCased: ", camelCased, "-->", result, ";lowerCaseResult(", lowerCaseResult, ")")
+
+	return result
+
 }
 
 func GetWordsAfterLastChar(str string, lastChar string) string {

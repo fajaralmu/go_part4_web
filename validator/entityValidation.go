@@ -69,14 +69,10 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 
 	switch fieldType {
 	case "FIELD_TYPE_IMAGE":
-		if currentFieldRecord != nil && currentFieldRecord != "" && (fieldValue == "" || fieldValue == nil) {
-			fieldValue = currentFieldRecord
-			reflections.SetFieldValue(field.Name, fieldValue, model)
-
-		} else if fieldValue != nil && fieldValue != "" {
+		if fieldValue != nil {
 			code := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
 			code = strings.Replace(code, "*", "", -1)
-			fieldValue = processImg(fieldValue.(string), code)
+			fieldValue = processImg(fieldValue.(string), code, currentFieldRecord)
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 
 		} else {
@@ -88,7 +84,11 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 	return true
 }
 
-func processImg(imgData string, code string) string {
+func processImg(imgData string, code string, currentFieldRecord interface{}) string {
+	if (imgData == "") && currentFieldRecord != "" && currentFieldRecord != nil {
+		log.Println("imgData is BLANK ... returns currentFieldRecord: ", currentFieldRecord)
+		return currentFieldRecord.(string)
+	}
 	log.Println("Process image dat, code: ", code)
 	return files.WriteBase64Img(imgData, code)
 }

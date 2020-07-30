@@ -60,12 +60,12 @@ func managementRoute(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(managementFiles...)
 	entityCode := getMuxParam(r, "code")
 	if "" == entityCode {
-		writeErrorMsgBadRequest(w, "Invalid Request")
+		writeErrorMsgBadRequest(w, "Invalid Request, entityCode is EMPTY")
 		return
 	}
 	entityConf := appConfig.GetEntityConf(entityCode)
 	if nil == entityConf {
-		writeErrorMsgBadRequest(w, "Invalid Request")
+		writeErrorMsgBadRequest(w, "Invalid Request, entityConf Not Found")
 		return
 	}
 	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType)

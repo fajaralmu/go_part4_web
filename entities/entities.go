@@ -55,7 +55,7 @@ type Menu struct {
 	MenuPage        *Page  `custom:"foreignKey:PageID;foreignKeyType:number;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:Name"`
 	PageID          uint16
 	IconURL         string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
-	FontColor       string `custom:"type:FIELD_TYPE_COLOR"`
+	Color           string `custom:"type:FIELD_TYPE_COLOR;lableName:Font_Color"`
 	BackgroundColor string `custom:"type:FIELD_TYPE_COLOR"`
 }
 
@@ -88,8 +88,8 @@ type Profile struct {
 	Website          string `custom:"type:FIELD_TYPE_TEXT"`
 	IconURL          string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
 	BackgroundURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultBackground.bmp"`
-	FontColor        string `custom:"type:FIELD_TYPE_COLOR"`
 	Color            string `custom:"type:FIELD_TYPE_COLOR"`
+	BackgroundColor  string `custom:"type:FIELD_TYPE_COLOR"`
 }
 
 //RegisteredRequest is the entity
