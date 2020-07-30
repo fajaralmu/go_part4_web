@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 
 	"github.com/fajaralmu/go_part4_web/dataaccess"
 	"github.com/fajaralmu/go_part4_web/files"
@@ -75,7 +76,9 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 	switch fieldType {
 	case "FIELD_TYPE_IMAGE":
 		if fieldValue != nil {
-			fieldValue = processImg(fieldValue.(string), reflect.TypeOf(model).Name())
+			code := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
+			code = strings.Replace(code, "*", "", -1)
+			fieldValue = processImg(fieldValue.(string), code)
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 		} else {
 			log.Println("IMG VAL is NIL")

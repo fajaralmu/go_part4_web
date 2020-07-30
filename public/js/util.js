@@ -457,13 +457,13 @@ function createFilterInputDate(fieldName, callback){
 	inputGroup.append(inputYear);
 	return inputGroup;
 }
-var index = 0;
+var randCounter = 0;
 function randomID(){
 	 
 	let string = "";
 	string = new Date().getUTCMilliseconds();
-	index++;
-	return index + "-" + string;
+	randCounter++;
+	return randCounter + "-" + string;
 }
 
 /**
