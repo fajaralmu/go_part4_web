@@ -100,6 +100,15 @@ func GetWordsAfterLastChar(str string, lastChar string) string {
 	return res
 }
 
+func LimitStr(raw interface{}, limit int) string {
+	var fieldValueStr string = ""
+	str := fmt.Sprintf("%v", raw)
+	if len(str) > limit {
+		fieldValueStr = str[:(limit - 1)]
+	}
+	return fieldValueStr
+}
+
 func ToJSONString(i interface{}) string {
 	jsonStr, _ := json.Marshal(i)
 	return string(jsonStr)

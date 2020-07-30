@@ -122,7 +122,7 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 				fieldValueStr = fieldValueStr[:24]
 			}
 
-			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValueStr, "is join column: ", isStructType)
+			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", LimitStr(fieldValueStr, 25), "is join column: ", isStructType)
 			fmt.Println("__________________")
 		}
 	} else {

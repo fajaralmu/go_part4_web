@@ -49,11 +49,11 @@
 	</div>
 </div>
 <script type="text/javascript">
-	document.body.style.backgroundColor = " {{.Profile.Color}}";
+	document.body.style.backgroundColor = " {{.Profile.BackgroundColor}}";
 
 	var pagesLink = document.getElementsByClassName("pagelink");
 	var pageMenus = {};
-	var ctxPath = "http://localhost:8080"
+	var ctxPath = "/"
 	function logout() {
 		/* postReq(
 				"<spring:url value="/api/account/logout" />",

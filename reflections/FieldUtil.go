@@ -9,6 +9,7 @@ import (
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
+//StructFieldToEntity CAST struct field value to entities.InterfaceEntity
 func StructFieldToEntity(field reflect.StructField, model entities.InterfaceEntity) entities.InterfaceEntity {
 	fieldValue, _ := GetFieldValue(field.Name, model)
 	fmt.Println("structFieldToEntity fieldValue: ", fieldValue)
@@ -16,6 +17,7 @@ func StructFieldToEntity(field reflect.StructField, model entities.InterfaceEnti
 	return entity
 }
 
+//GetFieldValue returns value of field
 func GetFieldValue(fieldName string, model interface{}) (interface{}, bool) {
 	log.Printf("GetFieldValue [%v] FROM MODEL: %v \n", fieldName, reflect.TypeOf(model))
 	//fmt.Println("MODEL : ", model)
@@ -23,13 +25,14 @@ func GetFieldValue(fieldName string, model interface{}) (interface{}, bool) {
 	value := reflect.Indirect(r).FieldByName(fieldName)
 	isZero := !value.IsValid() || value.IsZero()
 
-	fmt.Println("value interface: ", value.Interface(), " isZero: ", isZero)
+	fmt.Println("value interface: ", LimitStr(value.Interface(), 25), " isZero: ", isZero)
 
 	return value.Interface(), isZero
 }
 
+//SetFieldValue sets value to field
 func SetFieldValue(fieldName string, fieldValue interface{}, model interface{}) {
-	fmt.Println("SET", fieldName, "value: ", fieldValue, reflect.TypeOf(model))
+	fmt.Println("SET", fieldName, "value: ", LimitStr(fieldValue, 25), reflect.TypeOf(model))
 
 	r := reflect.ValueOf(model)
 	value := reflect.Indirect(r).FieldByName(fieldName)

@@ -237,13 +237,13 @@
 				}, true);
 	}
 	
-	function buildRequestObject(page){
+	function buildRequestObject(_page){
 		var requestObject = {
 				
 				"Filter" : {
 					"EntityName" : this.entityName ,
 					"Limit" : this.limit,
-					"Page" : page,
+					"Page" : _page,
 					"OrderBy" : this.orderBy,
 					"OrderType" : this.orderType
 
