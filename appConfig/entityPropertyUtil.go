@@ -56,15 +56,19 @@ func CreateEntityProperty(clazz reflect.Type) EntityProperty {
 
 		if ok {
 			if customTag["foreignKey"] != "" {
-				entityConf := GetEntityConf(reflections.ToSnakeCase(field.Name, false))
+				configKey := reflections.GetWordsAfterLastChar(field.Type.String(), ".")
+				entityConf := GetEntityConf(reflections.ToSnakeCase(configKey, false))
 				if nil == entityConf {
-					println(field.Name, " is not registered in entity cinfig")
+					println(configKey, " is not registered in entity config")
 					continue
 				}
 
 				newList := reflections.CreateNewType(entityConf.ListType)
 				list, _ := repository.Filter(newList, entities.Filter{})
-				additionalObjectList[entityConf.Name] = list
+				additionalMapKey := field.Name
+				additionalObjectList[additionalMapKey] = list
+
+				log.Println("additionalMapKey: ", additionalMapKey, "list size: ", len(list))
 			}
 		}
 

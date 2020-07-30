@@ -31,7 +31,7 @@ type User struct {
 	Username    string    `gorm:"unique;not null" custom:"type:FIELD_TYPE_TEXT;emptyAble:FALSE"`
 	DisplayName string    `gorm:"not null" custom:"type:FIELD_TYPE_TEXT;emptyAble:FALSE"`
 	Password    string    `gorm:"not null" custom:"type:FIELD_TYPE_TEXT;emptyAble:FALSE"`
-	Role        *UserRole `custom:"foreignKey:UserRoleID;type:FIELD_TYPE_FIXED_LIST;optionItemName:name"`
+	Role        *UserRole `custom:"foreignKey:UserRoleID;type:FIELD_TYPE_FIXED_LIST;optionItemName:Name"`
 	UserRoleID  uint16
 }
 
@@ -52,7 +52,7 @@ type Menu struct {
 	Name        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	URL         string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	MenuPage    *Page  `custom:"foreignKey:PageID;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:name"`
+	MenuPage    *Page  `custom:"foreignKey:PageID;type:FIELD_TYPE_FIXED_LIST;lableName:Page;optionItemName:Name"`
 	PageID      uint16
 
 	IconURL string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`

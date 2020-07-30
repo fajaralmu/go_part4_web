@@ -75,6 +75,21 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 	}
 }
 
+func GetWordsAfterLastChar(str string, lastChar string) string {
+	res := str
+	lastCharIdx := 0
+	for i, char := range str {
+		if string(char) == lastChar {
+			lastCharIdx = i
+		}
+	}
+	if lastCharIdx > 0 && len(str) > lastCharIdx+1 {
+		res = str[(lastCharIdx + 1):]
+	}
+
+	return res
+}
+
 func ToJSONString(i interface{}) string {
 	jsonStr, _ := json.Marshal(i)
 	return string(jsonStr)
