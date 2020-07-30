@@ -1,39 +1,29 @@
- {{define "about"}}
+{{define "about"}}
 <div class="content">
-	<p></p>
-	<div class="card" style="width: 90%">
-		<div class="card-header">About Us</div>
-		<div class="card-body">
+  <p></p>
+  <div class="card" style="width: 90%;">
+    <div class="card-header">About Us</div>
+    <div class="card-body">
+      <div style="display: grid; grid-template-columns: 20% 70%;">
+        <div>Name</div>
+        <div>{{.Profile.Name }}</div>
 
-			<div style="display: grid; grid-template-columns: 20% 70%">
+        <div>Code</div>
+        <div>{{.Profile.APPCode }}</div>
 
-				<div>Name</div>
-				<div>{{.Profile.Name }}</div>
+        <div>About</div>
+        <div>{{.Profile.About }}</div>
 
+        <div>Address</div>
+        <div>{{.Profile.Address }}</div>
 
-				<div>Code</div>
-				<div>{{.Profile.APPCode }}</div>
+        <div>Contact</div>
+        <div>{{.Profile.Contact }}</div>
 
-
-				<div>About</div>
-				<div>{{.Profile.About }}</div>
-
-
-				<div>Address</div>
-				<div>{{.Profile.Address }}</div>
-
-
-				<div>Contact</div>
-				<div>{{.Profile.Contact }}</div>
-
-
-				<div>Website</div>
-				<div>{{.Profile.Website }}</div>
-
-
-			</div>
-		</div>
-	</div>
+        <div>Website</div>
+        <div>{{.Profile.Website }}</div>
+      </div>
+    </div>
+  </div>
 </div>
 {{end}}
-

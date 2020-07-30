@@ -331,13 +331,13 @@ type EntityProperty struct {
 func (e *EntityProperty) setElementJsonList() {
 
 	dateJSON, _ := json.Marshal(&e.DateElements)
-	e.DateElementsJSON = string(dateJSON)
+	e.DateElementsJSON = strings.Replace(string(dateJSON), "\"", "\\\"", -1)
 	imgJSON, _ := json.Marshal(&e.ImageElements)
-	e.ImageElementsJSON = string(imgJSON)
+	e.ImageElementsJSON = strings.Replace(string(imgJSON), "\"", "\\\"", -1)
 	currJSON, _ := json.Marshal(&e.CurrencyElements)
-	e.CurrencyElementsJSON = string(currJSON)
+	e.CurrencyElementsJSON = strings.Replace(string(currJSON), "\"", "\\\"", -1)
 	numJSON, _ := json.Marshal(&e.NumberElements)
-	e.NumberElementsJSON = string(numJSON)
+	e.NumberElementsJSON = strings.Replace(string(numJSON), "\"", "\\\"", -1)
 }
 
 func (e *EntityProperty) removeElements(fieldNames ...string) {
