@@ -22,6 +22,7 @@ type EntityElement struct {
 	JSONList            string
 	OptionItemName      string
 	OptionValueName     string
+	OptionValueType     string
 	EntityReferenceName string
 	EtityReferenceClass string
 	Multiple            bool
@@ -273,6 +274,11 @@ func (e *EntityElement) processJoinColumn(fieldType string) {
 	// 	throw new Exception("ID Field Not Found");
 	// }
 
+	foreignKeyType := e.FormField["foreignKeyType"]
+	if foreignKeyType == "" {
+		foreignKeyType = "text"
+	}
+
 	if fieldType == ("FIELD_TYPE_FIXED_LIST") && e.AdditionalMap != nil {
 
 		referenceEntityList := e.AdditionalMap[e.Field.Name]
@@ -293,6 +299,7 @@ func (e *EntityElement) processJoinColumn(fieldType string) {
 
 	e.OptionValueName = "ID" //(referenceEntityIdField.getName());
 	e.OptionItemName = (e.FormField["optionItemName"])
+	e.OptionValueType = foreignKeyType
 }
 
 ///////////////////ENTITY PROPERTY///////////////////

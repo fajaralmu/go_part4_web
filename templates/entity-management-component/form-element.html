@@ -39,6 +39,7 @@
 										<script>
 											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
 											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
+											managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
 											var optionJsonString =  "{{.OptionJSONString}}";
 
 											var options;
@@ -77,6 +78,7 @@
 										<script>
 											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
 											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
+											managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
 										</script>
 									{{else if eq .Type "FIELD_TYPE_PLAIN_LIST"}}
 									 

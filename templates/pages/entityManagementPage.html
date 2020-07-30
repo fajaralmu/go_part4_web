@@ -954,7 +954,12 @@
 			if (selectNodeAndNotPlainList(field)) { //handle select element
 				const _idField = field.getAttribute("itemValueField");
 				finalValue = {};
-				finalValue[_idField] = field.value;
+				
+				if( managedEntity["valueType_"+fieldId] == "number" ){
+					finalValue[_idField] = parseInt(field.value);
+				}else{
+					finalValue[_idField] = field.value;
+				}
 			} else if (isImage(fieldId)) { //handle image element
 				
 				//handle multiple images
