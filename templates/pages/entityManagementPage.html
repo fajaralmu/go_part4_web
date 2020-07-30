@@ -420,7 +420,7 @@
 			entityValue = domToString(dom);//"<span style=\"font-family:consolas\">"+ beautifyNominal(entityValue) +"</span>";
 		}
 		//handle image type value
-		else if (isImage(fieldName)) {
+		else if (isImage(fieldName) && entityValue != null) {
 			if (entityValue.split("~") != null) {
 				entityValue = entityValue.split("~")[0];
 			}

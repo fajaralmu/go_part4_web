@@ -11,17 +11,33 @@ import (
 )
 
 var initiated bool = false
-var entityConfigMap map[string]reflect.Type = map[string]reflect.Type{}
+var entityConfigMap map[string]*entityConfig = map[string]*entityConfig{}
+
+type entityConfig struct {
+	name       string
+	listType   reflect.Type
+	singleType reflect.Type
+}
+
+func getEConf(single interface{}, list interface{}) *entityConfig {
+	singleType := reflect.TypeOf(single)
+	log.Println("create CONFIG: ", singleType.Name())
+	return &entityConfig{
+		name:       reflections.ToSnakeCase(singleType.Name()),
+		listType:   reflect.TypeOf(list),
+		singleType: reflect.TypeOf(single),
+	}
+}
 
 func Init() {
 	router = mux.NewRouter()
 	initiated = true
-	putConfig([]entities.User{},
-		[]entities.UserRole{},
-		[]entities.RegisteredRequest{},
-		[]entities.Menu{},
-		[]entities.Page{},
-		[]entities.Profile{})
+	putConfig(getEConf(entities.User{}, []entities.User{}),
+		getEConf(entities.UserRole{}, []entities.UserRole{}),
+		getEConf(entities.RegisteredRequest{}, []entities.RegisteredRequest{}),
+		getEConf(entities.Menu{}, []entities.Menu{}),
+		getEConf(entities.Page{}, []entities.Page{}),
+		getEConf(entities.Profile{}, []entities.Profile{}))
 }
 
 func Run() {
@@ -48,14 +64,11 @@ func initWebApp() {
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
-func putConfig(t ...interface{}) {
+func putConfig(t ...*entityConfig) {
 
 	for _, item := range t {
-		_type := reflect.TypeOf(item)
-
-		key := reflections.ToSnakeCase(_type.Elem().Name())
-		// fmt.Println("KEY:", key, "_type: ", _type)
-		entityConfigMap[key] = _type
+		log.Println("put entity Config: ", item.name)
+		entityConfigMap[item.name] = item
 	}
 
 }
