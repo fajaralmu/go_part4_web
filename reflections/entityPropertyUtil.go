@@ -30,7 +30,7 @@ func CreateEntityProperty(clazz reflect.Type, additionalObjectList map[string][]
 	// r := reflect.ValueOf(obj)
 	// v := reflect.Indirect(r).FieldByName("ID").Elem
 
-	var fieldList []reflect.StructField = getDeclaredFields(clazz)
+	var fieldList []reflect.StructField = GetDeclaredFields(clazz)
 	log.Printf("field LIST size: %v \n", len(fieldList))
 	// if (isQuestionare) {
 	// 	Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList)

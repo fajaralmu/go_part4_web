@@ -99,7 +99,7 @@
 										<button id="btn-detail-${element.id }" class="btn btn-info"
 											onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
 									 
-									 {{else if eq .Type "img"}}
+									 {{else if and (eq .Type "img" ) (eq .Multiple false)}}
 									 <input class="input-field form-control" id="{{.ID}}"
 											type="file" 
 											identity="{{.Identity}}" />
@@ -114,40 +114,36 @@
 										<div>
 											<img id="{{.ID}}-display" width="50" height="50" />
 										</div>
-									<!-- <c:when
-										test="${ element.type=='img' && element.multiple == false}">
-										
-									</c:when>
-									<c:when
-										test="${ element.type=='img' && element.multiple == true}">
-										<div id="${element.id }" name="input-list" class="input-field">
-											<div id="${element.id }-0-input-item"
-												class="${element.id }-input-item">
+										{{else if and (eq .Type "img" ) (eq .Multiple true)}} 
+									 
+										<div id="{{.ID}}" name="input-list" class="input-field">
+											<div id="{{.ID}}-0-input-item"
+												class="{{.ID}}-input-item">
 
-												<input class="input-file" id="${element.id }-0" type="file"
-													${element.required?'required':'' }
-													identity="${element.identity }" />
+												<input class="input-file" id="{{.ID}}-0" type="file"
+													 
+													identity="{{.Identity}}" />
 
-												<button id="${element.id }-0-file-ok-btn "
+												<button id="{{.ID}}-0-file-ok-btn "
 													class="btn btn-primary btn-sm"
-													onclick="addImagesData('${element.id}-0')">ok</button>
+													onclick="addImagesData('{{.ID}}-0')">ok</button>
 
-												<button id="${element.id }-0-file-cancel-btn"
+												<button id="{{.ID}}-0-file-cancel-btn"
 													class="btn btn-warning btn-sm"
-													onclick="cancelImagesData('${element.id}-0')">cancel</button>
+													onclick="cancelImagesData('{{.ID}}-0')">cancel</button>
 
-												<button id="${element.id }-0-remove-list"
+												<button id="{{.ID}}-0-remove-list"
 													class="btn btn-danger btn-sm"
-													onclick="removeImageList('${element.id }-0')">Remove</button>
+													onclick="removeImageList('{{.ID}}-0')">Remove</button>
 
 												<div>
-													<img id="${element.id }-0-display" width="50" height="50" />
+													<img id="{{.ID}}-0-display" width="50" height="50" />
 												</div>
 											</div>
 										</div>
 										<button id="${element.id }-add-list"
 											onclick="addImageList('${element.id }')">Add</button>
-									</c:when> -->
+									 
 									{{else if  .Identity  }}
 									 
 										<input class="input-field form-control" disabled="disabled"

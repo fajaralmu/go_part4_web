@@ -13,7 +13,7 @@
 	var numericElements = {{.EntityProperty.NumberElementsJSON}};
 	
 	var fieldNames = {{.EntityProperty.FieldNames}};
-	var optionElements = [];//${options};
+	var optionElements = [];//${options}; //option from URI parameters
 	var imagesData = {};
 	var idField = "{{.EntityProperty.IDField}}";
 	var editable = {{.EntityProperty.Editable}};
@@ -130,14 +130,15 @@
 		const valueField = element.getAttribute("itemValueField");
 		const filterValue = inputElement.value;
 		var requestObject = {
-			"entity" : element.name,
-			"filter" : {
-				"page" : 0,
-				"limit" : 10
+			
+			"Filter" : {
+				"EntityName" : element.name,
+				"Page" : 0,
+				"Limit" : 10
 			}
 		};
-		requestObject.filter.fieldsFilter = {};
-		requestObject.filter.fieldsFilter[itemField] = filterValue;
+		requestObject.Filter.FieldsFilter = {};
+		requestObject.Filter.FieldsFilter[itemField] = filterValue;
 
 		doLoadDropDownItems("/api/entities/", requestObject, function(entities){
 			for (let i = 0; i < entities.length; i++) {
@@ -225,7 +226,7 @@
 			return;
 		}
 		
-		requestObject.filter.limit = limit;
+		requestObject.Filter.Limit = limit;
 		
 		postReq("/api/report/entity" ,
 				requestObject, function(xhr) {

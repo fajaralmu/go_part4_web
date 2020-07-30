@@ -2,6 +2,7 @@ package reflections
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -58,12 +59,16 @@ func isNumericType(_type reflect.Type) bool {
 	return res
 }
 
-func getDeclaredFields(t reflect.Type) []reflect.StructField {
+func GetDeclaredFields(t reflect.Type) []reflect.StructField {
+	log.Println("GetDeclaredFields of: ", t.Name())
 	fields := []reflect.StructField{}
 	var entityInterface bool = false
 	for i := 0; i < t.NumField(); i++ {
+
 		structField := t.Field(i)
+		log.Println("FIELD NAME: ", structField.Name)
 		if (structField.Type == reflect.TypeOf(gorm.Model{})) {
+			log.Println("Skip gorm.Model")
 			continue
 		}
 		if structField.Type.String() == "entities.InterfaceEntity" {
@@ -75,9 +80,12 @@ func getDeclaredFields(t reflect.Type) []reflect.StructField {
 
 	//ADD gorm model
 	if entityInterface {
-		gormFields := getDeclaredFields(reflect.TypeOf(gorm.Model{}))
+
+		gormFields := GetDeclaredFields(reflect.TypeOf(gorm.Model{}))
+		log.Println("current fields: ", len(fields), "ADD gorm model fields ", len(gormFields))
 		fields = append(fields, gormFields...)
 	}
+	log.Println("Field size of type ", t, " return:  ", len(fields))
 	return fields
 }
 
@@ -107,7 +115,13 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 			if isStructType {
 				result = append(result, structField)
 			}
-			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValue, "is join column: ", isStructType)
+			fieldValueStr := fmt.Sprintf("%v", fieldValue)
+
+			if len(fieldValueStr) > 25 {
+				fieldValueStr = fieldValueStr[:24]
+			}
+
+			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", fieldValueStr, "is join column: ", isStructType)
 			fmt.Println("__________________")
 		}
 	} else {
