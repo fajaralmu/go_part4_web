@@ -75,7 +75,7 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 	switch fieldType {
 	case "FIELD_TYPE_IMAGE":
 		if fieldValue != nil {
-			fieldValue = processImg(fieldValue.(string))
+			fieldValue = processImg(fieldValue.(string), reflect.TypeOf(model).Name())
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 		} else {
 			log.Println("IMG VAL is NIL")
@@ -86,9 +86,9 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 	return true
 }
 
-func processImg(imgData string) string {
-	log.Println("Process image data ")
-	return files.WriteBase64Img(imgData)
+func processImg(imgData string, code string) string {
+	log.Println("Process image dat, code: ", code)
+	return files.WriteBase64Img(imgData, code)
 }
 
 func processForeignKey(foreignKey string, field reflect.StructField, model entities.InterfaceEntity) bool {

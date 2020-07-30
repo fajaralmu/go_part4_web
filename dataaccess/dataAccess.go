@@ -73,7 +73,7 @@ func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool
 }
 
 //FilterLike queries by like clause
-func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
+func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
 	count := 0
 	reflections.EvaluateFilterMap(filter)
 	offset := page * limit
@@ -82,9 +82,27 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 
 		whereClauses := reflections.CreateLikeQueryString(filter)
 		if limit > 0 {
-			databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
+			if orderBy != "" {
+				if orderType == "" {
+					orderType = "asc"
+				}
+				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, whereClauses...)
+			} else {
+				databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
+			}
+
 		} else {
-			databaseConnection.Offset(offset).Find(result, whereClauses...)
+			if orderBy != "" {
+				if orderType == "" {
+					orderType = "asc"
+				}
+				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				databaseConnection.Offset(offset).Order(orderClause).Find(result, whereClauses...)
+			} else {
+				databaseConnection.Offset(offset).Find(result, whereClauses...)
+			}
+
 		}
 
 		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
@@ -97,7 +115,7 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 }
 
 //FilterMatch queries by equals clause
-func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int) ([]interface{}, int) { //[]interface{}, int{
+func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
 	count := 0
 	reflections.EvaluateFilterMap(filter)
 	offset := page * limit
@@ -105,9 +123,27 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 	dbOperation(func() {
 
 		if limit > 0 {
-			databaseConnection.Offset(offset).Limit(limit).Find(result, filter)
+			if orderBy != "" {
+				if orderType == "" {
+					orderType = "asc"
+				}
+				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, filter)
+
+			} else {
+				databaseConnection.Offset(offset).Limit(limit).Find(result, filter)
+			}
+
 		} else {
-			databaseConnection.Offset(offset).Find(result, filter)
+			if orderBy != "" {
+				if orderType == "" {
+					orderType = "asc"
+				}
+				orderClause := reflections.ToSnakeCase(orderBy) + " " + orderType
+				databaseConnection.Offset(offset).Order(orderClause).Find(result, filter)
+			} else {
+				databaseConnection.Offset(offset).Find(result, filter)
+			}
 		}
 
 		databaseConnection.Where(filter).Find(result).Count(&count)

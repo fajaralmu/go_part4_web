@@ -126,7 +126,7 @@ func (e *EntityElement) doBuild() bool {
 	if e.FormField["lableName"] == ("") {
 		lableName = e.Field.Name
 	} else {
-		lableName = e.FormField["lableName"]
+		lableName = strings.Replace(e.FormField["lableName"], "_", " ", -1)
 	}
 	var determinedFieldType string = e.determineFieldType()
 

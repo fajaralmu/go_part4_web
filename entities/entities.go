@@ -20,7 +20,7 @@ type BaseEntity struct {
 	CreatedDate  time.Time
 	ModifiedDate time.Time
 	Deleted      bool
-	Color        string `custom:"type:FIELD_TYPE_COLOR;lableName:Background Color;defaultValue:#ffffff"`
+	Color        string `custom:"type:FIELD_TYPE_COLOR;lableName:Background_Color;defaultValue:#ffffff"`
 	FontColor    string `custom:"type:FIELD_TYPE_COLOR;defaultValue:#000000"`
 }
 
@@ -64,9 +64,9 @@ type Page struct {
 	gorm.Model
 	Code        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
 	Name        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT"`
-	Authorized  int    `orm:"not null" custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Authorized (yes:1 or no:0);availableValues:0,1"`
-	NONMenuPage int    `custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Is Non-Menu Page (yes:1 or no:0);availableValues:0,1"`
-	Link        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT;lableName:Link for non menu page"`
+	Authorized  int    `orm:"not null" custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Authorized_(yes_1_or_no_0);availableValues:0,1"`
+	NONMenuPage int    `custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Is_Non_Menu_Page_(yes_1_or_no_0);availableValues:0,1"`
+	Link        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT;lableName:Link_for_non_menu_page"`
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
 	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
 	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan Ke"`

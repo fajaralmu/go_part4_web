@@ -5,11 +5,15 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
-//WriteBase64Img writes file from base64 Data
-func WriteBase64Img(imgRawData string) string {
-	log.Println("writeBase64Img")
+const IMG_PATH string = "./public/img/app/"
+
+//WriteBase64Img writes file from base64 string
+func WriteBase64Img(imgRawData string, code string) string {
+	log.Println("write Base64Data Img")
 
 	imageData := strings.Split(imgRawData, ",")
 	if imageData == nil || len(imageData) < 2 {
@@ -21,46 +25,34 @@ func WriteBase64Img(imgRawData string) string {
 	dec, err := base64.StdEncoding.DecodeString(imageString)
 	if err != nil {
 		panic(err)
+		return ""
 	}
-
-	// BufferedImage image = null;
-	// byte[] imageByte;
-
-	// Base64.Decoder decoder = Base64.getDecoder();
-	// imageByte = decoder.decode(imageString);
-	// ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-	// image = ImageIO.read(bis);
-	// bis.close();
 
 	// write the image to a file
 	imageIdentity := imageData[0]
 	imageType := strings.Replace(imageIdentity, "data:image/", "", 1)
 	imageType = strings.Replace(imageType, ";base64", "", 1)
-	//   imageIdentity.replace("data:image/", "").replace(";base64", "");
-	imageName := "RAND_IMG"
-	//String path = servletContext.getRealPath("/resources/img/upload");
-	//String path  ="D:/Development/Files/Web/Shop1/Images";
-	path := "./public/img/app/" // webAppConfiguration.getUploadedImageRealPath();
+	imageName := reflections.RandomNum(10)
+	path := IMG_PATH // webAppConfiguration.getUploadedImageRealPath();
 
-	imageFileName := "APP_" + imageName + "." + imageType
-	// File outputfile = new File(path +"/"+imageFileName);
-	// log.Println("==========UPLOADED FILE: ", outputfile.getAbsolutePath());
-	// ImageIO.write(image, imageType, outputfile);
-	// log.Println("==output file: ", outputfile.getAbsolutePath());
+	imageFileName := code + "_" + imageName + "." + imageType
 
 	log.Println("Writing to path: ", path+imageFileName)
 
 	f, err := os.Create(path + imageFileName)
 	if err != nil {
 		panic(err)
+		return ""
 	}
 	defer f.Close()
 
 	if _, err := f.Write(dec); err != nil {
 		panic(err)
+		return ""
 	}
 	if err := f.Sync(); err != nil {
 		panic(err)
+		return ""
 	}
 
 	return imageFileName

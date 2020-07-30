@@ -3,8 +3,10 @@ package reflections
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //CreateLikeQueryString generate filter like clause
@@ -37,7 +39,7 @@ func isUpperCase(str string) bool {
 	return strings.ToUpper(str) == str
 }
 
-//ToSnakeCase converts camelCased word to snake_cased
+//ToSnakeCase converts camelCased word to snake_cased (ALL LOWERCASE)
 func ToSnakeCase(camelCased string) string {
 
 	var result string
@@ -63,7 +65,7 @@ func ToSnakeCase(camelCased string) string {
 		}
 	}
 
-	return result
+	return strings.ToLower(result)
 }
 
 func ToJSONString(i interface{}) string {
@@ -74,6 +76,14 @@ func ToJSONString(i interface{}) string {
 func IsNumericValue(s string) bool {
 	_, err := strconv.ParseFloat(s, 64)
 	return err == nil
+}
+
+//RandomNum generates random Int string with specified length
+func RandomNum(length int) string {
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+	res := strconv.Itoa(r1.Intn(length))
+	return res
 }
 
 func extractCamelCase(camelCased string) string {

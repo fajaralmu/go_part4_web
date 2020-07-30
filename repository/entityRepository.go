@@ -82,7 +82,7 @@ func FilterByKey(models interface{}, key string, val interface{}) []interface{} 
 	var list []interface{}
 	list, _ = dataaccess.FilterMatch(models, map[string]interface{}{
 		key: val,
-	}, 0, 0)
+	}, 0, 0, "", "")
 	return list
 }
 
@@ -95,10 +95,10 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	var validatedList []interface{}
 	totalData := 0
 	if filter.Exacts {
-		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit)
+		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit, filter.OrderBy, filter.OrderType)
 
 	} else {
-		list, totalData = dataaccess.FilterLike(models, filter.FieldsFilter, filter.Page, filter.Limit)
+		list, totalData = dataaccess.FilterLike(models, filter.FieldsFilter, filter.Page, filter.Limit, filter.OrderBy, filter.OrderType)
 
 	}
 
