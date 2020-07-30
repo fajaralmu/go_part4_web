@@ -81,6 +81,14 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 	dbOperation(func() {
 
 		whereClauses := reflections.CreateLikeQueryString(filter)
+
+		//process count
+		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
+		//end count
+		if count == 0 {
+			return
+		}
+
 		if limit > 0 {
 			if orderBy != "" {
 				if orderType == "" {
@@ -105,8 +113,6 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 
 		}
 
-		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
-
 	})
 	result = reflections.ToInterfaceSlice(result)
 	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
@@ -121,6 +127,13 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 	offset := page * limit
 
 	dbOperation(func() {
+
+		//process count
+		databaseConnection.Where(filter).Find(result).Count(&count)
+		//end count
+		if count == 0 {
+			return
+		}
 
 		if limit > 0 {
 			if orderBy != "" {
@@ -145,8 +158,6 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 				databaseConnection.Offset(offset).Find(result, filter)
 			}
 		}
-
-		databaseConnection.Where(filter).Find(result).Count(&count)
 
 	})
 	result = reflections.ToInterfaceSlice(result)
