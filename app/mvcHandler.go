@@ -123,6 +123,13 @@ func loginRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 	return executeWebContents(pageData, w, r)
 }
+func logoutRoute(w http.ResponseWriter, r *http.Request) error {
+
+	setUserToSession(w, r, nil)
+	w.Header().Add("location", "/account/login")
+	w.WriteHeader(302)
+	return nil
+}
 func registerRoute(w http.ResponseWriter, r *http.Request) error {
 
 	pageData := pageData{

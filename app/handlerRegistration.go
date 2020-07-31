@@ -60,7 +60,7 @@ func registerWebPages() {
 
 	handleMvc("/account/login", loginRoute, "GET")
 	handleMvc("/account/register", registerRoute, "GET")
-
+	handleMvc("/account/logout", logoutRoute, "GET")
 	/////static resources/////
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
 	router.PathPrefix("/static/").Handler(fs)
