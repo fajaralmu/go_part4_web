@@ -2,76 +2,77 @@ package app
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
-func getEntities(w http.ResponseWriter, r *http.Request) {
-	log.Println("///////////////////////START API getEntities////////////////")
+/////////////////////////MODEL CRUD///////////////////////////
+
+func getEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 
 	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
+
 	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-
-	} else {
-		response, err := Filter(request)
-		if nil == err {
-			writeWebResponse(w, response)
-		} else {
-			writeErrorMsgBadRequest(w, err.Error())
-		}
+		return response, err
 	}
-
-	log.Println("///////////////////////END API getEntities////////////////")
+	response, err = Filter(request)
+	return response, err
 
 }
 
-func deleteEntities(w http.ResponseWriter, r *http.Request) {
-	log.Println("///////////////////////START API deleteEntities////////////////")
+func deleteEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 
 	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-	} else {
-		response := Delete(request)
-		writeWebResponse(w, response)
+		return response, err
 	}
+	response = Delete(request)
+	writeWebResponse(w, response)
+	return response, nil
 
-	log.Println("///////////////////////END API deleteEntities////////////////")
 }
 
-func addEntities(w http.ResponseWriter, r *http.Request) {
-	log.Println("///////////////////////START API addEntities////////////////")
+func addEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 
 	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-	} else {
-		response := AddEntity(request)
-		writeWebResponse(w, response)
+		return response, err
 	}
-
-	log.Println("///////////////////////END API addEntities////////////////")
+	response = AddEntity(request)
+	return response, err
 }
 
-func updateEntities(w http.ResponseWriter, r *http.Request) {
-	log.Println("///////////////////////START API updateEntities////////////////")
+func updateEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 
 	var request entities.WebRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
-		writeErrorMsgBadRequest(w, err.Error())
-	} else {
-		response := UpdateEnity(request)
-		writeWebResponse(w, response)
+		return response, err
 	}
-	log.Println("///////////////////////END API updateEntities////////////////")
+	response = UpdateEnity(request)
+	return response, err
+}
+
+/////////////////ACCOUNT////////////////
+func login(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+
+	var request entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		return response, err
+	}
+	response, err = Login(request, w, r)
+	if err == nil {
+		w.Header().Add("location", "/admin/home")
+	}
+	return response, err
+
 }

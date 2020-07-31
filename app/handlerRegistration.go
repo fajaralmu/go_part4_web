@@ -23,21 +23,27 @@ func registerAPIs() {
 	// router.HandleFunc("/api/books", createBook).Methods("POST")
 	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	handleAPI("/api/account/login", login, "POST")
 
 	log.Println("END registerAPIs")
 }
 
-func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request), method string) {
+func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("api-START///////////URI: ", r.RequestURI)
 			if apiPreHandle(w, r) == false {
-				log.Println("mvc-END////////////URI: ", path)
+				log.Println("API-END////////////URI: ", path)
 				return
 			}
-			handler(w, r)
-			log.Println("api-END////////////URI: ", r.RequestURI)
+			response, err := handler(w, r)
+			if nil != err {
+				writeErrorMsgBadRequest(w, err.Error())
+			} else {
+				writeWebResponse(w, response)
+			}
+			log.Println("API-END////////////URI: ", r.RequestURI)
 		},
 	}
 
@@ -55,13 +61,14 @@ func registerWebPages() {
 	handleMvc("/account/login", loginRoute, "GET")
 	handleMvc("/account/register", registerRoute, "GET")
 
+	/////static resources/////
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
 	router.PathPrefix("/static/").Handler(fs)
 
 	log.Println("END Register Web Pages")
 }
 
-func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request), method string) {
+func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +77,10 @@ func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request)
 				log.Println("mvc-END////////////URI: ", path)
 				return
 			}
-			handler(w, r)
+			err := handler(w, r)
+			if err != nil {
+				writeErrorMsgBadRequest(w, err.Error())
+			}
 			log.Println("mvc-END////////////URI: ", r.RequestURI)
 		},
 	}

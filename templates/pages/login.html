@@ -16,7 +16,7 @@
     postReq("/api/account/login", requestObject, function (xhr) {
       infoDone();
       var response = xhr.data;
-      if (response != null && response.code == "00") {
+      if (response != null && response.Code == "00") {
         alert("LOGIN SUCCESS");
         const redirectLocation = xhr.getResponseHeader("location");
 

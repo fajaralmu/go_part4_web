@@ -1,8 +1,10 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
 	"text/template"
 
 	"github.com/fajaralmu/go_part4_web/appConfig"
@@ -54,114 +56,88 @@ func toSliceOfMenu(menus []interface{}) []entities.Menu {
 	return result
 }
 
-func managementRoute(w http.ResponseWriter, r *http.Request) {
-	managementFiles := getWebFiles()
-	managementFiles = append(managementFiles)
-	tmpl, err := template.ParseFiles(managementFiles...)
+func managementRoute(w http.ResponseWriter, r *http.Request) error {
+
 	entityCode := getMuxParam(r, "code")
+
 	if "" == entityCode {
-		writeErrorMsgBadRequest(w, "Invalid Request, entityCode is EMPTY")
-		return
+
+		return errors.New("Invalid Request, entityCode is EMPTY")
 	}
 	entityConf := appConfig.GetEntityConf(entityCode)
 	if nil == entityConf {
-		writeErrorMsgBadRequest(w, "Invalid Request, entityConf Not Found")
-		return
+
+		return errors.New("Invalid Request, entityConf Not Found")
 	}
 	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType)
-	if err == nil {
-		pageData := pageData{
-			PageCode:       "entityManagementPage",
-			Title:          "Management Page",
-			Message:        "Manage Models",
-			EntityProperty: entityProperty,
-			AdditionalPages: []string{
-				"./templates/entity-management-component/detail-element.html", "./templates/entity-management-component/form-element.html",
-			},
-		}
+
+	pageData := pageData{
+		PageCode:       "entityManagementPage",
+		Title:          "Management Page",
+		Message:        "Manage Models",
+		EntityProperty: entityProperty,
+		AdditionalPages: []string{
+			"./templates/entity-management-component/detail-element.html", "./templates/entity-management-component/form-element.html",
+		},
+	}
+	return executeWebContents(pageData, w, r)
+}
+
+func executeWebContents(pageData pageData, w http.ResponseWriter, r *http.Request) error {
+	tmpl, err := template.ParseFiles(getWebFiles()...)
+	t := (reflect.ValueOf(pageData))
+
+	if err == nil && t.IsValid() {
+
 		pageData.prepareWebData()
-
 		tmpl.ExecuteTemplate(w, "layout", pageData)
-
+		return nil
 	} else {
 		writeResponseHeaders(w)
 		writeErrorMsgBadRequest(w, err.Error())
+		return err
 	}
 }
 
-func commonPageRoute(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(getWebFiles()...)
-	pageCode := getMuxParam(r, "code")
+func commonPageRoute(w http.ResponseWriter, r *http.Request) error {
 
+	pageCode := getMuxParam(r, "code")
 	selectedPage := getPageByCode(pageCode)
 
-	if err == nil {
-		pageData := pageData{
-			PageCode: "commonPage",
-			Title:    "Common Page",
-			Message:  "Hello World",
-			Page:     selectedPage,
-		}
-		pageData.prepareWebData()
-
-		tmpl.ExecuteTemplate(w, "layout", pageData)
-
-	} else {
-		writeResponseHeaders(w)
-		writeErrorMsgBadRequest(w, err.Error())
+	pageData := pageData{
+		PageCode: "commonPage",
+		Title:    "Common Page",
+		Message:  "Hello World",
+		Page:     selectedPage,
 	}
+	return executeWebContents(pageData, w, r)
+
 }
 
-func loginRoute(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(getWebFiles()...)
+func loginRoute(w http.ResponseWriter, r *http.Request) error {
 
-	if err == nil {
-		pageData := pageData{
-			PageCode: "login",
-			Title:    "Login Page",
-		}
-		pageData.prepareWebData()
-		tmpl.ExecuteTemplate(w, "layout", pageData)
-
-	} else {
-		writeResponseHeaders(w)
-		writeErrorMsgBadRequest(w, err.Error())
+	pageData := pageData{
+		PageCode: "login",
+		Title:    "Login Page",
 	}
+	return executeWebContents(pageData, w, r)
 }
-func registerRoute(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles(getWebFiles()...)
+func registerRoute(w http.ResponseWriter, r *http.Request) error {
 
-	if err == nil {
-		pageData := pageData{
-			PageCode: "register",
-			Title:    "Register Page",
-		}
-		pageData.prepareWebData()
-		tmpl.ExecuteTemplate(w, "layout", pageData)
-
-	} else {
-		writeResponseHeaders(w)
-		writeErrorMsgBadRequest(w, err.Error())
+	pageData := pageData{
+		PageCode: "register",
+		Title:    "Register Page",
 	}
+	return executeWebContents(pageData, w, r)
 }
 
-func homeRoute(w http.ResponseWriter, r *http.Request) {
+func homeRoute(w http.ResponseWriter, r *http.Request) error {
 
-	tmpl, err := template.ParseFiles(getWebFiles()...)
-
-	if err == nil {
-		pageData := pageData{
-			PageCode: "about",
-			Title:    "Welcome",
-			Message:  "Hello World",
-		}
-		pageData.prepareWebData()
-		pageData.setStylePath("about")
-
-		tmpl.ExecuteTemplate(w, "layout", pageData)
-
-	} else {
-		writeResponseHeaders(w)
-		writeErrorMsgBadRequest(w, err.Error())
+	pageData := pageData{
+		PageCode: "about",
+		Title:    "About Us",
+		Message:  "Hello World",
 	}
+	pageData.setStylePath("about")
+	return executeWebContents(pageData, w, r)
 }
