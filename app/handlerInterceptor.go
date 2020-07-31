@@ -5,8 +5,13 @@ import (
 	"net/http"
 )
 
-func mvcPreHandle(w http.ResponseWriter, r *http.Request) bool {
+func mvcPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bool {
 	log.Println("mvcPreHandle: ", r.RequestURI)
+	if authenticated {
+		sessionValid := validateSessionn(w, r)
+		log.Println("Session IS VALID: ", sessionValid)
+		return sessionValid
+	}
 	return true
 }
 func apiPreHandle(w http.ResponseWriter, r *http.Request) bool {
@@ -16,4 +21,10 @@ func apiPreHandle(w http.ResponseWriter, r *http.Request) bool {
 	// log.Printf("apiPreHandle result: %v", err == nil)
 	// return err == nil
 	return true
+}
+
+func sendRedirect(w http.ResponseWriter, r *http.Request, path string) {
+	log.Println("sendRedirect: ", path)
+	w.Header().Add("location", path)
+	w.WriteHeader(302)
 }

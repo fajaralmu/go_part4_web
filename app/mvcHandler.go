@@ -126,8 +126,7 @@ func loginRoute(w http.ResponseWriter, r *http.Request) error {
 func logoutRoute(w http.ResponseWriter, r *http.Request) error {
 
 	setUserToSession(w, r, nil)
-	w.Header().Add("location", "/account/login")
-	w.WriteHeader(302)
+	sendRedirect(w, r, "/account/login")
 	return nil
 }
 func registerRoute(w http.ResponseWriter, r *http.Request) error {

@@ -54,13 +54,14 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 func registerWebPages() {
 
 	log.Println("START Register Web Pages")
-	handleMvc("/home", homeRoute, "GET")
-	handleMvc("/page/{code}", commonPageRoute, "GET")
-	handleMvc("/management/{code}", managementRoute, "GET")
+	handleMvc("/home", homeRoute, "GET", false)
+	handleMvc("/page/{code}", commonPageRoute, "GET", true)
+	handleMvc("/management/{code}", managementRoute, "GET", true)
+	handleMvc("/admin/home", homeRoute, "GET", false)
 
-	handleMvc("/account/login", loginRoute, "GET")
-	handleMvc("/account/register", registerRoute, "GET")
-	handleMvc("/account/logout", logoutRoute, "GET")
+	handleMvc("/account/login", loginRoute, "GET", false)
+	handleMvc("/account/register", registerRoute, "GET", false)
+	handleMvc("/account/logout", logoutRoute, "GET", false)
 	/////static resources/////
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
 	router.PathPrefix("/static/").Handler(fs)
@@ -68,12 +69,19 @@ func registerWebPages() {
 	log.Println("END Register Web Pages")
 }
 
-func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string) {
+func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("mvc-START///////////URI: ", r.RequestURI)
-			if mvcPreHandle(w, r) == false {
+
+			preHandleResult := mvcPreHandle(w, r, authenticated)
+			if preHandleResult == false {
+				if authenticated {
+					sendRedirect(w, r, "/account/login")
+					return
+				}
+
 				log.Println("mvc-END////////////URI: ", path)
 				return
 			}
