@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var arrayOfNums []string = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "0"}
@@ -119,20 +120,20 @@ func IsNumericValue(s string) bool {
 	return err == nil
 }
 
-var randomCounter int = 0
+var RandomCounter int = time.Now().Second()
 
 //RandomNum generates random Int string with specified length
 func RandomNum(length int) string {
 	res := ""
 	numLength := len(arrayOfNums)
 	for i := 0; i < length; i++ {
-		s1 := rand.NewSource(int64(i * randomCounter))
+		s1 := rand.NewSource(int64(i * RandomCounter))
 		r1 := rand.New(s1)
 		res += arrayOfNums[r1.Intn(numLength)]
 
-		randomCounter++
+		RandomCounter++
 	}
-	randomCounter += randomCounter * 2
+	RandomCounter += RandomCounter * 2
 	return res
 }
 

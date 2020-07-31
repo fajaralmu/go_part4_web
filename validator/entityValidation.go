@@ -104,41 +104,62 @@ func processImg(imgData string, code string, multipleImg bool, currentFieldRecor
 const originalPreffix = "{ORIGINAL>>"
 
 func processMultipleImageData(imageData string, code string) string {
+	if imageData == "NULL" {
+		return ""
+	}
 	log.Println("processMultipleImageData code: ", code)
 	base64Images := strings.Split(imageData, "~")
 	finalImgURL := ""
 	if base64Images != nil && len(base64Images) > 0 {
 
+		log.Print("len(base64Images): ", len(base64Images))
+
 		imageUrls := []string{}
 		for i, base64Image := range base64Images {
-
+			reflections.RandomCounter++
 			if base64Image == ("") {
 				continue
 			}
-			var updated bool = true
-			var imageName string = ""
+			var needWriting bool = true
+			var imageName string
 			if strings.HasPrefix(base64Image, originalPreffix) {
 
 				raw := strings.Split(base64Image, "}")
-				if len(raw) > 1 {
+				log.Println("Has originalPreffix:  len(raw): ", len(raw), raw)
+				if len(raw) > 1 && raw[1] != "" {
 					base64Image = raw[1]
+
 				} else {
+					log.Println("raw[0]: ", raw[0])
+
 					imageName = strings.Replace(raw[0], originalPreffix, "", -1)
-					updated = false
+					log.Println("imageName: ", imageName)
+					needWriting = false
+
+					//NOT NEED FOR WRITING
+					needWriting = false
 				}
+
+			} else {
+				log.Println("NO originalPreffix")
+
 			}
-			if updated {
+			if needWriting {
 				imageName = files.WriteBase64Img(base64Image, code+"_"+strconv.Itoa(i))
 			}
+
+			log.Println("WILL add imageName: ", imageName)
+
 			if "" != imageName {
+				log.Println("append imageName: ", imageName)
 				imageUrls = append(imageUrls, imageName)
 			}
 		}
-
+		log.Println("imageUrls: ", imageUrls)
 		finalImgURL = strings.Join(imageUrls, "~")
 
 	}
-
+	log.Println("finalImgURL: ", finalImgURL)
 	return finalImgURL
 
 }

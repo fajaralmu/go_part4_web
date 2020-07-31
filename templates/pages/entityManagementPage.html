@@ -747,7 +747,7 @@
     appendElements(listItem, btnAddData, btnCancelData, btnRemoveListItem);
 
     //append image display
-    const wrapperDiv = createDiv(elmentIdAndIndex + "-wrapper-img", "wrapper");
+    const wrapperDiv = createDiv(elmentIdAndIndex + "-wrapper-img",  id+"-imgwrapper");
     wrapperDiv.append(imgTag);
     listItem.append(wrapperDiv);
 
@@ -1001,6 +1001,9 @@
 
       //handle multiple images
       if (isInputList(field)) {
+        if(document.getElementsByClassName(fieldId+"-input-item").length == 0){
+          return "NULL"
+        }
         const itemLists = document.getElementsByClassName(
           fieldId + "-input-item"
         );
