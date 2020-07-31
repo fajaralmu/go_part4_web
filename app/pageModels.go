@@ -60,7 +60,7 @@ func (p *pageData) setHeaderFooter() {
 	p.RequestID = reflections.RandomNum(15)
 	p.Header = header{
 		Profile: p.Profile,
-		Pages:   getPages(),
+		Pages:   getPages(p.w, p.r),
 	}
 	p.Footer = footer{
 		Year:    getCurrentYr(),
@@ -86,8 +86,22 @@ func (pageData *pageData) prepareWebData() {
 	pageData.parseContent(pageData.AdditionalPages...)
 }
 
-func getPages() []entities.Page {
+func getPages(w http.ResponseWriter, r *http.Request) []entities.Page {
+	sessionValid := false
+	if r != nil {
+		sessionValid = validateSessionn(w, r)
+	}
+
 	filter := entities.Filter{}
+	if !sessionValid {
+		filter.Exacts = true
+		filter.FieldsFilter = map[string]interface{}{
+			"Authorized": 0,
+		}
+	} else {
+
+	}
+
 	list, count := repository.Filter(&[]entities.Page{}, filter)
 	fmt.Println("Total Pages: ", count)
 	return toSliceOfPage(list)
