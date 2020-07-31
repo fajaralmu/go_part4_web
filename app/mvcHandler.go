@@ -112,6 +112,39 @@ func commonPageRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loginRoute(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(getWebFiles()...)
+
+	if err == nil {
+		pageData := pageData{
+			PageCode: "login",
+			Title:    "Login Page",
+		}
+		pageData.prepareWebData()
+		tmpl.ExecuteTemplate(w, "layout", pageData)
+
+	} else {
+		writeResponseHeaders(w)
+		writeErrorMsgBadRequest(w, err.Error())
+	}
+}
+func registerRoute(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles(getWebFiles()...)
+
+	if err == nil {
+		pageData := pageData{
+			PageCode: "register",
+			Title:    "Register Page",
+		}
+		pageData.prepareWebData()
+		tmpl.ExecuteTemplate(w, "layout", pageData)
+
+	} else {
+		writeResponseHeaders(w)
+		writeErrorMsgBadRequest(w, err.Error())
+	}
+}
+
 func homeRoute(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles(getWebFiles()...)
