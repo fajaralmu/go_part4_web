@@ -78,6 +78,7 @@ func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request)
 			preHandleResult := mvcPreHandle(w, r, authenticated)
 			if preHandleResult == false {
 				if authenticated {
+					setLatestURI(w, r, r.RequestURI)
 					sendRedirect(w, r, "/account/login")
 					return
 				}

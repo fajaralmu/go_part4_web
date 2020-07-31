@@ -29,12 +29,37 @@ func getSessionValue(r *http.Request, sessionName string) (*sessions.Session, er
 	return session, nil
 }
 
+func getLatestURI(w http.ResponseWriter, r *http.Request) string {
+	savedURI := getSessionVal(w, r, "APP_SESSION", "request-uri")
+	if savedURI == nil {
+		return ""
+	}
+	if _, ok := (savedURI).(string); ok {
+		return (savedURI).(string)
+	}
+	return ""
+}
+
+func setLatestURI(w http.ResponseWriter, r *http.Request, path string) bool {
+	sessionUpdated := setSessionValue(w, r, "APP_SESSION", "request-uri", path)
+	log.Println("setLatestURI:", path, " sessionUpdated: ", sessionUpdated)
+	return sessionUpdated
+}
+
 func validateSessionn(w http.ResponseWriter, r *http.Request) bool {
 	userSession := getUserFromSession(w, r)
 	if nil == userSession {
 		return false
 	}
 	return getUserByUsernameAndPassword(userSession) != nil
+}
+
+func getSessionVal(w http.ResponseWriter, r *http.Request, sessionName string, sessionKey string) interface{} {
+	session, err := getSessionValue(r, sessionName)
+	if err != nil {
+		return nil
+	}
+	return session.Values[sessionKey]
 }
 
 func getUserFromSession(w http.ResponseWriter, r *http.Request) *entities.User {

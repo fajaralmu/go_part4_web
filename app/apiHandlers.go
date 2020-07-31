@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/fajaralmu/go_part4_web/entities"
@@ -71,7 +72,12 @@ func login(w http.ResponseWriter, r *http.Request) (response entities.WebRespons
 	}
 	response, err = Login(request, w, r)
 	if err == nil {
-		w.Header().Add("location", "/admin/home")
+		var latestURI string = getLatestURI(w, r)
+		if latestURI != "" {
+			// w.WriteHeader(302)
+			log.Println(" getLatestURI(w, r) : ", latestURI)
+			w.Header().Add("location", latestURI)
+		}
 	}
 	return response, err
 

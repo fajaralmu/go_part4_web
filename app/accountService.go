@@ -35,5 +35,6 @@ func Login(request entities.WebRequest, w http.ResponseWriter, r *http.Request) 
 		return response, errors.New("User Not Found")
 	}
 	setUserToSession(w, r, dbUser)
+
 	return webResponse("00", "success"), nil
 }
