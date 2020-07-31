@@ -83,14 +83,15 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 	return executeWebContents(pageData, w, r)
 }
 
-func executeWebContents(pageData pageData, w http.ResponseWriter, r *http.Request) error {
+func executeWebContents(p pageData, w http.ResponseWriter, r *http.Request) error {
 	tmpl, err := template.ParseFiles(getWebFiles()...)
-	t := (reflect.ValueOf(pageData))
+	t := (reflect.ValueOf(p))
 
 	if err == nil && t.IsValid() {
-
-		pageData.prepareWebData()
-		tmpl.ExecuteTemplate(w, "layout", pageData)
+		p.w = w
+		p.r = r
+		p.prepareWebData()
+		tmpl.ExecuteTemplate(w, "layout", p)
 		return nil
 	} else {
 		writeResponseHeaders(w)

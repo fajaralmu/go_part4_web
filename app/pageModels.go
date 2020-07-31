@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"net/http"
 	"text/template"
 	"time"
 
@@ -21,8 +22,10 @@ type footer struct {
 }
 
 type header struct {
-	Profile entities.Profile
-	Pages   []entities.Page
+	Profile       entities.Profile
+	Pages         []entities.Page
+	User          *entities.User
+	Authenticated bool
 }
 
 type pageData struct {
@@ -39,26 +42,41 @@ type pageData struct {
 	AdditionalPages       []string
 	Page                  entities.Page
 	EntityProperty        appConfig.EntityProperty
+
+	//private
+	r *http.Request
+	w http.ResponseWriter
 }
 
-func (pageData *pageData) setStylePath(paths ...string) {
-	pageData.AdditionalStylePaths = paths
+func (p *pageData) setStylePath(paths ...string) {
+	p.AdditionalStylePaths = paths
 }
 
-func (pageData *pageData) setScriptPath(paths ...string) {
-	pageData.AdditionalScriptPaths = paths
+func (p *pageData) setScriptPath(paths ...string) {
+	p.AdditionalScriptPaths = paths
 }
 
-func (pageData *pageData) setHeaderFooter() {
-	pageData.RequestID = reflections.RandomNum(15)
-	pageData.Header = header{
-		Profile: pageData.Profile,
+func (p *pageData) setHeaderFooter() {
+	p.RequestID = reflections.RandomNum(15)
+	p.Header = header{
+		Profile: p.Profile,
 		Pages:   getPages(),
 	}
-	pageData.Footer = footer{
+	p.Footer = footer{
 		Year:    getCurrentYr(),
-		Profile: pageData.Profile,
+		Profile: p.Profile,
 	}
+	var loggedUser *entities.User
+
+	if p.r != nil {
+		loggedUser = getUserFromSession(p.w, p.r)
+		if nil != loggedUser {
+			p.Header.User = loggedUser
+		}
+	}
+
+	p.Header.Authenticated = loggedUser != nil
+
 }
 
 func (pageData *pageData) prepareWebData() {

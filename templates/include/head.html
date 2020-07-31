@@ -8,20 +8,19 @@
   <div>
     <!-- <ul class="nav nav-tabs"> -->
     <ul class="nav flex-column">
-      <!-- Account Menu
-			<c:if test="${loggedUser == null  }">
+      <!-- Account Menu -->
+			{{if eq .Authenticated false}}
 				<li class="nav-item "><a
 					class="nav-link  ${page == 'login' ? 'active':'' }"
-					href="<spring:url value="/account/login"/>">Log In </a></li>
-			</c:if>
-			<c:if test="${loggedUser != null }"> -->
+					href="/account/login">Log In </a></li>
+			{{else if eq .Authenticated true}}
       <div class="dropdown">
         <button
           class="btn btn-primary dropdown-toggle"
           type="button"
           data-toggle="dropdown"
         >
-          ${loggedUser.displayName }<span class="caret"></span>
+          {{.User.DisplayName}}<span class="caret"></span>
         </button>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="/management/profile">Profile</a>
@@ -30,7 +29,7 @@
           >
         </div>
       </div>
-      <!-- </c:if> -->
+     {{end}}
 
       <!-- <%--  
 			<c:if test="${loggedUser != null }">
