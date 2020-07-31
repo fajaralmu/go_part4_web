@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/fajaralmu/go_part4_web/dataaccess"
@@ -69,10 +70,14 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 
 	switch fieldType {
 	case "FIELD_TYPE_IMAGE":
+
+		fieldTags, _ := reflections.GetMapOfTag(field, "custom")
+		multipleImg := fieldTags["multiple"] == "true"
+
 		if fieldValue != nil {
 			code := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
 			code = strings.Replace(code, "*", "", -1)
-			fieldValue = processImg(fieldValue.(string), code, currentFieldRecord)
+			fieldValue = processImg(fieldValue.(string), code, multipleImg, currentFieldRecord)
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 
 		} else {
@@ -84,13 +89,58 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 	return true
 }
 
-func processImg(imgData string, code string, currentFieldRecord interface{}) string {
+func processImg(imgData string, code string, multipleImg bool, currentFieldRecord interface{}) string {
 	if (imgData == "") && currentFieldRecord != "" && currentFieldRecord != nil {
 		log.Println("imgData is BLANK ... returns currentFieldRecord: ", currentFieldRecord)
 		return currentFieldRecord.(string)
 	}
-	log.Println("Process image dat, code: ", code)
+	log.Println("Process image base64data multipleImg: ", multipleImg, " code: ", code)
+	if multipleImg {
+		return processMultipleImageData(imgData, code)
+	}
 	return files.WriteBase64Img(imgData, code)
+}
+
+const originalPreffix = "{ORIGINAL>>"
+
+func processMultipleImageData(imageData string, code string) string {
+	log.Println("processMultipleImageData code: ", code)
+	base64Images := strings.Split(imageData, "~")
+	finalImgURL := ""
+	if base64Images != nil && len(base64Images) > 0 {
+
+		imageUrls := []string{}
+		for i, base64Image := range base64Images {
+
+			if base64Image == ("") {
+				continue
+			}
+			var updated bool = true
+			var imageName string = ""
+			if strings.HasPrefix(base64Image, originalPreffix) {
+
+				raw := strings.Split(base64Image, "}")
+				if len(raw) > 1 {
+					base64Image = raw[1]
+				} else {
+					imageName = strings.Replace(raw[0], originalPreffix, "", -1)
+					updated = false
+				}
+			}
+			if updated {
+				imageName = files.WriteBase64Img(base64Image, code+"_"+strconv.Itoa(i))
+			}
+			if "" != imageName {
+				imageUrls = append(imageUrls, imageName)
+			}
+		}
+
+		finalImgURL = strings.Join(imageUrls, "~")
+
+	}
+
+	return finalImgURL
+
 }
 
 func processForeignKey(foreignKey string, field reflect.StructField, model entities.InterfaceEntity) bool {

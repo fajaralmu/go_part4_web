@@ -69,7 +69,7 @@ type Page struct {
 	NONMenuPage int    `custom:"type:FIELD_TYPE_PLAIN_LIST;lableName:Is_Non_Menu_Page_(yes_1_or_no_0);availableValues:0,1"`
 	Link        string `gorm:"unique" custom:"type:FIELD_TYPE_TEXT;lableName:Link_for_non_menu_page"`
 	Description string `custom:"type:FIELD_TYPE_TEXTAREA"`
-	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;required:FALSE;defaultValue:DefaultIcon.bmp"`
+	ImageURL    string `custom:"type:FIELD_TYPE_IMAGE;multiple:true;required:FALSE;defaultValue:DefaultIcon.bmp"`
 	Sequence    int    `custom:"type:FIELD_TYPE_NUMBER;lableName:Urutan_Ke"`
 	Menus       []Menu `gorm:"-"`
 }

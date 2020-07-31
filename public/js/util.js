@@ -5,8 +5,8 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 	];
 
 function _byId(id){
-	if(id==null || id == ""){
-		console.warn("ID IS EMPTY");
+	if( document.getElementById(id)==null){
+		console.warn("doc.getElementByID(",id,") Not Found");
 	}
 	return document.getElementById(id);
 }

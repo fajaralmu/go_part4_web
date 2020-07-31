@@ -145,11 +145,11 @@ func (e *EntityElement) doBuild() bool {
 	e.ID = (e.Field.Name)
 	e.Identity = (e.IDField)
 	e.LableName = reflections.ExtractCamelCase(lableName)
-	e.Required = e.FormField["required"] == "TRUE"
+	e.Required = strings.ToUpper(e.FormField["required"]) == "TRUE"
 	e.Type = determinedFieldType
-	e.Multiple = e.FormField["multiple"] == "TRUE"
+	e.Multiple = strings.ToUpper(e.FormField["multiple"]) == "TRUE"
 	e.ClassName = e.Field.Type.Name()
-	e.ShowDetail = e.FormField["showDetail"] == "TRUE"
+	e.ShowDetail = strings.ToUpper(e.FormField["showDetail"]) == "TRUE"
 
 	//setting field type so can be read by browser
 	switch e.Type {
