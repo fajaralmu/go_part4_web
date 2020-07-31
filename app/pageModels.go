@@ -98,9 +98,12 @@ func getPages(w http.ResponseWriter, r *http.Request) []entities.Page {
 		filter.FieldsFilter = map[string]interface{}{
 			"Authorized": 0,
 		}
+
 	} else {
 
 	}
+
+	filter.OrderBy = "Sequence"
 
 	list, count := repository.Filter(&[]entities.Page{}, filter)
 	fmt.Println("Total Pages: ", count)
