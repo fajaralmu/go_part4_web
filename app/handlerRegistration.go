@@ -16,25 +16,32 @@ func registerAPIs() {
 
 	log.Println("START registerAPIs")
 
-	handleAPI("/api/entities", getEntities, "POST")
-	handleAPI("/api/entities/add", addEntities, "POST")
-	handleAPI("/api/entities/update", updateEntities, "POST")
-	handleAPI("/api/entities/delete", deleteEntities, "POST")
+	handleAPI("/api/entities", getEntities, "POST", true)
+	handleAPI("/api/entities/add", addEntities, "POST", true)
+	handleAPI("/api/entities/update", updateEntities, "POST", true)
+	handleAPI("/api/entities/delete", deleteEntities, "POST", true)
 	// router.HandleFunc("/api/books", createBook).Methods("POST")
 	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
-	handleAPI("/api/account/login", login, "POST")
+	handleAPI("/api/account/login", login, "POST", false)
 
 	log.Println("END registerAPIs")
 }
 
-func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string) {
+func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string, authenticated bool) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("api-START///////////URI: ", r.RequestURI)
-			if apiPreHandle(w, r) == false {
-				log.Println("API-END////////////URI: ", path)
+			preHandleResult := apiPreHandle(w, r, authenticated)
+			if preHandleResult == false {
+				if authenticated {
+
+					writeErrorMsgBadRequest(w, "Invalid Request 01")
+					return
+				}
+
+				log.Println("api-END////////////URI: ", path)
 				return
 			}
 			response, err := handler(w, r)

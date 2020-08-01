@@ -14,12 +14,14 @@ func mvcPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bo
 	}
 	return true
 }
-func apiPreHandle(w http.ResponseWriter, r *http.Request) bool {
+func apiPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bool {
 	log.Println("apiPreHandle: ", r.RequestURI)
-	// var request entities.WebRequest
-	// err := nil
-	// log.Printf("apiPreHandle result: %v", err == nil)
-	// return err == nil
+	if authenticated {
+		sessionValid := validateSessionn(w, r)
+		log.Println("Session IS VALID: ", sessionValid)
+		return sessionValid
+	}
+
 	return true
 }
 
