@@ -19,6 +19,13 @@ func GetEntityConf(key string) *EntityConfig {
 	return entityConfigMap[strings.ToLower(key)]
 }
 
+func GetEntitiesTypes() (types []reflect.Type) {
+	for _, val := range entityConfigMap {
+		types = append(types, val.SingleType)
+	}
+	return types
+}
+
 func PutConfig(t ...*EntityConfig) {
 
 	for _, item := range t {

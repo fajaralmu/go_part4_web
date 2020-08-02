@@ -76,5 +76,5 @@ func testDelete() {
 	user := entities.User{
 		Model: gorm.Model{ID: 4225},
 	}
-	repository.Delete(&user)
+	repository.Delete(&user, true)
 }

@@ -33,6 +33,7 @@ func Init() {
 		newEConf(entities.Page{}, []entities.Page{}),
 		newEConf(entities.Profile{}, []entities.Profile{}))
 	registerSessions()
+	initMenus()
 }
 
 func Run() {

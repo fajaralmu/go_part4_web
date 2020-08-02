@@ -83,6 +83,14 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 	return executeWebContents(pageData, w, r)
 }
 
+func resetMenus(w http.ResponseWriter, r *http.Request) (err error) {
+
+	resetAllMenus()
+	sendRedirect(w, r, "/admin/home")
+	return nil
+
+}
+
 func executeWebContents(p pageData, w http.ResponseWriter, r *http.Request) error {
 	tmpl, err := template.ParseFiles(getWebFiles()...)
 	t := (reflect.ValueOf(p))

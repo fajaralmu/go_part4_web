@@ -18,7 +18,7 @@ func UpdateEntity(request entities.WebRequest) entities.WebResponse {
 	log.Println("entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 
-	repository.Save(fieldValue.(entities.InterfaceEntity))
+	repository.SaveAndValidate(fieldValue.(entities.InterfaceEntity))
 	fmt.Println("SAVED Entity: ", fieldValue)
 
 	response := entities.WebResponse{
@@ -32,7 +32,7 @@ func Delete(request entities.WebRequest) entities.WebResponse {
 	log.Println("entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 
-	deleted := repository.Delete(fieldValue.(entities.InterfaceEntity))
+	deleted := repository.Delete(fieldValue.(entities.InterfaceEntity), true)
 	fmt.Println("Deleted Entity: ", deleted)
 
 	response := entities.WebResponse{

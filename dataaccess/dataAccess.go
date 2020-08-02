@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 
 	"github.com/fajaralmu/go_part4_web/entities"
@@ -194,11 +195,18 @@ func Save(model entities.InterfaceEntity) interface{} {
 }
 
 //Delete removes from record, if has DeletedAt field ti deletes softly
-func Delete(model entities.InterfaceEntity) {
+func Delete(model entities.InterfaceEntity, softDelete bool) {
 
 	dbOperation(func() {
 		// autoMigrate(model)
-		deleteModel(model)
+		if softDelete {
+			log.Println("SOFT DELETE")
+			deleteModel(model)
+		} else {
+			log.Println("/!\\ HARD DELETE /!\\")
+			deleteModelPermanently(model)
+		}
+
 	})
 
 }

@@ -13,9 +13,21 @@ import (
 
 //CreateNew insert new record to entity, Will REMOVE ID Field
 func CreateNew(model entities.InterfaceEntity) {
-	validator.RemoveID(model)
+	doCreate(model, true)
+}
 
-	ok := validator.ValidateEntity(model, nil)
+//CreateNewWithoutValidation insert new record to entity (NO VALIDTION), Will REMOVE ID Field
+func CreateNewWithoutValidation(model entities.InterfaceEntity) {
+	doCreate(model, false)
+}
+
+func doCreate(model entities.InterfaceEntity, withValidation bool) {
+	validator.RemoveID(model)
+	ok := true
+	if withValidation {
+		ok = validator.ValidateEntity(model, nil)
+	}
+
 	if ok {
 		println("Creating Model")
 		dataaccess.CreateNew(model)
@@ -25,11 +37,11 @@ func CreateNew(model entities.InterfaceEntity) {
 }
 
 //Delete removes from record
-func Delete(model entities.InterfaceEntity) bool {
+func Delete(model entities.InterfaceEntity, softDelete bool) bool {
 	_, existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
 	if existInDB {
-		dataaccess.Delete(model)
+		dataaccess.Delete(model, softDelete)
 	} else {
 		println("Record does not exist!")
 		return existInDB
@@ -39,8 +51,7 @@ func Delete(model entities.InterfaceEntity) bool {
 	return stillExist == false
 }
 
-//Save updates entity
-func doSave(model entities.InterfaceEntity, validate bool) {
+func doSave(model entities.InterfaceEntity, validate bool) interface{} {
 
 	result, existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
@@ -56,20 +67,25 @@ func doSave(model entities.InterfaceEntity, validate bool) {
 
 		if ok {
 			fmt.Println("saving model: ", model)
-			dataaccess.Save(model)
+			result := dataaccess.Save(model)
+			return result
 		} else {
 			println("Entity Invalid!")
 		}
 	}
+	return model
 }
 
-func Save(model entities.InterfaceEntity) {
+//SaveAndValidate validates entity value and save record
+func SaveAndValidate(model entities.InterfaceEntity) interface{} {
 
-	doSave(model, true)
+	return doSave(model, true)
 }
-func SaveWihoutValidation(model entities.InterfaceEntity) {
 
-	doSave(model, false)
+//SaveWihoutValidation save record without validating
+func SaveWihoutValidation(model entities.InterfaceEntity) interface{} {
+
+	return doSave(model, false)
 }
 
 func isExistInDB(model entities.InterfaceEntity) (entities.InterfaceEntity, bool) {
