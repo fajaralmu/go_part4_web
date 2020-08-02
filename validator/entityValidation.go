@@ -2,7 +2,6 @@ package validator
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -16,7 +15,7 @@ import (
 
 //ValidateEntity validates entity field before Persisting to DB
 func ValidateEntity(model entities.InterfaceEntity, currentRecord entities.InterfaceEntity) bool {
-	println("***ValidateEntity***", reflect.TypeOf(model))
+	//println("***ValidateEntity***", reflect.TypeOf(model))
 
 	structFields := reflections.GetDeclaredFields(reflect.TypeOf(reflections.Dereference(model).Interface()))
 	fmt.Println("GetDeclaredFields size: ", len(structFields))
@@ -27,7 +26,7 @@ loop:
 		customTag, ok := reflections.GetMapOfTag(field, "custom")
 
 		if !ok {
-			println("NO Custom Tag")
+			//println("NO Custom Tag")
 			continue
 		}
 		var customTagResult bool
@@ -44,14 +43,14 @@ loop:
 
 	}
 
-	println("_________ END VALIDATION ___________")
+	//println("_________ END VALIDATION ___________")
 
 	return valid
 }
 
 func processCustomTag(customTag map[string]string, field reflect.StructField, model entities.InterfaceEntity, currentFieldRecord interface{}) bool {
 
-	println("__________-processCustomTag____________ for ", field.Name)
+	//println("__________-processCustomTag____________ for ", field.Name)
 
 	foreignKey := customTag["foreignKey"]
 	foreignKeyOk := processForeignKey(foreignKey, field, model)
@@ -59,13 +58,13 @@ func processCustomTag(customTag map[string]string, field reflect.StructField, mo
 	fieldType := customTag["type"]
 	fieldOK := processFieldValue(fieldType, field, model, currentFieldRecord)
 
-	println("__________END processCustomTag (", foreignKeyOk, fieldOK, ")____________")
+	//println("__________END processCustomTag (", foreignKeyOk, fieldOK, ")____________")
 
 	return foreignKeyOk && fieldOK
 }
 
 func processFieldValue(fieldType string, field reflect.StructField, model entities.InterfaceEntity, currentFieldRecord interface{}) bool {
-	log.Println("processFieldValue: ", field.Name, "currentFieldRecord: ", currentFieldRecord)
+	//log.Println("processFieldValue: ", field.Name, "currentFieldRecord: ", currentFieldRecord)
 	fieldValue, _ := reflections.GetFieldValue(field.Name, model)
 
 	switch fieldType {
@@ -81,7 +80,7 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 
 		} else {
-			log.Println("IMG base64data is Empty")
+			//log.Println("IMG base64data is Empty")
 		}
 
 	}
@@ -91,10 +90,10 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 
 func processImg(imgData string, code string, multipleImg bool, currentFieldRecord interface{}) string {
 	if (imgData == "") && currentFieldRecord != "" && currentFieldRecord != nil {
-		log.Println("imgData is BLANK ... returns currentFieldRecord: ", currentFieldRecord)
+		//log.Println("imgData is BLANK ... returns currentFieldRecord: ", currentFieldRecord)
 		return currentFieldRecord.(string)
 	}
-	log.Println("Process image base64data multipleImg: ", multipleImg, " code: ", code)
+	//log.Println("Process image base64data multipleImg: ", multipleImg, " code: ", code)
 	if multipleImg {
 		return processMultipleImageData(imgData, code)
 	}
@@ -107,12 +106,12 @@ func processMultipleImageData(imageData string, code string) string {
 	if imageData == "NULL" {
 		return ""
 	}
-	log.Println("processMultipleImageData code: ", code)
+	//log.Println("processMultipleImageData code: ", code)
 	base64Images := strings.Split(imageData, "~")
 	finalImgURL := ""
 	if base64Images != nil && len(base64Images) > 0 {
 
-		log.Print("len(base64Images): ", len(base64Images))
+		//log.Print("len(base64Images): ", len(base64Images))
 
 		imageUrls := []string{}
 		for i, base64Image := range base64Images {
@@ -125,15 +124,15 @@ func processMultipleImageData(imageData string, code string) string {
 			if strings.HasPrefix(base64Image, originalPreffix) {
 
 				raw := strings.Split(base64Image, "}")
-				log.Println("Has originalPreffix:  len(raw): ", len(raw), raw)
+				//log.Println("Has originalPreffix:  len(raw): ", len(raw), raw)
 				if len(raw) > 1 && raw[1] != "" {
 					base64Image = raw[1]
 
 				} else {
-					log.Println("raw[0]: ", raw[0])
+					//log.Println("raw[0]: ", raw[0])
 
 					imageName = strings.Replace(raw[0], originalPreffix, "", -1)
-					log.Println("imageName: ", imageName)
+					//log.Println("imageName: ", imageName)
 					needWriting = false
 
 					//NOT NEED FOR WRITING
@@ -141,31 +140,31 @@ func processMultipleImageData(imageData string, code string) string {
 				}
 
 			} else {
-				log.Println("NO originalPreffix")
+				//log.Println("NO originalPreffix")
 
 			}
 			if needWriting {
 				imageName = files.WriteBase64Img(base64Image, code+"_"+strconv.Itoa(i))
 			}
 
-			log.Println("WILL add imageName: ", imageName)
+			//log.Println("WILL add imageName: ", imageName)
 
 			if "" != imageName {
-				log.Println("append imageName: ", imageName)
+				//log.Println("append imageName: ", imageName)
 				imageUrls = append(imageUrls, imageName)
 			}
 		}
-		log.Println("imageUrls: ", imageUrls)
+		//log.Println("imageUrls: ", imageUrls)
 		finalImgURL = strings.Join(imageUrls, "~")
 
 	}
-	log.Println("finalImgURL: ", finalImgURL)
+	//log.Println("finalImgURL: ", finalImgURL)
 	return finalImgURL
 
 }
 
 func processForeignKey(foreignKey string, field reflect.StructField, model entities.InterfaceEntity) bool {
-	println("begin process foreign key: ", foreignKey)
+	//println("begin process foreign key: ", foreignKey)
 	if "" == foreignKey {
 		return true
 	}
@@ -176,7 +175,7 @@ func processForeignKey(foreignKey string, field reflect.StructField, model entit
 
 	result, ok := dataaccess.FindByID(entity, entityID)
 	fmt.Println("result FIND BY ID: ", result)
-	println("end process foreign key")
+	//println("end process foreign key")
 
 	return ok
 }

@@ -17,6 +17,7 @@ func WriteBase64Img(imgRawData string, code string) string {
 
 	imageData := strings.Split(imgRawData, ",")
 	if imageData == nil || len(imageData) < 2 {
+		log.Println("imgRawData is empty")
 		return ""
 	}
 	// create a buffered image

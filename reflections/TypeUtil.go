@@ -2,7 +2,6 @@ package reflections
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
 
@@ -35,7 +34,7 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 
 		for i := 0; i < s.Len(); i++ {
 			item := s.Index(i).Interface()
-			fmt.Println("Result item ", i, ":", item)
+			//fmt.Println("Result item ", i, ":", item)
 			result = append(result, item)
 		}
 	}
@@ -61,15 +60,15 @@ func IsNumericType(_type reflect.Type) bool {
 }
 
 func GetDeclaredFields(t reflect.Type) []reflect.StructField {
-	log.Println("GetDeclaredFields of: ", t.Name())
+	//log.Println("GetDeclaredFields of: ", t.Name())
 	fields := []reflect.StructField{}
 	var entityInterface bool = false
 	for i := 0; i < t.NumField(); i++ {
 
 		structField := t.Field(i)
-		log.Println("FIELD NAME: ", structField.Name)
+		//log.Println("FIELD NAME: ", structField.Name)
 		if (structField.Type == reflect.TypeOf(gorm.Model{})) {
-			log.Println("Skip gorm.Model")
+			//log.Println("Skip gorm.Model")
 			continue
 		}
 		if structField.Type.String() == "entities.InterfaceEntity" {
@@ -83,10 +82,10 @@ func GetDeclaredFields(t reflect.Type) []reflect.StructField {
 	if entityInterface {
 
 		gormFields := GetDeclaredFields(reflect.TypeOf(gorm.Model{}))
-		log.Println("current fields: ", len(fields), "ADD gorm model fields ", len(gormFields))
+		//log.Println("current fields: ", len(fields), "ADD gorm model fields ", len(gormFields))
 		fields = append(fields, gormFields...)
 	}
-	log.Println("Field size of type ", t, " return:  ", len(fields))
+	//log.Println("Field size of type ", t, " return:  ", len(fields))
 	return fields
 }
 
@@ -95,7 +94,7 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 
 	var result []reflect.StructField
 
-	println("====ValidateJoinColumn====")
+	//println("====ValidateJoinColumn====")
 	model := Dereference(_model)
 	entity := model.Interface().(entities.InterfaceEntity)
 	t := reflect.TypeOf(entity)
@@ -104,11 +103,11 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 	loop:
 		for i := 0; i < t.NumField(); i++ {
 			structField := t.Field(i)
-			fmt.Println("check join column field__________________", structField.Name)
+			//fmt.Println("check join column field__________________", structField.Name)
 			fieldValue, _ := GetFieldValue(structField.Name, entity)
 
 			if skipNull && isNil(fieldValue) {
-				println(structField.Name, "is nil, will continue")
+				//println(structField.Name, "is nil, will continue")
 				continue loop
 			}
 			isStructType := isJoinColumn(structField, entity)
@@ -122,11 +121,11 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 				fieldValueStr = fieldValueStr[:24]
 			}
 
-			fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", LimitStr(fieldValueStr, 25), "is join column: ", isStructType)
-			fmt.Println("__________________")
+			//fmt.Println("type:", structField.Type.Kind(), structField.Type.PkgPath(), "name: ", structField.Name, "value:", LimitStr(fieldValueStr, 25), "is join column: ", isStructType)
+			//fmt.Println("__________________")
 		}
 	} else {
-		fmt.Println("not a struct")
+		//fmt.Println("not a struct")
 	}
 	return result
 }
@@ -162,7 +161,7 @@ func isJoinColumn(field reflect.StructField, model entities.InterfaceEntity) boo
 	customTag, ok := GetMapOfTag(field, "custom")
 
 	if !ok {
-		println("NO Custom Tag")
+		//println("NO Custom Tag")
 		return false
 	}
 
@@ -176,7 +175,7 @@ func CreateNewTypeNotPointer(t reflect.Type) interface{} {
 
 //CreateNewType generate new Type pointer pointing TO given type
 func CreateNewType(t reflect.Type) interface{} {
-	fmt.Println("Initialize new pointer pointing to type : ", t)
+	//fmt.Println("Initialize new pointer pointing to type : ", t)
 
 	return reflect.New(t).Interface()
 }

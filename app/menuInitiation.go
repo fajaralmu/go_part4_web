@@ -24,10 +24,10 @@ func initMenus() {
 	log.Println("////////////////////END MENU INITIALIZE////////////////////")
 }
 
-func defaultAboutPage() entities.Page {
+func defaultAboutPage() *entities.Page {
 	return getPage("about", config_defaultAboutPage)
 }
-func defaultSettingPage() entities.Page {
+func defaultSettingPage() *entities.Page {
 	return getPage("setting", config_defaultSettingPage)
 
 }
@@ -54,7 +54,7 @@ func checkAdminMenu(baseMapping string, path string) {
 	if !ok {
 
 		adminMenu := constructAdminMenu(baseMapping + path)
-		repository.SaveWihoutValidation(&adminMenu)
+		repository.SaveAndValidate(&adminMenu)
 	}
 
 }
@@ -67,12 +67,14 @@ func getMenuByCode(code string) (menu entities.Menu, ok bool) {
 
 	return list[0].(entities.Menu), true
 }
-func getPageOnlyByCode(code string) (menu entities.Page, ok bool) {
-	list := repository.FilterByKey(&entities.Page{}, "Code", code)
+func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
+	log.Println("getPageOnlyByCode: ", code)
+	list := repository.FilterByKey(&page, "Code", code)
 	if len(list) != 1 {
-		return menu, false
+		log.Println("fails END getPageOnlyByCode: ", code)
+		return page, false
 	}
-
+	log.Println("success END getPageOnlyByCode: ", code)
 	return list[0].(entities.Page), true
 }
 
@@ -88,50 +90,53 @@ func constructAdminMenu(path string) entities.Menu {
 		Description:     "Generated [" + menuCode + "]",
 		Name:            strings.ToUpper(menuCode) + "(auto)",
 		URL:             path,
-		MenuPage:        &defAdminPage,
+		PageID:          uint16(defAdminPage.ID),
 	}
+	adminMenu.MenuPage = &entities.Page{}
 
 	return adminMenu
 }
 
-func defaultAdminPage() entities.Page {
+func defaultAdminPage() *entities.Page {
 	return getPage("admin", adminPage())
 }
 
-func managementPage() entities.Page {
+func managementPage() *entities.Page {
 	return config_defaultManagementPage
 }
 
-func adminPage() entities.Page {
+func adminPage() *entities.Page {
 	return config_defaultAdminPage
 }
 
-func getPage(code string, defaultPageIfNotExist entities.Page) entities.Page {
+func getPage(code string, defaultPageIfNotExist *entities.Page) *entities.Page {
 	page, ok := getPageOnlyByCode(code)
 	if ok {
 		log.Printf("page with code: %v FOUND! \n", code)
-		return page
+		return &page
 	}
 	log.Printf("WILL SAVE page : %v...", code)
-	repository.CreateNewWithoutValidation(&defaultPageIfNotExist)
+	peg := defaultPageIfNotExist
+	repository.CreateNewWithoutValidation(peg)
+	log.Println("defaultPageIfNotExist ID: ", peg.ID)
 	return defaultPageIfNotExist
 }
 
 func checkManagementPage() {
 	log.Println("STARTS _managementPage")
-	_managementPage, ok := getPageOnlyByCode("management")
+	_, ok := getPageOnlyByCode("management")
 	if ok {
 		log.Println("managementPage FOUND")
 		return
 	}
 
 	log.Println("managementPage NOT FOUND. WILL ADD SETTING")
-	_managementPage = managementPage()
-	repository.CreateNewWithoutValidation(&_managementPage)
+	_managementPage := managementPage()
+	repository.CreateNewWithoutValidation(_managementPage)
 	log.Println("STARTS _managementPage")
 }
 
-func defaultManagementPage() entities.Page {
+func defaultManagementPage() *entities.Page {
 
 	return getPage("management", managementPage())
 }
@@ -160,17 +165,18 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 	log.Println("Will add default menu for: ", t.Name())
 
 	commonPage := true //= dto.commonManagementPage();
-	menuCode := t.Name()
+	menuCode := reflections.ToSnakeCase(t.Name(), true)
 	managementPage, _ := getPageOnlyByCode("management")
 	menu := entities.Menu{
 		Code:            menuCode,
 		Name:            reflections.ExtractCamelCase(t.Name()),
-		MenuPage:        &managementPage,
+		MenuPage:        &entities.Page{},
+		PageID:          uint16(managementPage.ID),
 		Color:           "#000000",
 		BackgroundColor: "#ffffff",
 		Description:     "Generated Management Page for: " + t.Name(),
 	}
-
+	// menu.Validate()
 	if commonPage {
 		menu.URL = ("/management/" + menuCode)
 	} else {
@@ -184,22 +190,25 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 
 func checkDefaultMenu() {
 	getMenu("management", config_defaultManagementMenu, defaultAdminPage())
+	getMenu("pagesettings", config_defaultPageSettingMenu, defaultAdminPage())
 }
 
-func getMenu(code string, defaultMenuIfNotExist entities.Menu, menuPage entities.Page) entities.Menu {
+func getMenu(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {
 	eixsitingPage := getPage(menuPage.Code, menuPage)
-	menu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
+	existingMenu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
 	if ok {
 		log.Printf("menu: %v FOUND!", code)
-		return menu
+		return &existingMenu
 	}
 
 	log.Println("WILL SAVE menu with :", code)
 
-	menu = defaultMenuIfNotExist
-	menu.MenuPage = &(eixsitingPage)
-
-	repository.SaveWihoutValidation(&menu)
+	menu := defaultMenuIfNotExist
+	menu.MenuPage = &entities.Page{}
+	menu.PageID = uint16(eixsitingPage.ID)
+	// menu.Validate()
+	log.Println("00000000 menu.PageID:", menu.PageID)
+	repository.SaveAndValidate(menu)
 	return menu
 }
 
