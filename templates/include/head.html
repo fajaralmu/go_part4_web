@@ -9,11 +9,15 @@
     <!-- <ul class="nav nav-tabs"> -->
     <ul class="nav flex-column">
       <!-- Account Menu -->
-			{{if eq .Authenticated false}}
-				<li class="nav-item "><a
-					class="nav-link  ${page == 'login' ? 'active':'' }"
-					href="/account/login">Log In </a></li>
-			{{else if eq .Authenticated true}}
+      {{if eq .Authenticated false}}
+      <li class="nav-item">
+        <a
+          class="nav-link ${page == 'login' ? 'active':'' }"
+          href="/account/login"
+          >Log In
+        </a>
+      </li>
+      {{else if eq .Authenticated true}}
       <div class="dropdown">
         <button
           class="btn btn-primary dropdown-toggle"
@@ -29,16 +33,7 @@
           >
         </div>
       </div>
-     {{end}}
-
-      <!-- <%--  
-			<c:if test="${loggedUser != null }">
-				<li class="nav-item"><a
-					class="nav-link ${page == 'dashboard' ? 'active':'' }"
-					href="<spring:url value="/admin/home"/>">Dashboard</a></li> 
-			</c:if> --%> -->
-
-      {{range .Pages}}
+      {{end}} {{range .Pages}}
       <li class="nav-item page-li">
         <a
           class="nav-link pagelink"

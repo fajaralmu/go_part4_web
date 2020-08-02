@@ -35,6 +35,10 @@ type User struct {
 	UserRoleID  uint16
 }
 
+func (u User) GetName() string {
+	return u.DisplayName
+}
+
 //UserRole is the entity
 type UserRole struct {
 	InterfaceEntity

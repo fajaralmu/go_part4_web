@@ -1,7 +1,7 @@
 {{define "commonPage"}}
 <div class="content">
   <h2>{{.Page.Name}}</h2>
-  <p>Good ${timeGreeting}, ${loggedUser.displayName}. Have a great day!</p>
+  <p>Good {{.Header.Greeting}}, {{.Header.User.DisplayName}}. Have a great day!</p>
   <p>{{.Page.Description}}</p>
   <b>Available Menus:</b>
   <div class="row">
