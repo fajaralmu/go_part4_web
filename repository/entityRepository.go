@@ -40,7 +40,7 @@ func Delete(model entities.InterfaceEntity) bool {
 }
 
 //Save updates entity
-func Save(model entities.InterfaceEntity) {
+func doSave(model entities.InterfaceEntity, validate bool) {
 
 	result, existInDB := isExistInDB(model)
 	fmt.Println("existInDB: ", existInDB)
@@ -49,8 +49,11 @@ func Save(model entities.InterfaceEntity) {
 		CreateNew(model)
 
 	} else {
+		ok := true
+		if validate {
+			ok = validator.ValidateEntity(model, result)
+		}
 
-		ok := validator.ValidateEntity(model, result)
 		if ok {
 			fmt.Println("saving model: ", model)
 			dataaccess.Save(model)
@@ -58,6 +61,15 @@ func Save(model entities.InterfaceEntity) {
 			println("Entity Invalid!")
 		}
 	}
+}
+
+func Save(model entities.InterfaceEntity) {
+
+	doSave(model, true)
+}
+func SaveWihoutValidation(model entities.InterfaceEntity) {
+
+	doSave(model, false)
 }
 
 func isExistInDB(model entities.InterfaceEntity) (entities.InterfaceEntity, bool) {

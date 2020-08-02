@@ -8,8 +8,9 @@ import (
 func updatePageSequence(req entities.WebRequest) bool {
 	pages := req.Pages
 
-	for _, page := range pages {
-		repository.Save(page)
+	for i, page := range pages {
+		page.Sequence = i
+		repository.SaveWihoutValidation(&page)
 	}
 	return true
 
