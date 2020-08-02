@@ -26,6 +26,7 @@ type header struct {
 	Pages         []entities.Page
 	User          *entities.User
 	Authenticated bool
+	Greeting      string
 }
 
 type pageData struct {
@@ -59,8 +60,9 @@ func (p *pageData) setScriptPath(paths ...string) {
 func (p *pageData) setHeaderFooter() {
 	p.RequestID = reflections.RandomNum(15)
 	p.Header = header{
-		Profile: p.Profile,
-		Pages:   getPages(p.w, p.r),
+		Profile:  p.Profile,
+		Pages:    getPages(p.w, p.r),
+		Greeting: reflections.GetTimeGreeting(),
 	}
 	p.Footer = footer{
 		Year:    getCurrentYr(),
