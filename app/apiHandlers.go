@@ -57,8 +57,20 @@ func updateEntities(w http.ResponseWriter, r *http.Request) (response entities.W
 	if err != nil {
 		return response, err
 	}
-	response = UpdateEnity(request)
+	response = UpdateEntity(request)
 	return response, err
+}
+
+func savePageSequence(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+	var request entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		return response, err
+	}
+	updatePageSequence(request)
+	return response, err
+
 }
 
 /////////////////ACCOUNT////////////////

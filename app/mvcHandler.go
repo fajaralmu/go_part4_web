@@ -138,6 +138,16 @@ func registerRoute(w http.ResponseWriter, r *http.Request) error {
 	return executeWebContents(pageData, w, r)
 }
 
+func pageSettingRoute(w http.ResponseWriter, r *http.Request) error {
+
+	pageData := pageData{
+		PageCode: "pageSequence",
+		Title:    "Page Setting",
+	}
+	pageData.setStylePath("pagesequence")
+	return executeWebContents(pageData, w, r)
+}
+
 func homeRoute(w http.ResponseWriter, r *http.Request) error {
 
 	pageData := pageData{

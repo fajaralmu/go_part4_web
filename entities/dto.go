@@ -1,6 +1,8 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
 //Filter is filter object
 type Filter struct {
@@ -27,6 +29,9 @@ type WebRequest struct {
 	Menu               *Menu
 	Page               *Page
 	Registered_request *RegisteredRequest
+
+	//END MODELS
+	Pages []Page
 }
 
 //WebResponse is REST API response payload

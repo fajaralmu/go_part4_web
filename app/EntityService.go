@@ -13,7 +13,7 @@ import (
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
-func UpdateEnity(request entities.WebRequest) entities.WebResponse {
+func UpdateEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
 	log.Println("entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)

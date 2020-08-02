@@ -20,6 +20,7 @@ func registerAPIs() {
 	handleAPI("/api/entities/add", addEntities, "POST", true)
 	handleAPI("/api/entities/update", updateEntities, "POST", true)
 	handleAPI("/api/entities/delete", deleteEntities, "POST", true)
+	handleAPI("/api/admin/savepagesequence", savePageSequence, "POST", true)
 	// router.HandleFunc("/api/books", createBook).Methods("POST")
 	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
@@ -65,6 +66,7 @@ func registerWebPages() {
 	handleMvc("/page/{code}", commonPageRoute, "GET", true)
 	handleMvc("/management/{code}", managementRoute, "GET", true)
 	handleMvc("/admin/home", homeRoute, "GET", false)
+	handleMvc("/admin/pagesettings", pageSettingRoute, "GET", true)
 
 	handleMvc("/account/login", loginRoute, "GET", false)
 	handleMvc("/account/register", registerRoute, "GET", false)
