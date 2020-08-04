@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -84,6 +85,26 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 
 	return result
 
+}
+
+//GetFileExtention returns file extension
+func GetFileExtention(fileName string) string {
+	ext := filepath.Ext(fileName)
+	ext = strings.Replace(ext, ".", "", 1)
+	return ext
+}
+
+//RemoveCharsAfter excludes chars in the string str after given _char
+func RemoveCharsAfter(str string, _char string) string {
+	res := ""
+
+	for _, char := range str {
+		if string(char) == _char {
+			break
+		}
+		res += string(char)
+	}
+	return res
 }
 
 func GetWordsAfterLastChar(str string, lastChar string) string {

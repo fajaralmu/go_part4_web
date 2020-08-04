@@ -58,35 +58,21 @@ func constructAdminMenu(path string) entities.Menu {
 	return adminMenu
 }
 
-func defaultAdminPage() *entities.Page {
-	return getPage("admin", adminPage())
-}
-
-func managementPage() *entities.Page {
-	return config_defaultManagementPage
-}
-
-func adminPage() *entities.Page {
-	return config_defaultAdminPage
-}
-
 func checkManagementPage() {
 	log.Println("STARTS _managementPage")
+
 	_, ok := getPageOnlyByCode("management")
+
 	if ok {
 		log.Println("managementPage FOUND")
 		return
 	}
 
 	log.Println("managementPage NOT FOUND. WILL ADD SETTING")
+
 	_managementPage := managementPage()
 	repository.CreateNewWithoutValidation(_managementPage)
 	log.Println("STARTS _managementPage")
-}
-
-func defaultManagementPage() *entities.Page {
-
-	return getPage("management", managementPage())
 }
 
 func getPersistenctEntities() []reflect.Type {
@@ -139,22 +125,39 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 }
 
 func resetAllMenus() {
-	allMenus := &[]entities.Menu{}
-	menus, _ := repository.Filter(allMenus, entities.Filter{})
+	menus, _ := repository.Filter(&[]entities.Menu{}, entities.Filter{})
 
 	log.Println("Will reset allMenus")
-	for _, item := range menus {
-		repository.Delete(item.(entities.Menu), false)
+	for _, menu := range menus {
+		repository.Delete(menu.(entities.Menu), false)
 	}
-	allPages := &[]entities.Page{}
-	page, _ := repository.Filter(allPages, entities.Filter{})
+	pages, _ := repository.Filter(&[]entities.Page{}, entities.Filter{})
 	log.Println("Will reset allPages")
-	for _, item := range page {
-		repository.Delete(item.(entities.InterfaceEntity), false)
+
+	for _, page := range pages {
+		repository.Delete(page.(entities.InterfaceEntity), false)
 	}
 
 	log.Println("////////END REMOVING/////////")
 	initMenus()
 	log.Println("//////////////END RESET//////////////")
 
+}
+
+///////////////////////////////
+
+func defaultManagementPage() *entities.Page {
+	return getPage("management", managementPage())
+}
+
+func defaultAdminPage() *entities.Page {
+	return getPage("admin", adminPage())
+}
+
+func managementPage() *entities.Page {
+	return config_defaultManagementPage
+}
+
+func adminPage() *entities.Page {
+	return config_defaultAdminPage
 }

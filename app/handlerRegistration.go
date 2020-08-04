@@ -36,7 +36,7 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("api-START///////////URI: ", r.RequestURI)
 			preHandleResult := apiPreHandle(w, r, authenticated)
-			
+
 			if preHandleResult == false {
 
 				if authenticated {
@@ -75,11 +75,18 @@ func registerWebPages() {
 	handleMvc("/account/login", loginRoute, "GET", false)
 	handleMvc("/account/register", registerRoute, "GET", false)
 	handleMvc("/account/logout", logoutRoute, "GET", false)
-	/////static resources/////
-	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./public/")))
-	router.PathPrefix("/static/").Handler(fs)
+
+	/////STATIC RESOURCES/////
+
+	// fs := http.StripPrefix("/static/", fileServer())
+	cs := &customStaticHandler{root: http.Dir("./public/")}
+	router.PathPrefix("/static/").Handler(cs)
 
 	log.Println("END Register Web Pages")
+}
+
+func fileServer() http.Handler {
+	return http.FileServer(http.Dir("./public/"))
 }
 
 func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
