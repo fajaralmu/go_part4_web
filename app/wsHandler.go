@@ -13,7 +13,7 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 		// Read message from browser
 		msgType, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("ERROR", err.Error())
+			log.Println("ERROR ReadMessage", err.Error())
 			return
 		}
 
@@ -22,6 +22,7 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 
 		// Write message back to browser
 		if err = conn.WriteMessage(msgType, msg); err != nil {
+			log.Println("ERROR WriteMessage", err.Error())
 			return
 		}
 	}
