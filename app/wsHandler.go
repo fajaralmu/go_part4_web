@@ -11,7 +11,7 @@ import (
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan string)
 
-func sendMessage_(w http.ResponseWriter, r *http.Request, message string) {
+func sendMessageToClient(w http.ResponseWriter, r *http.Request, message string) {
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 	if nil != err {
 		log.Println("err: ", err.Error())
@@ -66,9 +66,8 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 func handleMessages() {
 	for {
 		// Grab the next message from the broadcast channel
-		log.Println("handleMessages()")
 		msg := <-broadcast
-		log.Println("msg:", msg)
+		log.Println("WILL handleMessages: ", msg)
 		// Send it out to every client that is currently connected
 		for client := range clients {
 			err := client.WriteJSON(struct{ Msg string }{msg})

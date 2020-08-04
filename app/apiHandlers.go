@@ -14,12 +14,12 @@ func getEntities(w http.ResponseWriter, r *http.Request) (response entities.WebR
 
 	var request entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&request)
-
+	broadcast <- "STARTS getEntities"
 	if err != nil {
 		return response, err
 	}
 	response, err = Filter(request)
-
+	broadcast <- "END getEntities"
 	return response, err
 
 }
@@ -32,6 +32,7 @@ func deleteEntities(w http.ResponseWriter, r *http.Request) (response entities.W
 	if err != nil {
 		return response, err
 	}
+
 	response = Delete(request)
 	writeWebResponse(w, response)
 	return response, nil
