@@ -85,9 +85,9 @@ func registerWebPages() {
 	log.Println("END Register Web Pages")
 }
 
-func fileServer() http.Handler {
-	return http.FileServer(http.Dir("./public/"))
-}
+// func fileServer() http.Handler {
+// 	return http.FileServer(http.Dir("./public/"))
+// }
 
 func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
 
