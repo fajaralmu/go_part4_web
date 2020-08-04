@@ -38,3 +38,10 @@ func Login(request entities.WebRequest, w http.ResponseWriter, r *http.Request) 
 
 	return webResponse("00", "success"), nil
 }
+
+func isUsernameAvailable(username string) bool {
+
+	resultList := repository.FilterByKey(&[]entities.User{}, "Username", username)
+
+	return len(resultList) == 0
+}

@@ -11,6 +11,10 @@ import (
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan string)
 
+func sendBroadcastMessage(msg string) {
+	broadcast <- msg
+}
+
 func sendMessageToClient(w http.ResponseWriter, r *http.Request, message string) {
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 	if nil != err {
@@ -53,12 +57,12 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 		// Print the message to the console
 		fmt.Printf("%s sent: %s %v \n", conn.RemoteAddr(), string(msg), msgType)
 
-		// Write message back to browser
-		if err = conn.WriteMessage(msgType, msg); err != nil {
-			log.Println("ERROR WriteMessage", err.Error())
-			return
-		}
-		broadcast <- string(msg)
+		// // Write message back to browser
+		// if err = conn.WriteMessage(msgType, msg); err != nil {
+		// 	log.Println("ERROR WriteMessage", err.Error())
+		// 	return
+		// }
+		sendBroadcastMessage(string(msg))
 		log.Println("...")
 	}
 }

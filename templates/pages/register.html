@@ -62,15 +62,17 @@
 
   function checkUsername(username) {
     const requestObject = {
-      username: username,
+      User:{
+        Username: username,
+      } 
     };
-    postReq("/api/public/checkusername", requestObject, function (xhr) {
+    postReq("/api/account/checkusername", requestObject, function (xhr) {
       var response = xhr.data;
       var msg;
       var color;
       if (response != null) {
-        msg = response.message;
-        color = response.code == "00" ? "green" : "red";
+        msg = response.Message;
+        color = response.Code == "00" ? "green" : "red";
       } else {
         msg = "SERVER ERROR";
         color = "red";
@@ -100,15 +102,15 @@
     }
 
     const requestObject = {
-      user: {
-        displayName: nameField.value,
-        username: usernameField.value,
-        password: passwordField.value,
+      User: {
+        DisplayName: nameField.value,
+        Username: usernameField.value,
+        Password: passwordField.value,
       },
     };
     postReq("/api/account/register", requestObject, function (xhr) {
       var response = xhr.data;
-      if (response != null && response.code == "00") {
+      if (response != null && response.Code == "00") {
         alert("register Success");
         window.location.href = "/account/login";
       } else {

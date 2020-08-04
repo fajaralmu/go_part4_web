@@ -26,6 +26,8 @@ func registerAPIs() {
 	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 	handleAPI("/api/account/login", login, "POST", false)
+	handleAPI("/api/account/checkusername", checkUserName, "POST", false)
+	handleAPI("/api/account/register", register, "POST", false)
 
 	log.Println("END registerAPIs")
 }

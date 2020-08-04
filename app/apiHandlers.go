@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/fajaralmu/go_part4_web/repository"
+
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
@@ -14,12 +16,12 @@ func getEntities(w http.ResponseWriter, r *http.Request) (response entities.WebR
 
 	var request entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&request)
-	broadcast <- "STARTS getEntities"
+	sendBroadcastMessage("start GET entities")
 	if err != nil {
 		return response, err
 	}
 	response, err = Filter(request)
-	broadcast <- "END getEntities"
+	sendBroadcastMessage("end GET entities")
 	return response, err
 
 }
@@ -72,6 +74,34 @@ func savePageSequence(w http.ResponseWriter, r *http.Request) (response entities
 	}
 	updatePageSequence(request)
 	return response, err
+
+}
+
+func checkUserName(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+	var request entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		return response, err
+	}
+	available := isUsernameAvailable(request.User.Username)
+	log.Println("isUsernameAvailable: ", available)
+	if available {
+		return webResponse("00", "username available"), nil
+	}
+	return webResponse("01", "username unavailable"), nil
+}
+func register(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+	var request entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		return response, err
+	}
+	user := request.User
+	repository.CreateNewWithoutValidation(user)
+
+	return webResponse("00", "success"), nil
 
 }
 
