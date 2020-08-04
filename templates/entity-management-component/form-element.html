@@ -1,281 +1,350 @@
 {{define "formElement"}}
-<div class="modal fade" id="modal-entity-form" tabindex="-1"
-	role="dialog" aria-labelledby="Entity Form Modal" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalCenterTitle">{{.EntityProperty.EntityName}}</h5>
-				<!-- <c:if test="${singleRecord == false }"> -->
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				<!-- </c:if> -->
-			</div>
-			<div class="modal-body" style="height: 400px; overflow: scroll;">
-				<div id="entity-form">
+<div
+  class="modal fade"
+  id="modal-entity-form"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="Entity Form Modal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">
+          {{.EntityProperty.EntityName}}
+        </h5>
+        <!-- <c:if test="${singleRecord == false }"> -->
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <!-- </c:if> -->
+      </div>
+      <div class="modal-body" style="height: 400px; overflow: scroll;">
+        <div id="entity-form">
+          <!-- ///////////////ELEMENTS////////////////// -->
+          {{range .EntityProperty.Elements}}
+          <!-- <c:forEach var="element" items="${entityProperty.elements}"> -->
 
-					<!-- ///////////////ELEMENTS////////////////// -->
-					{{range .EntityProperty.Elements}}
-					<!-- <c:forEach var="element" items="${entityProperty.elements}"> -->
+          <div
+            id="form_input_{{.ID}}"
+            groupName="{{.InputGroupname }}"
+            class="entity-input-form ${element.isGrouped() == 'true' ? 'grouped' : '' }"
+            style="grid-template-columns:{{$.EntityProperty.GridAutoColumns}}"
+          >
+            <div class="entity-input-label">
+              <label>{{.LableName }}</label>
+            </div>
+            <div class="entity-input-field">
+              {{ if eq .Type "FIELD_TYPE_FIXED_LIST"}}
+              <select
+                class="input-field form-control"
+                id="{{.ID}}"
+                required="{{.Required }}"
+                identity="{{.Identity }}"
+                itemValueField="{{.OptionValueName}}"
+                itemNameField="{{.OptionItemName}}"
+              >
+              </select>
+              <script>
+                managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
+                managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
+                managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
+                var optionJsonString = "{{.OptionJSONString}}";
 
-						<div id="form_input_{{.ID}}"
-							groupName="{{.InputGroupname }}"
-							class="entity-input-form ${element.isGrouped() == 'true' ? 'grouped' : '' }"
-							style="grid-template-columns: {{$.EntityProperty.GridAutoColumns}}">
-							<div class="entity-input-label">
-								<label>{{.LableName }}</label>
-							</div>
-							<div class="entity-input-field">
-								 
-									 {{ if eq .Type  "FIELD_TYPE_FIXED_LIST"}}
-										<select class="input-field form-control" id="{{.ID}}"
-											required="{{.Required }}"
-											identity="{{.Identity }}"
-											itemValueField="{{.OptionValueName}}"
-											itemNameField="{{.OptionItemName}}">
+                var options;
+                if (optionJsonString != "") {
+                  options = JSON.parse(optionJsonString);
+                } else {
+                  options = [];
+                }
 
-										</select>
-										<script>
-											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
-											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
-											managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
-											var optionJsonString =  "{{.OptionJSONString}}";
+                for (let i = 0; i < options.length; i++) {
+                  const optionItem = options[i];
+                  const option = createHtmlTag({
+                    tagName: "option",
+                    value: optionItem["{{.OptionValueName}}"],
+                    innerHTML: optionItem["{{.OptionItemName}}"],
+                  });
 
-											var options;
-											if(optionJsonString!=""){
-												options = JSON .parse(optionJsonString);
-											}else{
-												options = [];
-											}
-											 
-											for (let i = 0; i < options.length; i++) {
+                  _byId("{{.ID}}").append(option);
+                }
+              </script>
+              {{else if eq .Type "FIELD_TYPE_DYNAMIC_LIST"}}
 
-												const optionItem = options[i];
-												const option = createHtmlTag({
-													tagName : 'option',
-													value : optionItem["{{.OptionValueName}}"],
-													innerHTML : optionItem["{{.OptionItemName}}"]
-												});
+              <input
+                onkeyup="loadList(this)"
+                name="{{.ID}}"
+                id="input-{{.ID}}"
+                class="form-control"
+                type="text"
+              />
+              <br />
+              <select
+                style="width: 200px;"
+                class="input-field form-control"
+                id="{{.ID}}"
+                required="{{.Required}}"
+                multiple="multiple"
+                identity="{{.Identity}}"
+                itemValueField="{{.OptionValueName}}"
+                itemNameField="{{.OptionItemName}}"
+                name="{{.EntityReferenceClass}}"
+              >
+              </select>
+              <script>
+                managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
+                managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
+                managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
+              </script>
+              {{else if eq .Type "FIELD_TYPE_PLAIN_LIST"}}
 
-												_byId("{{.ID}}").append(option);
-											}
-										</script>
-									{{else if eq .Type "FIELD_TYPE_DYNAMIC_LIST"}}
-									 
-										<input onkeyup="loadList(this)" name="{{.ID}}"
-											id="input-{{.ID}}" class="form-control" type="text" />
-										<br />
-										<select style="width: 200px" class="input-field form-control"
-											id="{{.ID}}" required="{{.Required}}"
-											multiple="multiple" identity="{{.Identity}}"
-											itemValueField="{{.OptionValueName}}"
-											itemNameField="{{.OptionItemName}}"
-											name="{{.EntityReferenceClass}}"
-											>
+              <select
+                class="input-field form-control"
+                id="{{.ID}}"
+                required="{{.Required}}"
+                identity="{{.Identity}}"
+                plainlist="true"
+              >
+                {{range .PlainListValues}}
+                <option value="{{.}}}">{{.}}</option>
+                {{end}}
+              </select>
+              {{else if eq .Type "FIELD_TYPE_TEXTAREA"}}
+              <textarea
+                class="input-field form-control"
+                id="{{.ID}}"
+                type="textarea"
+                identity="{{.Identity}}"
+              >
+              </textarea>
+              <!--${element.required?'required':'' }-->
+              {{else if .ShowDetail }}
 
-										</select>
-										<script>
-											managedEntity["valueField_{{.ID}}"] = "{{.OptionValueName}}";
-											managedEntity["itemField_{{.ID}}"] = "{{.OptionItemName}}";
-											managedEntity["valueType_{{.ID}}"] = "{{.OptionValueType}}";
-										</script>
-									{{else if eq .Type "FIELD_TYPE_PLAIN_LIST"}}
-									 
-										<select class="input-field form-control" id="{{.ID}}"
-											required="{{.Required}}"
-											identity="{{.Identity}}" plainlist="true">
-											{{range .PlainListValues}} 
-												<option value="{{.}}}">{{.}}</option>
-										 	{{end}}
+              <input
+                detailfields="${element.detailFields}"
+                showdetail="true"
+                class="input-field"
+                id="${element.id }"
+                type="hidden"
+                name="${element.optionItemName}"
+                disabled="disabled"
+              />
 
-										</select>
-									{{else if eq .Type "FIELD_TYPE_TEXTAREA"}} 
-										<textarea class="input-field form-control" id="{{.ID}}"
-											type="textarea" 
-											identity="{{.Identity}}"> 
-									</textarea>
-									<!--${element.required?'required':'' }-->
-									{{else  if   .ShowDetail  }}
-									 
-										<input detailfields="${element.detailFields}"
-											showdetail="true" class="input-field" id="${element.id }"
-											type="hidden" name="${element.optionItemName}"
-											disabled="disabled" />
+              <button
+                id="btn-detail-${element.id }"
+                class="btn btn-info"
+                onclick="showDetail('${element.id }','${element.optionItemName}' )"
+              >
+                Detail
+              </button>
 
-										<button id="btn-detail-${element.id }" class="btn btn-info"
-											onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
-									 
-									 {{else if and (eq .Type "img" ) (eq .Multiple false)}}
-									 <input class="input-field form-control" id="{{.ID}}"
-											type="file" 
-											identity="{{.Identity}}" />
+              {{else if and (eq .Type "img" ) (eq .Multiple false)}}
+              <input
+                class="input-field form-control"
+                id="{{.ID}}"
+                type="file"
+                identity="{{.Identity}}"
+              />
 
-										<button id="{{.ID}}-file-ok-btn"
-											class="btn btn-primary btn-sm"
-											onclick="addImagesData('{{.ID}}')">ok</button>
+              <button
+                id="{{.ID}}-file-ok-btn"
+                class="btn btn-primary btn-sm"
+                onclick="addImagesData('{{.ID}}')"
+              >
+                ok
+              </button>
 
-										<button id="{{.ID}}-file-cancel-btn"
-											class="btn btn-warning btn-sm"
-											onclick="cancelImagesData('{{.ID}}')">cancel</button>
-										<div>
-											<img id="{{.ID}}-display" width="50" height="50" />
-										</div>
-										{{else if and (eq .Type "img" ) (eq .Multiple true)}} 
-									 
-										<div id="{{.ID}}" name="input-list" class="input-field">
-											<div id="{{.ID}}-0-input-item"
-												class="{{.ID}}-input-item">
+              <button
+                id="{{.ID}}-file-cancel-btn"
+                class="btn btn-warning btn-sm"
+                onclick="cancelImagesData('{{.ID}}')"
+              >
+                cancel
+              </button>
+              <div>
+                <img id="{{.ID}}-display" width="50" height="50" />
+              </div>
+              {{else if and (eq .Type "img" ) (eq .Multiple true)}}
 
-												<input class="input-file" id="{{.ID}}-0" type="file"
-													 
-													identity="{{.Identity}}" />
+              <div id="{{.ID}}" name="input-list" class="input-field">
+                <div id="{{.ID}}-0-input-item" class="{{.ID}}-input-item">
+                  <input
+                    class="input-file"
+                    id="{{.ID}}-0"
+                    type="file"
+                    identity="{{.Identity}}"
+                  />
 
-												<button id="{{.ID}}-0-file-ok-btn "
-													class="btn btn-primary btn-sm"
-													onclick="addImagesData('{{.ID}}-0')">ok</button>
+                  <button
+                    id="{{.ID}}-0-file-ok-btn "
+                    class="btn btn-primary btn-sm"
+                    onclick="addImagesData('{{.ID}}-0')"
+                  >
+                    ok
+                  </button>
 
-												<button id="{{.ID}}-0-file-cancel-btn"
-													class="btn btn-warning btn-sm"
-													onclick="cancelImagesData('{{.ID}}-0')">cancel</button>
+                  <button
+                    id="{{.ID}}-0-file-cancel-btn"
+                    class="btn btn-warning btn-sm"
+                    onclick="cancelImagesData('{{.ID}}-0')"
+                  >
+                    cancel
+                  </button>
 
-												<button id="{{.ID}}-0-remove-list"
-													class="btn btn-danger btn-sm"
-													onclick="removeImageList('{{.ID}}-0')">Remove</button>
+                  <button
+                    id="{{.ID}}-0-remove-list"
+                    class="btn btn-danger btn-sm"
+                    onclick="removeImageList('{{.ID}}-0')"
+                  >
+                    Remove
+                  </button>
 
-												<div>
-													<img id="{{.ID}}-0-display" width="50" height="50" />
-												</div>
-											</div>
-										</div>
-										<button id="{{.ID}}-add-list"
-											onclick="addImageList('{{.ID}}')">Add</button>
-									 
-									{{else if  .Identity  }}
-									 
-										<input class="input-field form-control" disabled="disabled"
-											id="{{.ID}}" type="{{.Type}}" 
-											identity="{{.Identity}}" />
-											<!-- ${element.required?'required':'' } -->
-										{{else}}
-										<input class="input-field form-control" id="{{.ID}}"
-											type="{{.Type}}" 
-											identity="{{.Identity}}" />
-										{{end}}	 
-											<!-- ${element.required?'required':'' } -->
-								<!-- </c:choose> -->
-							</div>
-						</div>
-					{{end}}
-				</div>
+                  <div>
+                    <img id="{{.ID}}-0-display" width="50" height="50" />
+                  </div>
+                </div>
+              </div>
+              <button id="{{.ID}}-add-list" onclick="addImageList('{{.ID}}')">
+                Add
+              </button>
 
-				<!-- </div> -->
-			</div>
-		  <div class="modal-footer">
-				{{if .EntityProperty.Editable }}
-					<button id="btn-submit" class="btn btn-primary">Save
-						Changes</button>
-					<!-- <c:if test="${singleRecord == false }"> -->
-						<button class="btn" id="btn-clear">Clear</button>
-					<!-- </c:if> -->
-				{{end}}
-				<!-- <c:if test="${singleRecord == false }"> -->
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">Close</button>
-				<!-- </c:if> -->
-				<!-- <c:if test="${singleRecord == true }">
+              {{else if .Identity }}
+
+              <input
+                class="input-field form-control"
+                disabled="disabled"
+                id="{{.ID}}"
+                type="{{.Type}}"
+                identity="{{.Identity}}"
+              />
+              <!-- ${element.required?'required':'' } -->
+              {{else}}
+              <input
+                class="input-field form-control"
+                id="{{.ID}}"
+                type="{{.Type}}"
+                identity="{{.Identity}}"
+              />
+              {{end}}
+              <!-- ${element.required?'required':'' } -->
+              <!-- </c:choose> -->
+            </div>
+          </div>
+          {{end}}
+        </div>
+
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        {{if .EntityProperty.Editable }}
+        <button id="btn-submit" class="btn btn-primary">Save Changes</button>
+        <!-- <c:if test="${singleRecord == false }"> -->
+        <button class="btn" id="btn-clear">Clear</button>
+        <!-- </c:if> -->
+        {{end}}
+        <!-- <c:if test="${singleRecord == false }"> -->
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <!-- </c:if> -->
+        <!-- <c:if test="${singleRecord == true }">
 					<a role="button" class="btn btn-secondary"
 						href="<spring:url value="/admin/home" />">Back</a>
 				</c:if> -->
-			</div>  
-		</div>
-	</div>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
-	const groupedInputs = getGroupedInputs();
-	const entityForm = _byId('entity-form');
-	var groupNames = "{{.EntityProperty.GroupNames}}";
-	
-	function arrangeInputs() {
-		if(!groupedInputs) return;
-		
-		entityForm.innerHTML = "";
-		const groupNameArray = groupNames.split(",");
-		for (var i = 0; i < groupNameArray.length; i++) {
-			const groupName = groupNameArray[i];
-			
-			console.debug("Now group name: ", groupName);
-			
-			const groupHeader = getGroupName(i+1, groupName);
-			const elements =  getElementsByGroupName(groupName);
-			const sectionContent = createHtmlTag({
-				tagName:'div',
-				id: 'section-'+groupName,
-				class : 'form-section',
-				ch1: groupHeader, 
-				style: {
-					padding: '5px',
-					margin: '5px', 
-				}
-			})
-			
-			console.debug("Elements length: ", elements.length);
-			for (var e= 0; e < elements.length; e++) {
-				sectionContent.appendChild(elements[e]);
-			}
-			//appendElementsArray(sectionContent, elements);
-			entityForm.appendChild(sectionContent);
-			
-		}
-	}
-	
-	function getElementsByGroupName(groupName){
-		const result = new Array();
-		
-		for (var i = 0; i < groupedInputs.length; i++) {
-			const input = (groupedInputs[i]);
-			if(input.getAttribute('groupName') == groupName){
-				result.push(input);
-			}
-		}
-		
-		return result;
-	}
-	
-	function getGroupedInputs(){
-		const inputs = document.getElementsByClassName('grouped');
-		const result = new Array();
-		if(null == inputs || inputs.length == 0){ return null; }
-		
-		for (var i = 0; i < inputs.length; i++) {
-			const cloned = inputs[i].cloneNode();
-			cloned.innerHTML = inputs[i].innerHTML;
-			result.push(cloned);
-		}
-		return result;
-	} 
-	
-	function getSectionBordersCount(){
-		try{
-			return document.getElementsByClassName("section-border").length;
-		}catch (e) {
-			return 0; 
-		}
-	}
-	 
-	
-	function getGroupName(section, groupName){
-		const h3 = createHtmlTag({
-			tagName: 'h3',
-			innerHTML: section + '  ' + groupName,
-			class: 'section-border'
-		});
-		return h3;
-	}
+  const groupedInputs = getGroupedInputs();
+  const entityForm = _byId("entity-form");
+  var groupNames = "{{.EntityProperty.GroupNames}}";
 
-	if (groupedInputs && groupedInputs.length > 1 ) {
-		arrangeInputs();
-	}
+  function arrangeInputs() {
+    if (!groupedInputs) return;
+
+    entityForm.innerHTML = "";
+    const groupNameArray = groupNames.split(",");
+    for (var i = 0; i < groupNameArray.length; i++) {
+      const groupName = groupNameArray[i];
+
+      console.debug("Now group name: ", groupName);
+
+      const groupHeader = getGroupName(i + 1, groupName);
+      const elements = getElementsByGroupName(groupName);
+      const sectionContent = createHtmlTag({
+        tagName: "div",
+        id: "section-" + groupName,
+        class: "form-section",
+        ch1: groupHeader,
+        style: {
+          padding: "5px",
+          margin: "5px",
+        },
+      });
+
+      console.debug("Elements length: ", elements.length);
+      for (var e = 0; e < elements.length; e++) {
+        sectionContent.appendChild(elements[e]);
+      }
+      //appendElementsArray(sectionContent, elements);
+      entityForm.appendChild(sectionContent);
+    }
+  }
+
+  function getElementsByGroupName(groupName) {
+    const result = new Array();
+
+    for (var i = 0; i < groupedInputs.length; i++) {
+      const input = groupedInputs[i];
+      if (input.getAttribute("groupName") == groupName) {
+        result.push(input);
+      }
+    }
+
+    return result;
+  }
+
+  function getGroupedInputs() {
+    const inputs = document.getElementsByClassName("grouped");
+    const result = new Array();
+    if (null == inputs || inputs.length == 0) {
+      return null;
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+      const cloned = inputs[i].cloneNode();
+      cloned.innerHTML = inputs[i].innerHTML;
+      result.push(cloned);
+    }
+    return result;
+  }
+
+  function getSectionBordersCount() {
+    try {
+      return document.getElementsByClassName("section-border").length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function getGroupName(section, groupName) {
+    const h3 = createHtmlTag({
+      tagName: "h3",
+      innerHTML: section + "  " + groupName,
+      class: "section-border",
+    });
+    return h3;
+  }
+
+  if (groupedInputs && groupedInputs.length > 1) {
+    arrangeInputs();
+  }
 </script>
 
 {{end}}

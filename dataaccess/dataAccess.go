@@ -76,6 +76,11 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 	resType := extractPointerType(result)
 	isSlice := resType.Kind() == reflect.Slice
 	log.Println("FilterLike, ", resType, " isSlice: ", isSlice)
+
+	if !isSlice {
+		fmt.Errorf("\n Given result %v is not a slice! \n", resType.Name())
+	}
+
 	count := 0
 	reflections.EvaluateFilterMap(filter)
 	offset := page * limit
@@ -131,6 +136,9 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 	resType := extractPointerType(result)
 	isSlice := resType.Kind() == reflect.Slice
 	log.Println("FilterMatch, ", resType, " isSlice: ", isSlice)
+	if !isSlice {
+		fmt.Errorf("\n Given result %v is not a slice! \n", resType.Name())
+	}
 	tableName := reflections.GetStructTableNameFromType(resType)
 	count := 0
 	reflections.EvaluateFilterMap(filter)

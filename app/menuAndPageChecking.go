@@ -18,11 +18,13 @@ func defaultSettingPage() *entities.Page {
 }
 
 func getMenuByCode(code string) (menu entities.Menu, ok bool) {
-	list := repository.FilterByKey(&entities.Menu{}, "Code", code)
+	log.Println("getMenuByCode: ", code)
+	list := repository.FilterByKey(&[]entities.Menu{}, "Code", code)
 	if len(list) != 1 {
+		log.Println("Menu (", code, ") Not Found")
 		return menu, false
 	}
-
+	log.Println("Menu (", code, ") Found")
 	return list[0].(entities.Menu), true
 }
 func getPageOnlyByCode(code string) (page entities.Page, ok bool) {

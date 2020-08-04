@@ -102,7 +102,8 @@ func getPersistenctEntities() []reflect.Type {
 }
 
 func validateManagementPage(t reflect.Type) {
-	_, ok := getMenuByCode(t.Name())
+	code := reflections.ToSnakeCase(t.Name(), true)
+	_, ok := getMenuByCode(code)
 	if !ok {
 		addNewManagementMenuPageFor(t)
 	}
