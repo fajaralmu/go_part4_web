@@ -26,7 +26,12 @@ func getWebFiles() []string {
 
 func getProfile() entities.Profile {
 	profiles := repository.FilterByKey(&[]entities.Profile{}, "AppCode", "123")
-	return profiles[0].(entities.Profile)
+	if len(profiles) > 0 {
+		return profiles[0].(entities.Profile)
+	}
+	return entities.Profile{
+		Name: "Undefined",
+	}
 }
 
 func getMuxParam(r *http.Request, param string) string {

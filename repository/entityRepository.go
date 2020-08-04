@@ -109,10 +109,12 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 
 //FilterByKey get list of obj by key match given value
 func FilterByKey(models interface{}, key string, val interface{}) []interface{} {
+	log.Println("FilterByKey: ", key, " val: ", val)
 	var list []interface{}
-	list, _ = dataaccess.FilterMatch(models, map[string]interface{}{
+	list, count := dataaccess.FilterMatch(models, map[string]interface{}{
 		key: val,
 	}, 0, 0, "", "")
+	log.Println("res size: ", len(list), count)
 	return list
 }
 

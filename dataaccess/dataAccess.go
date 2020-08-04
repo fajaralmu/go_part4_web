@@ -122,17 +122,24 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 
 }
 
+func extractPointerType(pointer interface{}) reflect.Type {
+	return reflect.TypeOf(reflect.ValueOf(pointer).Elem().Interface())
+}
+
 //FilterMatch queries by equals clause
 func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
+	resType := extractPointerType(result)
+	log.Println("FilterMatch, ", resType)
+	tableName := reflections.GetStructTableNameFromType(resType)
 	count := 0
 	reflections.EvaluateFilterMap(filter)
 	offset := page * limit
 
 	dbOperation(func() {
-
 		//process count
-		databaseConnection.Where(filter).Find(result).Count(&count)
-		//end count
+		// res := &result
+		databaseConnection.Where(filter).Table(tableName).Count(&count)
+		log.Println("//end count: ", count)
 		if count == 0 {
 			return
 		}
@@ -162,6 +169,7 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 		}
 
 	})
+	fmt.Println("result: ", result)
 	result = reflections.ToInterfaceSlice(result)
 	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
 	return result.([]interface{}), count

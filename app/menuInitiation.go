@@ -16,7 +16,6 @@ func initMenus() {
 	log.Println("////////////////////MenuInitiationService INITIALIZE////////////////////")
 	defaultAdminPage()
 	defaultAboutPage()
-	checkDefaultMenu()
 	checkManagementPage()
 	checkAdminMenus()
 
@@ -34,8 +33,8 @@ func defaultSettingPage() *entities.Page {
 func checkAdminMenus() {
 	log.Println("STARTS checkAdminMenus")
 	methods := []string{
-		"/admin/home",
-		"/admin/pagesettings",
+		"/home",
+		"/pagesettings",
 	}
 
 	baseMapping := "/admin"
@@ -50,11 +49,13 @@ func checkAdminMenus() {
 
 func checkAdminMenu(baseMapping string, path string) {
 	menuCode := reflections.GetWordsAfterLastChar(path, "/")
+	menuCode = strings.Replace(menuCode, "/", "", -1)
 	_, ok := getMenuByCode(menuCode)
+	log.Println("getMenuByCode ", menuCode, " OK:", ok)
 	if !ok {
 
 		adminMenu := constructAdminMenu(baseMapping + path)
-		repository.SaveAndValidate(&adminMenu)
+		repository.CreateNewWithoutValidation(&adminMenu)
 	}
 
 }
@@ -69,7 +70,7 @@ func getMenuByCode(code string) (menu entities.Menu, ok bool) {
 }
 func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
 	log.Println("getPageOnlyByCode: ", code)
-	list := repository.FilterByKey(&page, "Code", code)
+	list := repository.FilterByKey(&[]entities.Page{}, "Code", code)
 	if len(list) != 1 {
 		log.Println("fails END getPageOnlyByCode: ", code)
 		return page, false
@@ -83,17 +84,18 @@ func constructAdminMenu(path string) entities.Menu {
 	log.Println("constructAdminMenu LINK: ", path)
 	menuCode := reflections.GetWordsAfterLastChar(path, "/")
 	defAdminPage := defaultAdminPage()
+	log.Println("defAdminPage ID", defAdminPage.ID)
 	adminMenu := entities.Menu{
 		Code:            menuCode,
 		Color:           "#000000",
 		BackgroundColor: "#ffffff",
 		Description:     "Generated [" + menuCode + "]",
-		Name:            strings.ToUpper(menuCode) + "(auto)",
+		Name:            strings.ToUpper(menuCode),
 		URL:             path,
 		PageID:          uint16(defAdminPage.ID),
+		IconURL:         "DefaultIcon.bmp",
 	}
-	adminMenu.MenuPage = &entities.Page{}
-
+	adminMenu.MenuPage = defAdminPage
 	return adminMenu
 }
 
@@ -174,6 +176,7 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 		PageID:          uint16(managementPage.ID),
 		Color:           "#000000",
 		BackgroundColor: "#ffffff",
+		IconURL:         "DefaultIcon.bmp",
 		Description:     "Generated Management Page for: " + t.Name(),
 	}
 	// menu.Validate()
@@ -186,11 +189,6 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 	repository.CreateNewWithoutValidation(&menu)
 
 	log.Println("Success Adding Management Menu For: ", menuCode)
-}
-
-func checkDefaultMenu() {
-	getMenu("management", config_defaultManagementMenu, defaultAdminPage())
-	getMenu("pagesettings", config_defaultPageSettingMenu, defaultAdminPage())
 }
 
 func getMenu(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {

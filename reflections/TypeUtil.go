@@ -2,6 +2,7 @@ package reflections
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -22,6 +23,15 @@ func GetStructTableName(object interface{}) string {
 	return ToSnakeCase(typeName.Name(), true)
 }
 
+//GetStructTableNameFromType returns snake cased of struct name
+func GetStructTableNameFromType(t reflect.Type) string {
+	isSlice := t.Kind() == reflect.Slice
+	if isSlice {
+		t = t.Elem()
+	}
+	return ToSnakeCase(t.Name(), true)
+}
+
 //ToInterfaceSlice converts var slice to slice of interface
 func ToInterfaceSlice(object interface{}) []interface{} {
 
@@ -29,6 +39,7 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 	result := []interface{}{}
 	s := reflect.ValueOf(rawSlice)
 	// rawSlice = Dereference()
+	log.Println("reflect.TypeOf(rawSlice).Kind(): ", reflect.TypeOf(rawSlice).Kind())
 	switch reflect.TypeOf(rawSlice).Kind() {
 	case reflect.Slice:
 
@@ -37,6 +48,8 @@ func ToInterfaceSlice(object interface{}) []interface{} {
 			//fmt.Println("Result item ", i, ":", item)
 			result = append(result, item)
 		}
+	case reflect.Struct:
+		// result = append(result, rawSlice)
 	}
 	return result
 }
