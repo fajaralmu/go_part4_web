@@ -63,6 +63,8 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 
 func registerWebPages() {
 
+	///////////// WEB PAGES /////////////
+
 	log.Println("START Register Web Pages")
 	handleMvc("/home", homeRoute, "GET", false)
 	handleMvc("/public/about", homeRoute, "GET", false)
@@ -76,6 +78,9 @@ func registerWebPages() {
 	handleMvc("/account/register", registerRoute, "GET", false)
 	handleMvc("/account/logout", logoutRoute, "GET", false)
 
+	///////////// Web Socket /////////////
+	handleWebsocket("/chat", wsRoute)
+
 	/////STATIC RESOURCES/////
 
 	// fs := http.StripPrefix("/static/", fileServer())
@@ -88,6 +93,10 @@ func registerWebPages() {
 // func fileServer() http.Handler {
 // 	return http.FileServer(http.Dir("./public/"))
 // }
+
+func handleWebsocket(path string, handler func(w http.ResponseWriter, r *http.Request)) {
+	router.HandleFunc(path, handler)
+}
 
 func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
 
