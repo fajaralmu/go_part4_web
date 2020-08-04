@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
+
+var clients = make(map[*websocket.Conn]bool)
+var broadcast = make(chan string)
 
 func sendMessage_(w http.ResponseWriter, r *http.Request, message string) {
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
@@ -35,7 +40,8 @@ func sendMessage_(w http.ResponseWriter, r *http.Request, message string) {
 
 func wsRoute(w http.ResponseWriter, r *http.Request) {
 	conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
-
+	clients[conn] = true
+	defer conn.Close()
 	for {
 		// Read message from browser
 		msgType, msg, err := conn.ReadMessage()
@@ -51,6 +57,26 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 		if err = conn.WriteMessage(msgType, msg); err != nil {
 			log.Println("ERROR WriteMessage", err.Error())
 			return
+		}
+		broadcast <- string(msg)
+		log.Println("...")
+	}
+}
+
+func handleMessages() {
+	for {
+		// Grab the next message from the broadcast channel
+		log.Println("handleMessages()")
+		msg := <-broadcast
+		log.Println("msg:", msg)
+		// Send it out to every client that is currently connected
+		for client := range clients {
+			err := client.WriteJSON(struct{ Msg string }{msg})
+			if err != nil {
+				log.Printf("error: %v", err)
+				client.Close()
+				delete(clients, client)
+			}
 		}
 	}
 }

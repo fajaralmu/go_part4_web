@@ -35,9 +35,11 @@ func Init() {
 		newEConf(entities.Profile{}, []entities.Profile{}, 1))
 	registerSessions()
 	initMenus()
+
 }
 
 func Run() {
+	go handleMessages()
 	initWebApp()
 
 	// webReq := entities.WebRequest{
