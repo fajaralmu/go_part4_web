@@ -74,8 +74,11 @@ func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool
 	return model.(entities.InterfaceEntity), count > 0
 }
 
-//FilterLike queries by like clause
+//FilterLike queries by like clause,  results must be a slice
 func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
+	resType := extractPointerType(result)
+	isSlice := resType.Kind() == reflect.Slice
+	log.Println("FilterLike, ", resType, " isSlice: ", isSlice)
 	count := 0
 	reflections.EvaluateFilterMap(filter)
 	offset := page * limit
@@ -126,10 +129,11 @@ func extractPointerType(pointer interface{}) reflect.Type {
 	return reflect.TypeOf(reflect.ValueOf(pointer).Elem().Interface())
 }
 
-//FilterMatch queries by equals clause
+//FilterMatch queries by equals clause, results must be a slice
 func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
 	resType := extractPointerType(result)
-	log.Println("FilterMatch, ", resType)
+	isSlice := resType.Kind() == reflect.Slice
+	log.Println("FilterMatch, ", resType, " isSlice: ", isSlice)
 	tableName := reflections.GetStructTableNameFromType(resType)
 	count := 0
 	reflections.EvaluateFilterMap(filter)

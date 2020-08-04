@@ -36,9 +36,10 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("api-START///////////URI: ", r.RequestURI)
 			preHandleResult := apiPreHandle(w, r, authenticated)
+			
 			if preHandleResult == false {
-				if authenticated {
 
+				if authenticated {
 					writeErrorMsgBadRequest(w, "Invalid Request 01")
 					return
 				}

@@ -107,7 +107,7 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 	return nil
 }
 
-//FilterByKey get list of obj by key match given value
+//FilterByKey get list of obj by key match given value, models must be a slice
 func FilterByKey(models interface{}, key string, val interface{}) []interface{} {
 	log.Println("FilterByKey: ", key, " val: ", val)
 	var list []interface{}
@@ -118,7 +118,7 @@ func FilterByKey(models interface{}, key string, val interface{}) []interface{} 
 	return list
 }
 
-//Filter searches in DB by given parameters
+//Filter searches in DB by given parameters, models must be a slice
 func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	//	models := toSliceOfInterfaceEntity(sliceOfModel)
 	fmt.Println("model type: ", reflect.TypeOf(models))

@@ -11,6 +11,8 @@ import (
 	"github.com/fajaralmu/go_part4_web/repository"
 )
 
+var baseAdminMapping string = "/admin"
+
 func initMenus() {
 
 	log.Println("////////////////////MenuInitiationService INITIALIZE////////////////////")
@@ -23,60 +25,16 @@ func initMenus() {
 	log.Println("////////////////////END MENU INITIALIZE////////////////////")
 }
 
-func defaultAboutPage() *entities.Page {
-	return getPage("about", config_defaultAboutPage)
-}
-func defaultSettingPage() *entities.Page {
-	return getPage("setting", config_defaultSettingPage)
-
-}
 func checkAdminMenus() {
 	log.Println("STARTS checkAdminMenus")
-	methods := []string{
-		"/home",
-		"/pagesettings",
-	}
 
-	baseMapping := "/admin"
+	methods := []string{"/home", "/pagesettings"}
 
 	for _, method := range methods {
-
-		checkAdminMenu(baseMapping, method)
-
+		checkAdminMenu(baseAdminMapping, method)
 	}
+
 	log.Println("ENDS checkAdminMenus")
-}
-
-func checkAdminMenu(baseMapping string, path string) {
-	menuCode := reflections.GetWordsAfterLastChar(path, "/")
-	menuCode = strings.Replace(menuCode, "/", "", -1)
-	_, ok := getMenuByCode(menuCode)
-	log.Println("getMenuByCode ", menuCode, " OK:", ok)
-	if !ok {
-
-		adminMenu := constructAdminMenu(baseMapping + path)
-		repository.CreateNewWithoutValidation(&adminMenu)
-	}
-
-}
-
-func getMenuByCode(code string) (menu entities.Menu, ok bool) {
-	list := repository.FilterByKey(&entities.Menu{}, "Code", code)
-	if len(list) != 1 {
-		return menu, false
-	}
-
-	return list[0].(entities.Menu), true
-}
-func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
-	log.Println("getPageOnlyByCode: ", code)
-	list := repository.FilterByKey(&[]entities.Page{}, "Code", code)
-	if len(list) != 1 {
-		log.Println("fails END getPageOnlyByCode: ", code)
-		return page, false
-	}
-	log.Println("success END getPageOnlyByCode: ", code)
-	return list[0].(entities.Page), true
 }
 
 func constructAdminMenu(path string) entities.Menu {
@@ -85,6 +43,7 @@ func constructAdminMenu(path string) entities.Menu {
 	menuCode := reflections.GetWordsAfterLastChar(path, "/")
 	defAdminPage := defaultAdminPage()
 	log.Println("defAdminPage ID", defAdminPage.ID)
+
 	adminMenu := entities.Menu{
 		Code:            menuCode,
 		Color:           "#000000",
@@ -109,19 +68,6 @@ func managementPage() *entities.Page {
 
 func adminPage() *entities.Page {
 	return config_defaultAdminPage
-}
-
-func getPage(code string, defaultPageIfNotExist *entities.Page) *entities.Page {
-	page, ok := getPageOnlyByCode(code)
-	if ok {
-		log.Printf("page with code: %v FOUND! \n", code)
-		return &page
-	}
-	log.Printf("WILL SAVE page : %v...", code)
-	peg := defaultPageIfNotExist
-	repository.CreateNewWithoutValidation(peg)
-	log.Println("defaultPageIfNotExist ID: ", peg.ID)
-	return defaultPageIfNotExist
 }
 
 func checkManagementPage() {
@@ -166,7 +112,7 @@ func validateManagementPage(t reflect.Type) {
 func addNewManagementMenuPageFor(t reflect.Type) {
 	log.Println("Will add default menu for: ", t.Name())
 
-	commonPage := true //= dto.commonManagementPage();
+	commonPage := false //= dto.commonManagementPage();
 	menuCode := reflections.ToSnakeCase(t.Name(), true)
 	managementPage, _ := getPageOnlyByCode("management")
 	menu := entities.Menu{
@@ -181,7 +127,7 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 	}
 	// menu.Validate()
 	if commonPage {
-		menu.URL = ("/management/" + menuCode)
+		menu.URL = ("/management/common/" + menuCode)
 	} else {
 		menu.URL = ("/management/" + menuCode)
 	}
@@ -191,28 +137,10 @@ func addNewManagementMenuPageFor(t reflect.Type) {
 	log.Println("Success Adding Management Menu For: ", menuCode)
 }
 
-func getMenu(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {
-	eixsitingPage := getPage(menuPage.Code, menuPage)
-	existingMenu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
-	if ok {
-		log.Printf("menu: %v FOUND!", code)
-		return &existingMenu
-	}
-
-	log.Println("WILL SAVE menu with :", code)
-
-	menu := defaultMenuIfNotExist
-	menu.MenuPage = &entities.Page{}
-	menu.PageID = uint16(eixsitingPage.ID)
-	// menu.Validate()
-	log.Println("00000000 menu.PageID:", menu.PageID)
-	repository.SaveAndValidate(menu)
-	return menu
-}
-
 func resetAllMenus() {
 	allMenus := &[]entities.Menu{}
 	menus, _ := repository.Filter(allMenus, entities.Filter{})
+
 	log.Println("Will reset allMenus")
 	for _, item := range menus {
 		repository.Delete(item.(entities.Menu), false)
@@ -223,6 +151,7 @@ func resetAllMenus() {
 	for _, item := range page {
 		repository.Delete(item.(entities.InterfaceEntity), false)
 	}
+
 	log.Println("////////END REMOVING/////////")
 	initMenus()
 	log.Println("//////////////END RESET//////////////")
