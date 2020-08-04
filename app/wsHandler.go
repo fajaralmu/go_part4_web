@@ -6,6 +6,33 @@ import (
 	"net/http"
 )
 
+func sendMessage_(w http.ResponseWriter, r *http.Request, message string) {
+	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
+	if nil != err {
+		log.Println("err: ", err.Error())
+		return
+	}
+	for {
+		// // Read message from browser
+		// msgType, msg, err := conn.ReadMessage()
+		// if err != nil {
+		// 	log.Println("ERROR ReadMessage", err.Error())
+		// 	return
+		// }
+
+		// Print the message to the console
+		// fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), string(msg))
+
+		// Write message back to browser
+		msg := []byte(message)
+		fmt.Println("[]byte(message): ", msg)
+		if err := conn.WriteMessage(1, msg); err != nil {
+			log.Println("ERROR WriteMessage", err.Error())
+			return
+		}
+	}
+}
+
 func wsRoute(w http.ResponseWriter, r *http.Request) {
 	conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 
@@ -18,7 +45,7 @@ func wsRoute(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Print the message to the console
-		fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), string(msg))
+		fmt.Printf("%s sent: %s %v \n", conn.RemoteAddr(), string(msg), msgType)
 
 		// Write message back to browser
 		if err = conn.WriteMessage(msgType, msg); err != nil {

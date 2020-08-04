@@ -50,12 +50,18 @@ func (c *customStaticHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	//CHECK MIME TYPE//
 	extension := reflections.GetFileExtention(fileInfo.Name())
-	if strings.ToLower(extension) == "js" {
+
+	switch strings.ToLower(extension) {
+	case "js":
 		extension = "text/javascript"
-	} else if strings.ToLower(extension) == "css" {
+	case "css":
 		extension = "text/css"
+	case "html":
+		extension = "text/html"
 	}
+
 	w.Header().Add("Content-Type", extension)
 	w.Header().Add("inf0", "123-static")
 	w.Write((b))

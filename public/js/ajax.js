@@ -2,7 +2,7 @@ function postReq(url, requestObject, callback, blob) {
 	 infoLoading();
 	var request = new XMLHttpRequest();
 	var param = JSON.stringify(requestObject);
-	request.open("POST", url, true);
+	request.open("POST", url, true); 
 	request.setRequestHeader("Content-type", "application/json");
 	request.setRequestHeader("requestToken", document.getElementById("token-value").value);
 	request.setRequestHeader("requestId", document.getElementById("request-id").value);

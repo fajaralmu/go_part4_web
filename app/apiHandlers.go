@@ -19,6 +19,7 @@ func getEntities(w http.ResponseWriter, r *http.Request) (response entities.WebR
 		return response, err
 	}
 	response, err = Filter(request)
+
 	return response, err
 
 }
