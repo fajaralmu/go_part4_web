@@ -13,25 +13,26 @@ import (
 
 var initiated bool = false
 
-func newEConf(single interface{}, list interface{}) *appConfig.EntityConfig {
+func newEConf(single interface{}, list interface{}, FormInputColumn int) *appConfig.EntityConfig {
 	singleType := reflect.TypeOf(single)
 	log.Println("create CONFIG: ", singleType.Name())
 	return &appConfig.EntityConfig{
-		Name:       reflections.ToSnakeCase(singleType.Name(), true),
-		ListType:   reflect.TypeOf(list),
-		SingleType: reflect.TypeOf(single),
+		Name:            reflections.ToSnakeCase(singleType.Name(), true),
+		ListType:        reflect.TypeOf(list),
+		SingleType:      reflect.TypeOf(single),
+		FormInputColumn: FormInputColumn,
 	}
 }
 
 func Init() {
 	router = mux.NewRouter()
 	initiated = true
-	appConfig.PutConfig(newEConf(entities.User{}, []entities.User{}),
-		newEConf(entities.UserRole{}, []entities.UserRole{}),
-		newEConf(entities.RegisteredRequest{}, []entities.RegisteredRequest{}),
-		newEConf(entities.Menu{}, []entities.Menu{}),
-		newEConf(entities.Page{}, []entities.Page{}),
-		newEConf(entities.Profile{}, []entities.Profile{}))
+	appConfig.PutConfig(newEConf(entities.User{}, []entities.User{}, 1),
+		newEConf(entities.UserRole{}, []entities.UserRole{}, 1),
+		newEConf(entities.RegisteredRequest{}, []entities.RegisteredRequest{}, 2),
+		newEConf(entities.Menu{}, []entities.Menu{}, 2),
+		newEConf(entities.Page{}, []entities.Page{}, 2),
+		newEConf(entities.Profile{}, []entities.Profile{}, 1))
 	registerSessions()
 	initMenus()
 }

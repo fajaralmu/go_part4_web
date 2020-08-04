@@ -326,6 +326,7 @@ type EntityProperty struct {
 	IgnoreBaseField      bool
 	IsQuestionare        bool
 	GroupNames           string
+	GridAutoColumns      string
 }
 
 func (e *EntityProperty) setElementJsonList() {
@@ -401,11 +402,13 @@ func (e *EntityProperty) setGroupNames(groupNamesArray []string) {
 //		}
 //	}
 
-func (e *EntityProperty) getGridTemplateColumns() string {
+func (e *EntityProperty) setGridTemplateColumns() {
 	if e.FormInputColumn == 2 {
-		return "20% 70%"
+		e.GridAutoColumns = "20% 70%"
+	} else {
+		e.GridAutoColumns = strings.Repeat("auto ", e.FormInputColumn)
 	}
-	return strings.Repeat("auto ", e.FormInputColumn)
+
 }
 
 func (e *EntityProperty) determineIdField() {

@@ -74,7 +74,7 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 
 		return errors.New("Invalid Request, entityConf Not Found")
 	}
-	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType)
+	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType, entityConf.FormInputColumn)
 
 	pageData := pageData{
 		PageCode:       "entityManagementPage",
@@ -85,6 +85,7 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 			"./templates/entity-management-component/detail-element.html", "./templates/entity-management-component/form-element.html",
 		},
 	}
+	pageData.setStylePath("entitymanagement")
 	return executeWebContents(pageData, w, r)
 }
 

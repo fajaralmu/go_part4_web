@@ -23,8 +23,7 @@ func InitDatabase() {
 }
 
 func dbOperation(operation func()) {
-	println("_______________________________")
-	println("will init DB")
+	println("_______________________________ will init DB")
 	var err error
 	databaseConnection, err = gorm.Open("mysql", "root@(localhost:3306)/base_app_go?charset=utf8&parseTime=True&loc=Local")
 	if nil != err {
@@ -33,9 +32,7 @@ func dbOperation(operation func()) {
 		defer databaseConnection.Close()
 		databaseConnection.SingularTable(true)
 		databaseConnection.LogMode(true)
-		println("success init DB")
-
-		println("*****operation BEGINS*****")
+		println("success init DB, Operation BEGINS*****")
 		operation()
 		println("*****operation ENDS*****")
 
@@ -232,17 +229,3 @@ func deleteModelPermanently(model entities.InterfaceEntity) {
 	databaseConnection.Unscoped().Delete(model)
 	println("model deleted permanently")
 }
-
-/**
-	//long and bored code
-t := reflect.TypeOf(*&model)
-if t.Kind() == reflect.Struct {
-	for i := 0; i < t.NumField(); i++ {
-		structField := t.Field(i)
-		fmt.Println(structField.Type, structField.Name)
-	}
-} else {
-	fmt.Println("not a stuct")
-}
-
-*/

@@ -11,7 +11,7 @@ import (
 )
 
 //CreateEntityProperty creates entity field properties
-func CreateEntityProperty(clazz reflect.Type) EntityProperty {
+func CreateEntityProperty(clazz reflect.Type, inputColumn int) EntityProperty {
 	additionalObjectList := map[string][]interface{}{}
 	log.Println("~~~~~~~~~~CreateEntityProperty~~~~~~~~~~~")
 	// if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
@@ -29,6 +29,7 @@ func CreateEntityProperty(clazz reflect.Type) EntityProperty {
 		IgnoreBaseField: ignoreBaseField,
 		EntityName:      reflections.ToSnakeCase(clazz.Name(), false),
 		IsQuestionare:   isQuestionare,
+		FormInputColumn: inputColumn,
 	}
 
 	// // try {
@@ -104,15 +105,10 @@ func CreateEntityProperty(clazz reflect.Type) EntityProperty {
 	entityProperty.DetailFieldName = (fieldToShowDetail)
 	entityProperty.FieldNames = sliceOfStringToJSONString(fieldNames)
 	entityProperty.FieldNameList = (fieldNames)
-	entityProperty.FormInputColumn = 1 //dto.formInputColumn().value)
 	entityProperty.determineIdField()
-
+	entityProperty.setGridTemplateColumns()
 	// log.Println("============ENTITY PROPERTY: {} ", entityProperty)
 
 	return entityProperty
-	// } catch (Exception e) {
-	// 	e.printStackTrace()
-	// 	throw e
-	// }
 
 }

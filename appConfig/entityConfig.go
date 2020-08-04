@@ -9,9 +9,10 @@ import (
 var entityConfigMap map[string]*EntityConfig = map[string]*EntityConfig{}
 
 type EntityConfig struct {
-	Name       string
-	ListType   reflect.Type
-	SingleType reflect.Type
+	Name            string
+	ListType        reflect.Type
+	SingleType      reflect.Type
+	FormInputColumn int
 }
 
 //GetEntityConf returns *entityConfig

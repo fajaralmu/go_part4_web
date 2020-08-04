@@ -22,7 +22,7 @@
 						<div id="form_input_{{.ID}}"
 							groupName="{{.InputGroupname }}"
 							class="entity-input-form ${element.isGrouped() == 'true' ? 'grouped' : '' }"
-							style="grid-template-columns:  20px 80px">
+							style="grid-template-columns: {{$.EntityProperty.GridAutoColumns}}">
 							<div class="entity-input-label">
 								<label>{{.LableName }}</label>
 							</div>
