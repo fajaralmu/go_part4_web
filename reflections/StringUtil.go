@@ -24,6 +24,7 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 	for key, value := range filter {
 
 		strItem := "`"
+		//check join columns
 		if strings.Contains(key, ".") {
 			stringRaw := strings.Split(key, ".")
 			strItem += stringRaw[0] + "`.`" + stringRaw[1]

@@ -114,14 +114,7 @@ func FilterLike(resultModels interface{}, filter map[string]interface{}, page in
 		if count == 0 {
 			return
 		}
-		db := databaseConnection.Offset(offset)
-		if limit > 0 {
-			db = db.Limit(limit)
-		}
-		if orderBy != "" {
-			orderClause := createOrderClause(orderBy, orderType)
-			db = db.Order(orderClause)
-		}
+		db := createDBConnection(databaseConnection, offset, limit, orderBy, orderType)
 		if len(joinColumns) > 0 {
 			for _, s := range joinColumns {
 				db = db.Joins(s)
@@ -162,14 +155,7 @@ func FilterMatch(resultModels interface{}, filter map[string]interface{}, page i
 		if count == 0 {
 			return
 		}
-		db := databaseConnection.Offset(offset)
-		if limit > 0 {
-			db = db.Limit(limit)
-		}
-		if orderBy != "" {
-			orderClause := createOrderClause(orderBy, orderType)
-			db = db.Order(orderClause)
-		}
+		db := createDBConnection(databaseConnection, offset, limit, orderBy, orderType)
 		//Finally
 		db.Find(resultModels, filter)
 	})
@@ -178,6 +164,28 @@ func FilterMatch(resultModels interface{}, filter map[string]interface{}, page i
 	fmt.Println("Result list size: ", len(resultModels.([]interface{})), "total data: ", count)
 	return resultModels.([]interface{}), count
 
+}
+
+func createDBConnection(databaseConnection *gorm.DB, offset int, limit int, orderBy string, orderType string) *gorm.DB {
+	db := databaseConnection.Offset(offset)
+	db = checkLimit(db, limit)
+	db = checkOrderClause(db, orderBy, orderType)
+	return db
+}
+
+func checkLimit(db *gorm.DB, limit int) *gorm.DB {
+	if limit > 0 {
+		db = db.Limit(limit)
+	}
+	return db
+}
+
+func checkOrderClause(db *gorm.DB, orderBy string, orderType string) *gorm.DB {
+	if orderBy != "" {
+		orderClause := createOrderClause(orderBy, orderType)
+		db = db.Order(orderClause)
+	}
+	return db
 }
 
 func extractPointerType(pointer interface{}) reflect.Type {
