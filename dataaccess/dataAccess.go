@@ -149,7 +149,6 @@ func FilterMatch(resultModels interface{}, filter map[string]interface{}, page i
 		//Finally
 		db.Find(resultModels, filter)
 	})
-	fmt.Println("result: ", resultModels)
 	resultModels = reflections.ToInterfaceSlice(resultModels)
 	fmt.Println("Result list size: ", len(resultModels.([]interface{})), "total data: ", count)
 	return resultModels.([]interface{}), count

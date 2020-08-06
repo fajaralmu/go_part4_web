@@ -32,10 +32,19 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 			strItem += ToSnakeCase(key, true)
 		}
 
-		strItem += "` like ?"
-		likeStrs = append(likeStrs, strItem)
-		valueAsString := fmt.Sprintf("%v", value)
-		args = append(args, "%"+(valueAsString)+"%")
+		if strings.HasSuffix(strItem, "_[exacts_]") {
+			strItem = strings.Replace(strItem, "_[exacts_]", "", -1)
+			strItem += "` = ?"
+			likeStrs = append(likeStrs, strItem)
+			valueAsString := fmt.Sprintf("%v", value)
+			args = append(args, (valueAsString))
+		} else {
+			strItem += "` like ?"
+			likeStrs = append(likeStrs, strItem)
+			valueAsString := fmt.Sprintf("%v", value)
+			args = append(args, "%"+(valueAsString)+"%")
+		}
+
 	}
 	fmt.Println("likeStrs: ", likeStrs)
 	result = strings.Join(likeStrs, " AND ")
