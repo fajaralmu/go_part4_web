@@ -56,3 +56,14 @@ func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, 
 	}
 	return result, true
 }
+
+//GetCustomTagKey returns tag value
+func GetCustomTagKey(field reflect.StructField, key string) string {
+	customTag, ok := GetMapOfTag(field, "custom")
+
+	if !ok {
+		return ""
+	}
+	return customTag[key]
+
+}

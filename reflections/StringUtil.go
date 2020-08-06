@@ -54,6 +54,11 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 	for i, char := range camelCased {
 
 		_char := string(char)
+		if _char == "_" {
+			result += "_"
+			continue
+		}
+
 		if i > 0 && isUpperCase(_char) && currentUpperCase == false {
 			currentUpperCase = true
 			if i > 1 {
@@ -75,6 +80,7 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 			}
 
 		}
+
 	}
 
 	if lowerCaseResult {

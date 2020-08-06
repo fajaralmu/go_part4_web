@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 
 	"github.com/fajaralmu/go_part4_web/entities"
 	"github.com/fajaralmu/go_part4_web/reflections"
@@ -80,8 +81,8 @@ func createOrderClause(orderBy, orderType string) string {
 }
 
 //FilterLike queries by like clause,  results must be a slice
-func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
-	resType := extractPointerType(result)
+func FilterLike(resultModels interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
+	resType := extractPointerType(resultModels)
 	isSlice := resType.Kind() == reflect.Slice
 	log.Println("FilterLike, ", resType, " isSlice: ", isSlice)
 
@@ -90,17 +91,18 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 	}
 
 	count := 0
-	sliceDeref := reflect.ValueOf(result).Elem().Interface()
+	sliceDeref := reflect.ValueOf(resultModels).Elem().Interface()
 	underlyingType := reflections.GetUnderlyingSliceType(sliceDeref)
 	reflections.EvaluateFilterMap(filter, underlyingType)
-	offset := page * limit
+	joinColumns := getJoinQueries(filter, underlyingType)
 
 	dbOperation(func() {
 
+		offset := page * limit
 		whereClauses := reflections.CreateLikeQueryString(filter)
 
 		//process count
-		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(result).Count(&count)
+		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(resultModels).Count(&count)
 		//end count
 		if count == 0 {
 			return
@@ -113,37 +115,41 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 			orderClause := createOrderClause(orderBy, orderType)
 			db = db.Order(orderClause)
 		}
+		if len(joinColumns) > 0 {
+			for _, s := range joinColumns {
+				db = db.Joins(s)
+			}
+		}
 
-		db.Find(result, whereClauses...)
+		db.Find(resultModels, whereClauses...)
 	})
-	result = reflections.ToInterfaceSlice(result)
-	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
-	return result.([]interface{}), count
+	resultModels = reflections.ToInterfaceSlice(resultModels)
+	fmt.Println("Result list size: ", len(resultModels.([]interface{})), "total data: ", count)
+	return resultModels.([]interface{}), count
 
-}
-
-func extractPointerType(pointer interface{}) reflect.Type {
-	return reflect.TypeOf(reflect.ValueOf(pointer).Elem().Interface())
 }
 
 //FilterMatch queries by equals clause, results must be a slice
-func FilterMatch(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
-	resType := extractPointerType(result)
+func FilterMatch(resultModels interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
+	resType := extractPointerType(resultModels)
 	isSlice := resType.Kind() == reflect.Slice
 	log.Println("FilterMatch, ", resType, " isSlice: ", isSlice)
+
 	if !isSlice {
-		fmt.Errorf("\n Given result %v is not a slice! \n", resType.Name())
+		fmt.Errorf("Given result %v is not a slice!", resType.Name())
 	}
+
 	tableName := reflections.GetStructTableNameFromType(resType)
 	count := 0
-	sliceDeref := reflect.ValueOf(result).Elem().Interface()
+	sliceDeref := reflect.ValueOf(resultModels).Elem().Interface()
 	underlyingType := reflections.GetUnderlyingSliceType(sliceDeref)
 	reflections.EvaluateFilterMap(filter, underlyingType)
-	offset := page * limit
 
 	dbOperation(func() {
+
+		offset := page * limit
+
 		//process count
-		// res := &result
 		databaseConnection.Where(filter).Table(tableName).Count(&count)
 		log.Println("//end count: ", count)
 		if count == 0 {
@@ -158,14 +164,50 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 			db = db.Order(orderClause)
 		}
 		//Finally
-		db.Find(result, filter)
+		db.Find(resultModels, filter)
 	})
-	fmt.Println("result: ", result)
-	result = reflections.ToInterfaceSlice(result)
-	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
-	return result.([]interface{}), count
+	fmt.Println("result: ", resultModels)
+	resultModels = reflections.ToInterfaceSlice(resultModels)
+	fmt.Println("Result list size: ", len(resultModels.([]interface{})), "total data: ", count)
+	return resultModels.([]interface{}), count
 
 }
+
+func extractPointerType(pointer interface{}) reflect.Type {
+	return reflect.TypeOf(reflect.ValueOf(pointer).Elem().Interface())
+}
+
+func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
+	result := []string{}
+	fields := reflections.GetDeclaredFields(t)
+	fieldsMap := reflections.SliceOfFieldToMap(fields)
+
+	for key, field := range fieldsMap {
+		newKey := reflections.ToSnakeCase(key, true)
+		fieldsMap[newKey] = field
+	}
+	for key := range filter {
+		joinItem := ""
+		if strings.Contains(key, ".") {
+			splitString := strings.Split(key, ".")
+			foreignKeyName := reflections.GetCustomTagKey(fieldsMap[splitString[0]], "foreignKey")
+
+			if foreignKeyName == "" {
+				continue
+			}
+
+			foreignKeyName = reflections.ToSnakeCase(foreignKeyName, true)
+
+			joinItem = "left join " + splitString[0] + " on " + splitString[0] + ".id = " + foreignKeyName
+			log.Println("joinItem: ", joinItem)
+			result = append(result, joinItem)
+		}
+	}
+
+	return result
+}
+
+////////////////////////////////////
 
 //CreateNew adds new db record
 func CreateNew(model entities.InterfaceEntity) interface{} {
