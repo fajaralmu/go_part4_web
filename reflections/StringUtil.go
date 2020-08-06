@@ -29,7 +29,7 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 			stringRaw := strings.Split(key, ".")
 			strItem += stringRaw[0] + "`.`" + stringRaw[1]
 		} else {
-			strItem += key
+			strItem += ToSnakeCase(key, true)
 		}
 
 		strItem += "` like ?"
@@ -55,13 +55,35 @@ func isUpperCase(str string) bool {
 	return strings.ToUpper(str) == str
 }
 
+func camelCase(raw string) string {
+	res := ""
+	currentChar := ""
+	for i, char := range raw {
+		_char := string(char)
+		toLower := false
+		if i > 0 && isUpperCase(_char) {
+			if isUpperCase(currentChar) {
+				toLower = true
+			}
+		}
+		currentChar = _char
+		if toLower {
+			res += strings.ToLower(_char)
+		} else {
+			res += _char
+		}
+
+	}
+	return res
+}
+
 //ToSnakeCase converts camelCased word to snake_cased (ALL LOWERCASE)
 func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 
 	var result string
 	var currentUpperCase bool = false
 
-	for i, char := range camelCased {
+	for i, char := range camelCase(camelCased) {
 
 		_char := string(char)
 		if _char == "_" {

@@ -103,24 +103,14 @@ func FilterLike(resultModels interface{}, filter map[string]interface{}, page in
 
 		//process count
 		dbCount := databaseConnection.Where(whereClauses[0], whereClauses[1:]...)
-		if len(joinColumns) > 0 {
-
-			for _, s := range joinColumns {
-				dbCount = dbCount.Joins(s)
-			}
-		}
+		dbCount = appendJoinColumnQueries(dbCount, joinColumns)
 		dbCount.Find(resultModels).Count(&count)
 		//end count
 		if count == 0 {
 			return
 		}
 		db := createDBConnection(databaseConnection, offset, limit, orderBy, orderType)
-		if len(joinColumns) > 0 {
-			for _, s := range joinColumns {
-				db = db.Joins(s)
-			}
-		}
-
+		db = appendJoinColumnQueries(db, joinColumns)
 		db.Find(resultModels, whereClauses...)
 	})
 	resultModels = reflections.ToInterfaceSlice(resultModels)
@@ -164,6 +154,15 @@ func FilterMatch(resultModels interface{}, filter map[string]interface{}, page i
 	fmt.Println("Result list size: ", len(resultModels.([]interface{})), "total data: ", count)
 	return resultModels.([]interface{}), count
 
+}
+
+func appendJoinColumnQueries(db *gorm.DB, joinColumns []string) *gorm.DB {
+	if len(joinColumns) > 0 {
+		for _, s := range joinColumns {
+			db = db.Joins(s)
+		}
+	}
+	return db
 }
 
 func createDBConnection(databaseConnection *gorm.DB, offset int, limit int, orderBy string, orderType string) *gorm.DB {
