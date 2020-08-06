@@ -71,6 +71,14 @@ func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool
 	return model.(entities.InterfaceEntity), count > 0
 }
 
+func createOrderClause(orderBy, orderType string) string {
+	if orderType == "" {
+		orderType = "asc"
+	}
+	orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
+	return orderClause
+}
+
 //FilterLike queries by like clause,  results must be a slice
 func FilterLike(result interface{}, filter map[string]interface{}, page int, limit int, orderBy string, orderType string) ([]interface{}, int) { //[]interface{}, int{
 	resType := extractPointerType(result)
@@ -97,31 +105,16 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 		if count == 0 {
 			return
 		}
-
+		db := databaseConnection.Offset(offset)
 		if limit > 0 {
-			if orderBy != "" {
-				if orderType == "" {
-					orderType = "asc"
-				}
-				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
-				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, whereClauses...)
-			} else {
-				databaseConnection.Offset(offset).Limit(limit).Find(result, whereClauses...)
-			}
-
-		} else {
-			if orderBy != "" {
-				if orderType == "" {
-					orderType = "asc"
-				}
-				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
-				databaseConnection.Offset(offset).Order(orderClause).Find(result, whereClauses...)
-			} else {
-				databaseConnection.Offset(offset).Find(result, whereClauses...)
-			}
-
+			db = db.Limit(limit)
+		}
+		if orderBy != "" {
+			orderClause := createOrderClause(orderBy, orderType)
+			db = db.Order(orderClause)
 		}
 
+		db.Find(result, whereClauses...)
 	})
 	result = reflections.ToInterfaceSlice(result)
 	fmt.Println("Result list size: ", len(result.([]interface{})), "total data: ", count)
@@ -156,31 +149,16 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 		if count == 0 {
 			return
 		}
-
+		db := databaseConnection.Offset(offset)
 		if limit > 0 {
-			if orderBy != "" {
-				if orderType == "" {
-					orderType = "asc"
-				}
-				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
-				databaseConnection.Offset(offset).Limit(limit).Order(orderClause).Find(result, filter)
-
-			} else {
-				databaseConnection.Offset(offset).Limit(limit).Find(result, filter)
-			}
-
-		} else {
-			if orderBy != "" {
-				if orderType == "" {
-					orderType = "asc"
-				}
-				orderClause := reflections.ToSnakeCase(orderBy, true) + " " + orderType
-				databaseConnection.Offset(offset).Order(orderClause).Find(result, filter)
-			} else {
-				databaseConnection.Offset(offset).Find(result, filter)
-			}
+			db = db.Limit(limit)
 		}
-
+		if orderBy != "" {
+			orderClause := createOrderClause(orderBy, orderType)
+			db = db.Order(orderClause)
+		}
+		//Finally
+		db.Find(result, filter)
 	})
 	fmt.Println("result: ", result)
 	result = reflections.ToInterfaceSlice(result)
