@@ -102,7 +102,14 @@ func FilterLike(resultModels interface{}, filter map[string]interface{}, page in
 		whereClauses := reflections.CreateLikeQueryString(filter)
 
 		//process count
-		databaseConnection.Where(whereClauses[0], whereClauses[1:]...).Find(resultModels).Count(&count)
+		dbCount := databaseConnection.Where(whereClauses[0], whereClauses[1:]...)
+		if len(joinColumns) > 0 {
+
+			for _, s := range joinColumns {
+				dbCount = dbCount.Joins(s)
+			}
+		}
+		dbCount.Find(resultModels).Count(&count)
 		//end count
 		if count == 0 {
 			return
@@ -186,11 +193,12 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 		newKey := reflections.ToSnakeCase(key, true)
 		fieldsMap[newKey] = field
 	}
-	for key := range filter {
+	for key, val := range filter {
 		joinItem := ""
 		if strings.Contains(key, ".") {
 			splitString := strings.Split(key, ".")
-			foreignKeyName := reflections.GetCustomTagKey(fieldsMap[splitString[0]], "foreignKey")
+			currentField := fieldsMap[splitString[0]]
+			foreignKeyName := reflections.GetCustomTagKey(currentField, "foreignKey")
 
 			if foreignKeyName == "" {
 				continue
@@ -198,9 +206,12 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 
 			foreignKeyName = reflections.ToSnakeCase(foreignKeyName, true)
 
-			joinItem = "left join " + splitString[0] + " on " + splitString[0] + ".id = " + foreignKeyName
-			log.Println("joinItem: ", joinItem)
+			tableName := reflections.GetStructTableNameFromType(currentField.Type)
+			joinItem = "left join " + tableName + " on " + tableName + ".id = " + foreignKeyName
+
 			result = append(result, joinItem)
+			filter[tableName+"."+splitString[1]] = val
+			delete(filter, key)
 		}
 	}
 

@@ -22,7 +22,16 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 	var likeStrs []string
 	var args []string
 	for key, value := range filter {
-		strItem := "`" + key + "` like ?"
+
+		strItem := "`"
+		if strings.Contains(key, ".") {
+			stringRaw := strings.Split(key, ".")
+			strItem += stringRaw[0] + "`.`" + stringRaw[1]
+		} else {
+			strItem += key
+		}
+
+		strItem += "` like ?"
 		likeStrs = append(likeStrs, strItem)
 		valueAsString := fmt.Sprintf("%v", value)
 		args = append(args, "%"+(valueAsString)+"%")

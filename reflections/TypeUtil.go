@@ -25,8 +25,8 @@ func GetStructTableName(object interface{}) string {
 
 //GetStructTableNameFromType returns snake cased of struct name
 func GetStructTableNameFromType(t reflect.Type) string {
-	isSlice := t.Kind() == reflect.Slice
-	if isSlice {
+	isSliceOrPtr := t.Kind() == reflect.Slice || t.Kind() == reflect.Ptr
+	if isSliceOrPtr {
 		t = t.Elem()
 	}
 	return ToSnakeCase(t.Name(), true)
