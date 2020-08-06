@@ -78,11 +78,13 @@ func FilterLike(result interface{}, filter map[string]interface{}, page int, lim
 	log.Println("FilterLike, ", resType, " isSlice: ", isSlice)
 
 	if !isSlice {
-		fmt.Errorf("\n Given result %v is not a slice! \n", resType.Name())
+		fmt.Errorf("given result %v is not a slice ", resType.Name())
 	}
 
 	count := 0
-	reflections.EvaluateFilterMap(filter)
+	sliceDeref := reflect.ValueOf(result).Elem().Interface()
+	underlyingType := reflections.GetUnderlyingSliceType(sliceDeref)
+	reflections.EvaluateFilterMap(filter, underlyingType)
 	offset := page * limit
 
 	dbOperation(func() {
@@ -141,7 +143,9 @@ func FilterMatch(result interface{}, filter map[string]interface{}, page int, li
 	}
 	tableName := reflections.GetStructTableNameFromType(resType)
 	count := 0
-	reflections.EvaluateFilterMap(filter)
+	sliceDeref := reflect.ValueOf(result).Elem().Interface()
+	underlyingType := reflections.GetUnderlyingSliceType(sliceDeref)
+	reflections.EvaluateFilterMap(filter, underlyingType)
 	offset := page * limit
 
 	dbOperation(func() {

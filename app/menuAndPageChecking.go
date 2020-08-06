@@ -10,10 +10,10 @@ import (
 )
 
 func defaultAboutPage() *entities.Page {
-	return getPage("about", config_defaultAboutPage)
+	return getPageFromDB("about", config_defaultAboutPage)
 }
 func defaultSettingPage() *entities.Page {
-	return getPage("setting", config_defaultSettingPage)
+	return getPageFromDB("setting", config_defaultSettingPage)
 
 }
 
@@ -40,7 +40,7 @@ func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
 	return list[0].(entities.Page), true
 }
 
-func getPage(code string, defaultPageIfNotExist *entities.Page) *entities.Page {
+func getPageFromDB(code string, defaultPageIfNotExist *entities.Page) *entities.Page {
 	page, ok := getPageOnlyByCode(code)
 	if ok {
 		log.Printf("page with code: %v FOUND! \n", code)
@@ -53,8 +53,8 @@ func getPage(code string, defaultPageIfNotExist *entities.Page) *entities.Page {
 	return defaultPageIfNotExist
 }
 
-func getMenu(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {
-	eixsitingPage := getPage(menuPage.Code, menuPage)
+func getMenuFromDB(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {
+	eixsitingPage := getPageFromDB(menuPage.Code, menuPage)
 	existingMenu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
 	if ok {
 		log.Printf("menu: %v FOUND!", code)

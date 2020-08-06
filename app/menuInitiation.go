@@ -147,11 +147,11 @@ func resetAllMenus() {
 ///////////////////////////////
 
 func defaultManagementPage() *entities.Page {
-	return getPage("management", managementPage())
+	return getPageFromDB("management", managementPage())
 }
 
 func defaultAdminPage() *entities.Page {
-	return getPage("admin", adminPage())
+	return getPageFromDB("admin", adminPage())
 }
 
 func managementPage() *entities.Page {

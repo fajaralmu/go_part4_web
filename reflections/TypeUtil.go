@@ -192,3 +192,9 @@ func CreateNewType(t reflect.Type) interface{} {
 
 	return reflect.New(t).Interface()
 }
+
+//GetUnderlyingSliceType returns type of element inside the slice
+func GetUnderlyingSliceType(sliceDeref interface{}) reflect.Type {
+
+	return reflect.TypeOf(sliceDeref).Elem()
+}

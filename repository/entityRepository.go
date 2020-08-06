@@ -126,6 +126,7 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 	var list []interface{}
 	var validatedList []interface{}
 	totalData := 0
+
 	if filter.Exacts {
 		list, totalData = dataaccess.FilterMatch(models, filter.FieldsFilter, filter.Page, filter.Limit, filter.OrderBy, filter.OrderType)
 
