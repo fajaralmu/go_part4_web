@@ -131,6 +131,10 @@ func commonPageRoute(w http.ResponseWriter, r *http.Request) error {
 
 func loginRoute(w http.ResponseWriter, r *http.Request) error {
 
+	if validateSessionn(w, r) {
+		sendRedirect(w, r, "/admin/home")
+	}
+
 	pageData := pageData{
 		PageCode: "login",
 		Title:    "Login Page",

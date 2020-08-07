@@ -216,6 +216,7 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 			joinItem = "left join " + tableName + " on " + tableName + ".id = " + foreignKeyName
 
 			result = append(result, joinItem)
+
 			filter[tableName+"."+splitString[1]] = val
 			delete(filter, key)
 		}

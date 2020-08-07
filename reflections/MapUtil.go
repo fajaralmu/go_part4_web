@@ -13,7 +13,9 @@ func EvaluateFilterMap(filter map[string]interface{}, t reflect.Type) {
 	for key, value := range filter {
 		newKey := key
 		//check if joinColumn
-		field, ok := fieldsMap[key]
+		fieldKey := key
+
+		field, ok := fieldsMap[fieldKey]
 		if ok {
 			customTag, tagOk := GetMapOfTag(field, "custom")
 			if tagOk {
@@ -22,8 +24,13 @@ func EvaluateFilterMap(filter map[string]interface{}, t reflect.Type) {
 
 					log.Println("JOIN key: ", key, ".", itemName)
 					newKey = ToSnakeCase(key, true) + "." + ToSnakeCase(itemName, true)
+				} else {
+					newKey = ToSnakeCase(key, true)
 				}
+			} else {
+				newKey = ToSnakeCase(key, true)
 			}
+
 		} else {
 			newKey = ToSnakeCase(key, true)
 		}

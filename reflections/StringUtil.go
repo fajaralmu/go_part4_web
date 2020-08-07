@@ -42,7 +42,8 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 			strItem += "` like ?"
 			likeStrs = append(likeStrs, strItem)
 			valueAsString := fmt.Sprintf("%v", value)
-			args = append(args, "%"+(valueAsString)+"%")
+			valueAsString = "%" + (valueAsString) + "%"
+			args = append(args, (valueAsString))
 		}
 
 	}
