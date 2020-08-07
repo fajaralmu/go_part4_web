@@ -95,11 +95,11 @@ func FilterLike(resultModels interface{}, filter map[string]interface{}, page in
 	underlyingType := reflections.GetUnderlyingSliceType(sliceDeref)
 	reflections.EvaluateFilterMap(filter, underlyingType)
 	joinColumns := getJoinQueries(filter, underlyingType)
+	whereClauses := reflections.CreateLikeQueryString(filter)
 
 	dbOperation(func() {
 
 		offset := page * limit
-		whereClauses := reflections.CreateLikeQueryString(filter)
 
 		//process count
 		dbCount := databaseConnection.Where(whereClauses[0], whereClauses[1:]...)
@@ -203,7 +203,14 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 		joinItem := ""
 		if strings.Contains(key, ".") {
 			splitString := strings.Split(key, ".")
-			currentField := fieldsMap[splitString[0]]
+			var fieldKey string
+			exactSearch := strings.HasSuffix(splitString[0], "_[exacts_]")
+			if exactSearch {
+				fieldKey = strings.Replace(splitString[0], "_[exacts_]", "", 1)
+			} else {
+				fieldKey = splitString[0]
+			}
+			currentField := fieldsMap[fieldKey]
 			foreignKeyName := reflections.GetCustomTagKey(currentField, "foreignKey")
 
 			if foreignKeyName == "" {
@@ -216,8 +223,11 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 			joinItem = "left join " + tableName + " on " + tableName + ".id = " + foreignKeyName
 
 			result = append(result, joinItem)
-
-			filter[tableName+"."+splitString[1]] = val
+			if exactSearch {
+				filter[tableName+"."+splitString[1]+"[exacts]"] = val
+			} else {
+				filter[tableName+"."+splitString[1]] = val
+			}
 			delete(filter, key)
 		}
 	}

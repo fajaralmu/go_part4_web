@@ -32,8 +32,8 @@ func CreateLikeQueryString(filter map[string]interface{}) []interface{} {
 			strItem += ToSnakeCase(key, true)
 		}
 
-		if strings.HasSuffix(strItem, "_[exacts_]") {
-			strItem = strings.Replace(strItem, "_[exacts_]", "", -1)
+		if strings.HasSuffix(strItem, "[exacts]") {
+			strItem = strings.Replace(strItem, "[exacts]", "", 1)
 			strItem += "` = ?"
 			likeStrs = append(likeStrs, strItem)
 			valueAsString := fmt.Sprintf("%v", value)
@@ -96,10 +96,8 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 	currentChar := ""
 loop:
 	for i, char := range camelCased {
-
 		_char := string(char)
 		if _char == "_" {
-			log.Println("CONTINUE LOOOOP: ", _char)
 			result += _char
 			currentChar = _char
 			continue loop
@@ -160,6 +158,7 @@ func RemoveCharsAfter(str string, _char string) string {
 	return res
 }
 
+//GetWordsAfterLastChar removes all character before specified character
 func GetWordsAfterLastChar(str string, lastChar string) string {
 	res := str
 	lastCharIdx := 0
@@ -175,6 +174,7 @@ func GetWordsAfterLastChar(str string, lastChar string) string {
 	return res
 }
 
+//LimitStr removes indexes of string after the limit
 func LimitStr(raw interface{}, limit int) string {
 	var fieldValueStr string = ""
 	str := fmt.Sprintf("%v", raw)
@@ -184,11 +184,13 @@ func LimitStr(raw interface{}, limit int) string {
 	return fieldValueStr
 }
 
+//ToJSONString create JSON string
 func ToJSONString(i interface{}) string {
 	jsonStr, _ := json.Marshal(i)
 	return string(jsonStr)
 }
 
+//IsNumericValue checks if the given string is numeric
 func IsNumericValue(s string) bool {
 	_, err := strconv.ParseFloat(s, 64)
 	return err == nil
@@ -211,6 +213,7 @@ func RandomNum(length int) string {
 	return res
 }
 
+//ExtractCamelCase returns word with space delimiter
 func ExtractCamelCase(camelCased string) string {
 
 	var result string = ""

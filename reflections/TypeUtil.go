@@ -58,6 +58,7 @@ func t(i interface{}) reflect.Type {
 	return reflect.TypeOf(i)
 }
 
+//IsNumericType checks if given type is numeric type
 func IsNumericType(_type reflect.Type) bool {
 	var res bool = false
 	switch _type {
@@ -72,6 +73,7 @@ func IsNumericType(_type reflect.Type) bool {
 	return res
 }
 
+//GetDeclaredFields returns struct fields
 func GetDeclaredFields(t reflect.Type) []reflect.StructField {
 	//log.Println("GetDeclaredFields of: ", t.Name())
 	fields := []reflect.StructField{}

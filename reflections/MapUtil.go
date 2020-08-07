@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 )
 
 //EvaluateFilterMap convert map keys to snake_case
@@ -13,7 +14,12 @@ func EvaluateFilterMap(filter map[string]interface{}, t reflect.Type) {
 	for key, value := range filter {
 		newKey := key
 		//check if joinColumn
-		fieldKey := key
+		var fieldKey string
+		if strings.Contains(key, "[EXACTS]") {
+			fieldKey = strings.Replace(key, "[EXACTS]", "", 1)
+		} else {
+			fieldKey = key
+		}
 
 		field, ok := fieldsMap[fieldKey]
 		if ok {

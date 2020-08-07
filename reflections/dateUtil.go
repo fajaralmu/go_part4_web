@@ -2,6 +2,7 @@ package reflections
 
 import "time"
 
+//GetTimeGreeting generate greeting message
 func GetTimeGreeting() string {
 	//var time string = "Morning"
 	currentTime := time.Now()
