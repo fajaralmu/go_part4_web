@@ -67,17 +67,7 @@ func registerWebPages() {
 
 	///////////// WEB PAGES /////////////
 	log.Println("START Register Web Pages")
-	handleMvc("/home", homeRoute, "GET", false)
-	handleMvc("/public/about", homeRoute, "GET", false)
-	handleMvc("/page/{code}", commonPageRoute, "GET", true)
-	handleMvc("/management/{code}", managementRoute, "GET", true)
-	handleMvc("/admin/home", homeRoute, "GET", false)
-	handleMvc("/admin/pagesettings", pageSettingRoute, "GET", true)
-	handleMvc("/admin/resetmenus", resetMenus, "GET", true)
-
-	handleMvc("/account/login", loginRoute, "GET", false)
-	handleMvc("/account/register", registerRoute, "GET", false)
-	handleMvc("/account/logout", logoutRoute, "GET", false)
+	registerRoutes()
 
 	///////////// Web Socket /////////////
 	handleWebsocket("/chat", wsRoute)

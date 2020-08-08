@@ -24,6 +24,7 @@ func newEConf(single interface{}, list interface{}, FormInputColumn int) *appCon
 	}
 }
 
+//Init begins configuration to be configured
 func Init() {
 	router = mux.NewRouter()
 	initiated = true
