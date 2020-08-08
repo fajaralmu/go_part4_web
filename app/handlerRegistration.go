@@ -15,20 +15,7 @@ var router *mux.Router
 func registerAPIs() {
 
 	log.Println("START registerAPIs")
-
-	handleAPI("/api/entities", getEntities, "POST", true)
-	handleAPI("/api/entities/add", addEntities, "POST", true)
-	handleAPI("/api/entities/update", updateEntities, "POST", true)
-	handleAPI("/api/entities/delete", deleteEntities, "POST", true)
-	handleAPI("/api/admin/savepagesequence", savePageSequence, "POST", true)
-
-	// router.HandleFunc("/api/books", createBook).Methods("POST")
-	// router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
-	// router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
-	handleAPI("/api/account/login", login, "POST", false)
-	handleAPI("/api/account/checkusername", checkUserName, "POST", false)
-	handleAPI("/api/account/register", register, "POST", false)
-
+	registerWebAPIRoutes()
 	log.Println("END registerAPIs")
 }
 
@@ -67,7 +54,7 @@ func registerWebPages() {
 
 	///////////// WEB PAGES /////////////
 	log.Println("START Register Web Pages")
-	registerRoutes()
+	registerWebPageRoutes()
 
 	///////////// Web Socket /////////////
 	handleWebsocket("/chat", wsRoute)

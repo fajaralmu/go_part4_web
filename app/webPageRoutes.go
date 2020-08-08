@@ -1,13 +1,16 @@
 package app
 
 import (
+	"log"
 	"net/http"
 	"reflect"
+
+	"github.com/fajaralmu/go_part4_web/entities"
 
 	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
-type appRoutes struct {
+type webPageRoute struct {
 	HomeRoute           func(w http.ResponseWriter, r *http.Request) error `custom:"path:/home;authenticated:true"`
 	AboutRoute          func(w http.ResponseWriter, r *http.Request) error `custom:"path:/public/about;authenticated:false"`
 	CommonPageRoute     func(w http.ResponseWriter, r *http.Request) error `custom:"path:/page/{code};authenticated:true"`
@@ -21,8 +24,8 @@ type appRoutes struct {
 	LogoutRoute   func(w http.ResponseWriter, r *http.Request) error `custom:"path:/account/logout;authenticated:false"`
 }
 
-func registerRoutes() {
-	appRoute := appRoutes{}
+func registerWebPageRoutes() {
+	appRoute := webPageRoute{}
 	appRoute.HomeRoute = func(w http.ResponseWriter, r *http.Request) error {
 		return homeRoute(w, r)
 	}
@@ -51,10 +54,10 @@ func registerRoutes() {
 	appRoute.RegisterRoute = func(w http.ResponseWriter, r *http.Request) error {
 		return registerRoute(w, r)
 	}
-	registerHandlers(appRoute)
+	registerHandlers(appRoute, "mvc")
 }
 
-func registerHandlers(appRoute appRoutes) {
+func registerHandlers(appRoute interface{}, handleType string) {
 	fields := reflections.GetDeclaredFields(reflect.TypeOf(appRoute))
 	for _, field := range fields {
 		if field.Type.Kind() == reflect.Func {
@@ -63,7 +66,15 @@ func registerHandlers(appRoute appRoutes) {
 			path := customTag["path"]
 			authenticated := customTag["authenticated"] == "true"
 			fieldValue, _ := reflections.GetFieldValue(field.Name, appRoute)
-			handleMvc(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) error), "GET", authenticated)
+
+			switch handleType {
+			case "mvc":
+				handleMvc(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) error), "GET", authenticated)
+			case "api":
+				handleAPI(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error)), "POST", authenticated)
+			default:
+				log.Println("Handle type unknown")
+			}
 		}
 	}
 
