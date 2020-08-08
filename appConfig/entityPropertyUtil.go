@@ -11,7 +11,7 @@ import (
 )
 
 //CreateEntityProperty creates entity field properties
-func CreateEntityProperty(clazz reflect.Type, inputColumn int) EntityProperty {
+func CreateEntityProperty(modelType reflect.Type, inputColumn int) EntityProperty {
 	additionalObjectList := map[string][]interface{}{}
 	log.Println("~~~~~~~~~~CreateEntityProperty~~~~~~~~~~~")
 	// if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
@@ -27,7 +27,7 @@ func CreateEntityProperty(clazz reflect.Type, inputColumn int) EntityProperty {
 	var entityProperty EntityProperty = EntityProperty{
 		IDField:         "ID",
 		IgnoreBaseField: ignoreBaseField,
-		EntityName:      reflections.ToSnakeCase(clazz.Name(), false),
+		EntityName:      reflections.ToSnakeCase(modelType.Name(), false),
 		IsQuestionare:   isQuestionare,
 		FormInputColumn: inputColumn,
 	}
@@ -37,7 +37,7 @@ func CreateEntityProperty(clazz reflect.Type, inputColumn int) EntityProperty {
 	// r := reflect.ValueOf(obj)
 	// v := reflect.Indirect(r).FieldByName("ID").Elem
 
-	var fieldList []reflect.StructField = reflections.GetDeclaredFields(clazz)
+	var fieldList []reflect.StructField = reflections.GetDeclaredFields(modelType)
 	log.Printf("field LIST size: %v \n", len(fieldList))
 	// if (isQuestionare) {
 	// 	Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList)
@@ -98,9 +98,9 @@ func CreateEntityProperty(clazz reflect.Type, inputColumn int) EntityProperty {
 
 	log.Printf("entityElements size: %v \n", len(entityElements))
 	log.Printf("fieldNames: %v ", fieldNames)
-	entityProperty.Alias = clazz.Name() //(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value())
-	entityProperty.Editable = true      //(dto.editable())
-	entityProperty.setElementJsonList()
+	entityProperty.Alias = modelType.Name() //(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value())
+	entityProperty.Editable = true          //(dto.editable())
+	entityProperty.setElementJSONList()
 	entityProperty.Elements = entityElements
 	entityProperty.DetailFieldName = (fieldToShowDetail)
 	entityProperty.FieldNames = sliceOfStringToJSONString(fieldNames)

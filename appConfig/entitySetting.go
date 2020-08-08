@@ -10,6 +10,7 @@ import (
 	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
+//EntityElement holds configuration information of the model's field
 type EntityElement struct {
 	ID                   string
 	Type                 string
@@ -83,11 +84,12 @@ func (e *EntityElement) init() {
 	e.checkIfGroupedInput()
 }
 
-func (e *EntityElement) GetJsonListString(removeBeginningAndEndIndex bool) string {
+//GetJSONListString returns JSON list as a plain string
+func (e *EntityElement) GetJSONListString(removeFirstLastIndex bool) string {
 
 	jsonBytes, _ := json.Marshal(&e.JSONList)
 	jsonStringified := ""
-	if removeBeginningAndEndIndex {
+	if removeFirstLastIndex {
 		var dummyString string = string(jsonBytes[1:])
 		dummyString = string(dummyString[:len(dummyString)-1])
 		jsonStringified = dummyString
@@ -110,6 +112,7 @@ func (e *EntityElement) checkIfGroupedInput() {
 	}
 }
 
+//Build constructs model field element configuration
 func (e *EntityElement) Build() bool {
 	result := e.doBuild()
 	e.entityProperty = nil // &EntityProperty{}
@@ -166,7 +169,7 @@ func (e *EntityElement) doBuild() bool {
 	}
 
 	if e.JSONList != "" {
-		e.OptionJSONString = e.GetJsonListString(true)
+		e.OptionJSONString = e.GetJSONListString(true)
 	}
 
 	return true
@@ -210,24 +213,18 @@ func (e *EntityElement) checkFieldType(fieldType string) {
 
 func (e *EntityElement) processNumberType() {
 	e.entityProperty.NumberElements = append(e.entityProperty.NumberElements, e.Field.Name)
-	// e.EntityProperty.getCurrencyElements().add(field.getName());
 }
 
 func (e *EntityElement) processCurrencyType() {
 	e.entityProperty.CurrencyElements = append(e.entityProperty.CurrencyElements, e.Field.Name)
-	// e.EntityProperty.getCurrencyElements().add(field.getName());
 }
 
 func (e *EntityElement) processImageType() {
 	e.entityProperty.ImageElements = append(e.entityProperty.ImageElements, e.Field.Name)
-
-	// entityProperty.getImageElements().add(field.getName());
 }
 
 func (e *EntityElement) processDateType() {
 	e.entityProperty.DateElements = append(e.entityProperty.DateElements, e.Field.Name)
-
-	// entityProperty.getDateElements().add(field.getName());
 }
 
 func (e *EntityElement) processPlainListType() {
@@ -304,6 +301,7 @@ func (e *EntityElement) processJoinColumn(fieldType string) {
 
 ///////////////////ENTITY PROPERTY///////////////////
 
+//EntityProperty holds information of the model
 type EntityProperty struct {
 	EntityName           string
 	Alias                string
@@ -329,14 +327,11 @@ type EntityProperty struct {
 	GridAutoColumns      string
 }
 
-func (e *EntityProperty) setElementJsonList() {
+func (e *EntityProperty) setElementJSONList() {
 
 	e.DateElementsJSON = sliceOfStringToJSONString(e.DateElements)
-
 	e.ImageElementsJSON = sliceOfStringToJSONString(e.ImageElements)
-
 	e.CurrencyElementsJSON = sliceOfStringToJSONString(e.CurrencyElements)
-
 	e.NumberElementsJSON = sliceOfStringToJSONString(e.NumberElements)
 }
 

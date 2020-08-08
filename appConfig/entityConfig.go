@@ -8,6 +8,7 @@ import (
 
 var entityConfigMap map[string]*EntityConfig = map[string]*EntityConfig{}
 
+//EntityConfig holds CRUD related information of the model
 type EntityConfig struct {
 	Name            string
 	ListType        reflect.Type
@@ -20,6 +21,7 @@ func GetEntityConf(key string) *EntityConfig {
 	return entityConfigMap[strings.ToLower(key)]
 }
 
+//GetEntitiesTypes returns slice of entity types from entityConfigMap
 func GetEntitiesTypes() (types []reflect.Type) {
 	for _, val := range entityConfigMap {
 		types = append(types, val.SingleType)
@@ -27,6 +29,7 @@ func GetEntitiesTypes() (types []reflect.Type) {
 	return types
 }
 
+//PutConfig add config to the entityConfigMap
 func PutConfig(t ...*EntityConfig) {
 
 	for _, item := range t {

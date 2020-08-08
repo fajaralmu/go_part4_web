@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jinzhu/gorm"
 
@@ -33,7 +34,7 @@ func main2() {
 }
 
 func main() {
-	println("____start____")
+	log.Println("____start____")
 	app.Init()
 	app.Run()
 	// testFilter()
