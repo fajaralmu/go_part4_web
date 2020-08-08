@@ -74,9 +74,9 @@ func processFieldValue(fieldType string, field reflect.StructField, model entiti
 		multipleImg := fieldTags["multiple"] == "true"
 
 		if fieldValue != nil {
-			code := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
-			code = strings.Replace(code, "*", "", -1)
-			fieldValue = processImg(fieldValue.(string), code, multipleImg, currentFieldRecord)
+			typeName := strings.Replace(reflect.TypeOf(model).String(), ".", "", -1)
+			typeName = strings.Replace(typeName, "*", "", -1)
+			fieldValue = processImg(fieldValue.(string), typeName, multipleImg, currentFieldRecord)
 			reflections.SetFieldValue(field.Name, fieldValue, model)
 
 		} else {
@@ -130,12 +130,8 @@ func processMultipleImageData(imageData string, code string) string {
 
 				} else {
 					//log.Println("raw[0]: ", raw[0])
-
 					imageName = strings.Replace(raw[0], originalPreffix, "", -1)
 					//log.Println("imageName: ", imageName)
-					needWriting = false
-
-					//NOT NEED FOR WRITING
 					needWriting = false
 				}
 

@@ -66,7 +66,6 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 func registerWebPages() {
 
 	///////////// WEB PAGES /////////////
-
 	log.Println("START Register Web Pages")
 	handleMvc("/home", homeRoute, "GET", false)
 	handleMvc("/public/about", homeRoute, "GET", false)
