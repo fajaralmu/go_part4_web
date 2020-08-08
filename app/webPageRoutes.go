@@ -61,7 +61,11 @@ func registerHandlers(appRoute interface{}, handleType string) {
 	fields := reflections.GetDeclaredFields(reflect.TypeOf(appRoute))
 	for _, field := range fields {
 		if field.Type.Kind() == reflect.Func {
-			customTag, _ := reflections.GetMapOfTag(field, "custom")
+			customTag, tagOK := reflections.GetMapOfTag(field, "custom")
+
+			if !tagOK {
+				continue
+			}
 
 			path := customTag["path"]
 			authenticated := customTag["authenticated"] == "true"

@@ -114,7 +114,7 @@ func loginREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse
 	if err != nil {
 		return res, err
 	}
-	res, err = Login(req, w, r)
+	res, err = authenticateUser(req, w, r)
 	if err == nil {
 		var latestURI string = getLatestURI(w, r)
 		if latestURI != "" {

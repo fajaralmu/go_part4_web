@@ -4,9 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/fajaralmu/go_part4_web/repository"
-
 	"github.com/fajaralmu/go_part4_web/entities"
+	"github.com/fajaralmu/go_part4_web/repository"
 )
 
 func getUserByUsernameAndPassword(user *entities.User) *entities.User {
@@ -27,7 +26,7 @@ func getUserByUsernameAndPassword(user *entities.User) *entities.User {
 	return nil
 }
 
-func Login(request entities.WebRequest, w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func authenticateUser(request entities.WebRequest, w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 
 	user := request.User
 	dbUser := getUserByUsernameAndPassword(user)

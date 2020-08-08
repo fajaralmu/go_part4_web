@@ -26,7 +26,7 @@ func apiPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bo
 }
 
 func sendRedirect(w http.ResponseWriter, r *http.Request, path string) {
-	log.Println("sendRedirect: ", path)
+	log.Println("sendRedirect TO: ", path)
 	w.Header().Add("location", path)
 	w.WriteHeader(302)
 }
