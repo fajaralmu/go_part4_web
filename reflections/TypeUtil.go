@@ -35,12 +35,12 @@ func GetStructTableNameFromType(t reflect.Type) string {
 //ToInterfaceSlice converts var slice to slice of interface
 func ToInterfaceSlice(object interface{}) []interface{} {
 
-	rawSlice := Dereference(object).Interface()
+	rawObject := Dereference(object).Interface()
 	result := []interface{}{}
-	s := reflect.ValueOf(rawSlice)
+	s := reflect.ValueOf(rawObject)
 	// rawSlice = Dereference()
-	log.Println("reflect.TypeOf(rawSlice).Kind(): ", reflect.TypeOf(rawSlice).Kind())
-	switch reflect.TypeOf(rawSlice).Kind() {
+	log.Println("reflect.TypeOf(rawObject).Kind(): ", reflect.TypeOf(rawObject).Kind())
+	switch reflect.TypeOf(rawObject).Kind() {
 	case reflect.Slice:
 
 		for i := 0; i < s.Len(); i++ {

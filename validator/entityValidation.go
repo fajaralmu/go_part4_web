@@ -191,7 +191,7 @@ func RemoveID(model entities.InterfaceEntity) {
 	setUintValue("ID", 0, model)
 }
 
-//SetID set ID field of the model
-func SetID(model entities.InterfaceEntity, id uint) {
+//SetModelID set ID field of the model
+func SetModelID(model entities.InterfaceEntity, id uint) {
 	setUintValue("ID", id, model)
 }

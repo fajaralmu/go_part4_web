@@ -12,79 +12,79 @@ import (
 
 /////////////////////////MODEL CRUD///////////////////////////
 
-func getEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func getEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 	sendBroadcastMessage("start GET entities")
 	if err != nil {
-		return response, err
+		return res, err
 	}
-	response, err = Filter(request)
+	res, err = Filter(req)
 	sendBroadcastMessage("end GET entities")
-	return response, err
+	return res, err
 
 }
 
-func deleteEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func deleteEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		return response, err
+		return res, err
 	}
 
-	response = Delete(request)
-	writeWebResponse(w, response)
-	return response, nil
+	res = Delete(req)
+	writeWebResponse(w, res)
+	return res, nil
 
 }
 
-func addEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func addEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		return response, err
+		return res, err
 	}
-	response = AddEntity(request)
-	return response, err
+	res = AddEntity(req)
+	return res, err
 }
 
-func updateEntities(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func updateEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		return response, err
+		return res, err
 	}
-	response = UpdateEntity(request)
-	return response, err
+	res = UpdateEntity(req)
+	return res, err
 }
 
-func savePageSequence(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+func savePageSequence(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		return response, err
+		return res, err
 	}
-	updatePageSequence(request)
-	return response, err
+	updatePageSequence(req)
+	return res, err
 
 }
 
 func checkUserName(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
 		return response, err
 	}
-	available := isUsernameAvailable(request.User.Username)
+	available := isUsernameAvailable(req.User.Username)
 	log.Println("isUsernameAvailable: ", available)
 	if available {
 		return webResponse("00", "username available"), nil
@@ -92,13 +92,13 @@ func checkUserName(w http.ResponseWriter, r *http.Request) (response entities.We
 	return webResponse("01", "username unavailable"), nil
 }
 func register(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
 		return response, err
 	}
-	user := request.User
+	user := req.User
 	repository.CreateNewWithoutValidation(user)
 
 	return webResponse("00", "success"), nil
@@ -106,15 +106,15 @@ func register(w http.ResponseWriter, r *http.Request) (response entities.WebResp
 }
 
 /////////////////ACCOUNT////////////////
-func login(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func login(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
-	var request entities.WebRequest
-	err = json.NewDecoder(r.Body).Decode(&request)
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
 
 	if err != nil {
-		return response, err
+		return res, err
 	}
-	response, err = Login(request, w, r)
+	res, err = Login(req, w, r)
 	if err == nil {
 		var latestURI string = getLatestURI(w, r)
 		if latestURI != "" {
@@ -123,6 +123,6 @@ func login(w http.ResponseWriter, r *http.Request) (response entities.WebRespons
 			w.Header().Add("location", latestURI)
 		}
 	}
-	return response, err
+	return res, err
 
 }

@@ -65,7 +65,7 @@ func isUpperCase(str string) bool {
 	return strings.ToUpper(str) == str
 }
 
-func camelCase(raw string) string {
+func adjustCamelCase(raw string) string {
 	res := ""
 	currentChar := ""
 	for i, char := range raw {
@@ -92,7 +92,7 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 
 	var result string
 	var currentUpperCase bool = false
-	camelCased = camelCase(camelCased)
+	camelCased = adjustCamelCase(camelCased)
 	currentChar := ""
 loop:
 	for i, char := range camelCased {
@@ -132,14 +132,14 @@ loop:
 		result = strings.ToLower(result)
 	}
 
-	log.Println("SNAKE CASED camelCased: ", camelCased, "-->", result, ";lowerCaseResult(", lowerCaseResult, ")")
+	log.Println("SNAKE CASED from: ", camelCased, "-->", result, ";lowerCaseResult(", lowerCaseResult, ")")
 
 	return result
 
 }
 
-//GetFileExtention returns file extension
-func GetFileExtention(fileName string) string {
+//GetFileExtension returns file extension
+func GetFileExtension(fileName string) string {
 	ext := filepath.Ext(fileName)
 	ext = strings.Replace(ext, ".", "", 1)
 	return ext
@@ -196,6 +196,7 @@ func IsNumericValue(s string) bool {
 	return err == nil
 }
 
+//RandomCounter is random generation counter
 var RandomCounter int = time.Now().Second()
 
 //RandomNum generates random Int string with specified length

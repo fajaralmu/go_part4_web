@@ -51,7 +51,7 @@ func (c *customStaticHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	//CHECK MIME TYPE//
-	extension := reflections.GetFileExtention(fileInfo.Name())
+	extension := reflections.GetFileExtension(fileInfo.Name())
 
 	switch strings.ToLower(extension) {
 	case "js":

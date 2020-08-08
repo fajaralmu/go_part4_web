@@ -96,34 +96,6 @@ func validateManagementPage(t reflect.Type) {
 
 }
 
-func addNewManagementMenuPageFor(t reflect.Type) {
-	log.Println("Will add default menu for: ", t.Name())
-
-	commonPage := false //= dto.commonManagementPage();
-	menuCode := reflections.ToSnakeCase(t.Name(), true)
-	managementPage, _ := getPageOnlyByCode("management")
-	menu := entities.Menu{
-		Code:            menuCode,
-		Name:            reflections.ExtractCamelCase(t.Name()),
-		MenuPage:        &entities.Page{},
-		PageID:          uint16(managementPage.ID),
-		Color:           "#000000",
-		BackgroundColor: "#ffffff",
-		IconURL:         "DefaultIcon.bmp",
-		Description:     "Generated Management Page for: " + t.Name(),
-	}
-	// menu.Validate()
-	if commonPage {
-		menu.URL = ("/management/common/" + menuCode)
-	} else {
-		menu.URL = ("/management/" + menuCode)
-	}
-
-	repository.CreateNewWithoutValidation(&menu)
-
-	log.Println("Success Adding Management Menu For: ", menuCode)
-}
-
 func resetAllMenus() {
 	menus, _ := repository.Filter(&[]entities.Menu{}, entities.Filter{})
 
@@ -145,19 +117,3 @@ func resetAllMenus() {
 }
 
 ///////////////////////////////
-
-func defaultManagementPage() *entities.Page {
-	return getPageFromDB("management", managementPage())
-}
-
-func defaultAdminPage() *entities.Page {
-	return getPageFromDB("admin", adminPage())
-}
-
-func managementPage() *entities.Page {
-	return config_defaultManagementPage
-}
-
-func adminPage() *entities.Page {
-	return config_defaultAdminPage
-}

@@ -10,11 +10,27 @@ import (
 )
 
 func defaultAboutPage() *entities.Page {
-	return getPageFromDB("about", config_defaultAboutPage)
+	return getPageFromDB("about", configDefaultAboutPage)
 }
 func defaultSettingPage() *entities.Page {
-	return getPageFromDB("setting", config_defaultSettingPage)
+	return getPageFromDB("setting", configDefaultSettingPage)
 
+}
+
+func defaultManagementPage() *entities.Page {
+	return getPageFromDB("management", managementPage())
+}
+
+func defaultAdminPage() *entities.Page {
+	return getPageFromDB("admin", adminPage())
+}
+
+func managementPage() *entities.Page {
+	return configDefaultManagementPage
+}
+
+func adminPage() *entities.Page {
+	return configDefaultAdminPage
 }
 
 func getMenuByCode(code string) (menu entities.Menu, ok bool) {
@@ -32,6 +48,7 @@ func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
 	log.Println("getPageOnlyByCode: ", code)
 
 	list := repository.FilterByKey(&[]entities.Page{}, "Code", code)
+
 	if len(list) != 1 {
 		log.Println("fails END getPageOnlyByCode: ", code)
 		return page, false
@@ -47,9 +64,11 @@ func getPageFromDB(code string, defaultPageIfNotExist *entities.Page) *entities.
 		return &page
 	}
 	log.Printf("WILL SAVE page : %v...", code)
-	peg := defaultPageIfNotExist
-	repository.CreateNewWithoutValidation(peg)
-	log.Println("defaultPageIfNotExist ID: ", peg.ID)
+
+	defaultPageObject := defaultPageIfNotExist
+	repository.CreateNewWithoutValidation(defaultPageObject)
+
+	log.Println("defaultPageIfNotExist ID: ", defaultPageObject.ID)
 	return defaultPageIfNotExist
 }
 
@@ -57,7 +76,7 @@ func getMenuFromDB(code string, defaultMenuIfNotExist *entities.Menu, menuPage *
 	eixsitingPage := getPageFromDB(menuPage.Code, menuPage)
 	existingMenu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
 	if ok {
-		log.Printf("menu: %v FOUND!", code)
+
 		return &existingMenu
 	}
 
@@ -66,8 +85,8 @@ func getMenuFromDB(code string, defaultMenuIfNotExist *entities.Menu, menuPage *
 	menu := defaultMenuIfNotExist
 	menu.MenuPage = &entities.Page{}
 	menu.PageID = uint16(eixsitingPage.ID)
-
 	log.Println("menu.PageID:", menu.PageID)
+
 	repository.SaveAndValidate(menu)
 	return menu
 }
@@ -77,7 +96,6 @@ func checkAdminMenu(baseMapping string, path string) {
 	menuCode = strings.Replace(menuCode, "/", "", -1)
 	_, ok := getMenuByCode(menuCode)
 
-	log.Println("getMenuByCode ", menuCode, " OK:", ok)
 	if !ok {
 		adminMenu := constructAdminMenu(baseMapping + path)
 		repository.CreateNewWithoutValidation(&adminMenu)

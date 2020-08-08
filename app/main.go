@@ -38,6 +38,7 @@ func Init() {
 
 }
 
+//Run fires up the app
 func Run() {
 	go handleMessages()
 	initWebApp()

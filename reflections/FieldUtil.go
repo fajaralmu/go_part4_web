@@ -41,7 +41,7 @@ func SetFieldValue(fieldName string, fieldValue interface{}, model interface{}) 
 func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, bool) {
 
 	result := map[string]string{}
-	value, ok := field.Tag.Lookup(tagName)
+	tagValue, ok := field.Tag.Lookup(tagName)
 
 	//log.Printf("Lookup field %v tagName %v, ok: %v \n", field.Name, tagName, ok)
 
@@ -49,8 +49,8 @@ func GetMapOfTag(field reflect.StructField, tagName string) (map[string]string, 
 		return result, false
 	}
 
-	tagValues := strings.Split(value, ";")
-	for _, item := range tagValues {
+	tagContents := strings.Split(tagValue, ";")
+	for _, item := range tagContents {
 		keyVal := strings.Split(item, ":")
 		result[strings.Trim(keyVal[0], " ")] = strings.Trim(keyVal[1], " ")
 	}

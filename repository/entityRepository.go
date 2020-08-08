@@ -99,7 +99,7 @@ func isExistInDB(model entities.InterfaceEntity) (entities.InterfaceEntity, bool
 //FindByID return model from DB with given ID
 func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity {
 	validator.RemoveID(model)
-	validator.SetID(model, ID)
+	validator.SetModelID(model, ID)
 	result, ok := dataaccess.FindByID(model, ID)
 	if ok {
 		return result

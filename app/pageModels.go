@@ -81,11 +81,11 @@ func (p *pageData) setHeaderFooter() {
 
 }
 
-func (pageData *pageData) prepareWebData() {
-	pageData.Profile = getProfile()
+func (p *pageData) prepareWebData() {
+	p.Profile = getProfile()
 
-	pageData.setHeaderFooter()
-	pageData.parseContent(pageData.AdditionalPages...)
+	p.setHeaderFooter()
+	p.parseContent(p.AdditionalPages...)
 }
 
 func getPages(w http.ResponseWriter, r *http.Request) []entities.Page {
@@ -122,29 +122,29 @@ func toSliceOfPage(list []interface{}) []entities.Page {
 	return pages
 }
 
-func (pageData *pageData) parseContent(additionalPage ...string) {
+func (p *pageData) parseContent(additionalPageCodes ...string) {
 
 	webPages := []string{
-		"./templates/pages/" + pageData.PageCode + ".html",
+		"./templates/pages/" + p.PageCode + ".html",
 	}
-	webPages = append(webPages, additionalPage...)
+	webPages = append(webPages, additionalPageCodes...)
 
-	tmpl2, err := template.ParseFiles(webPages...)
-	var tpl bytes.Buffer
+	tmpl, err := template.ParseFiles(webPages...)
+	var tplContent bytes.Buffer
 
 	if err != nil {
-		log.Println("tmpl2 ERR: ", err.Error())
+		log.Println("tmpl ERR: ", err.Error())
 	}
-	log.Println("********pageData.PageCode: ", pageData.PageCode)
+	log.Println("********pageData.PageCode: ", p.PageCode)
 
-	e := tmpl2.ExecuteTemplate(&tpl, pageData.PageCode, pageData)
+	e := tmpl.ExecuteTemplate(&tplContent, p.PageCode, p)
 	if e == nil {
 
-		fmt.Println("Success parsing ", pageData.PageCode)
-		pageData.Content = tpl.String()
+		fmt.Println("Success parsing ", p.PageCode)
+		p.Content = tplContent.String()
 	} else {
 		fmt.Println("Error parsing web content: ", e.Error())
-		pageData.PageCode = ""
+		p.PageCode = ""
 	}
 }
 
