@@ -96,14 +96,14 @@ func ToSnakeCase(camelCased string, lowerCaseResult bool) string {
 	currentChar := ""
 loop:
 	for i, char := range camelCased {
-		_char := string(char)
-		if _char == "_" {
-			result += _char
-			currentChar = _char
+		charString := string(char)
+		if charString == "_" {
+			result += charString
+			currentChar = charString
 			continue loop
 		}
 
-		if i > 0 && isUpperCase(_char) && currentUpperCase == false {
+		if i > 0 && isUpperCase(charString) && currentUpperCase == false {
 			currentUpperCase = true
 			if i > 1 && currentChar != "_" {
 				result += "_"
@@ -113,18 +113,18 @@ loop:
 			currentUpperCase = false
 		}
 
-		_charStr := strings.ToLower(_char)
+		charLower := strings.ToLower(charString)
 		if 0 == i && lowerCaseResult {
-			result += strings.ToLower(_char)
+			result += strings.ToLower(charString)
 		} else {
 			if 0 == i {
-				result += _char
+				result += charString
 			} else {
-				result += (_charStr)
+				result += (charLower)
 			}
 
 		}
-		currentChar = _char
+		currentChar = charString
 
 	}
 

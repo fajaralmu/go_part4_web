@@ -100,9 +100,6 @@ func getPages(w http.ResponseWriter, r *http.Request) []entities.Page {
 		filter.FieldsFilter = map[string]interface{}{
 			"Authorized": 0,
 		}
-
-	} else {
-
 	}
 
 	filter.OrderBy = "Sequence"
@@ -138,8 +135,8 @@ func (p *pageData) parseContent(additionalPageCodes ...string) {
 	log.Println("********pageData.PageCode: ", p.PageCode)
 
 	e := tmpl.ExecuteTemplate(&tplContent, p.PageCode, p)
-	if e == nil {
 
+	if e == nil {
 		fmt.Println("Success parsing ", p.PageCode)
 		p.Content = tplContent.String()
 	} else {

@@ -19,15 +19,14 @@ func registerAPIs() {
 	log.Println("END registerAPIs")
 }
 
-func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string, authenticated bool) {
+func handleAPI(path string, handlerMethod func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string, authenticated bool) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("api-START///////////URI: ", r.RequestURI)
 			preHandleResult := apiPreHandle(w, r, authenticated)
 
-			if preHandleResult == false {
-
+			if !preHandleResult {
 				if authenticated {
 					writeErrorMsgBadRequest(w, "Invalid Request 01")
 					return
@@ -36,7 +35,7 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 				log.Println("API-END////////////URI: ", path)
 				return
 			}
-			response, err := handler(w, r)
+			response, err := handlerMethod(w, r)
 			if nil != err {
 				writeErrorMsgBadRequest(w, err.Error())
 			} else {
@@ -62,7 +61,7 @@ func registerWebPages() {
 	/////STATIC RESOURCES/////
 
 	// fs := http.StripPrefix("/static/", fileServer())
-	cs := &customStaticHandler{root: http.Dir("./public/")}
+	var cs *customStaticHandler = &customStaticHandler{root: http.Dir("./public/")}
 	router.PathPrefix("/static/").Handler(cs)
 
 	log.Println("END Register Web Pages")
@@ -76,14 +75,14 @@ func handleWebsocket(path string, handler func(w http.ResponseWriter, r *http.Re
 	router.HandleFunc(path, handler)
 }
 
-func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
+func handleMvc(path string, handlerMethod func(w http.ResponseWriter, r *http.Request) error, method string, authenticated bool) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
 			log.Println("MVC-START///////////URI: ", r.RequestURI)
 
 			preHandleResult := mvcPreHandle(w, r, authenticated)
-			if preHandleResult == false {
+			if !preHandleResult {
 				if authenticated {
 					setLatestURI(w, r, r.RequestURI)
 					sendRedirect(w, r, "/account/login")
@@ -93,7 +92,7 @@ func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request)
 				log.Println("MVC-END////////////URI: ", path)
 				return
 			}
-			err := handler(w, r)
+			err := handlerMethod(w, r)
 			if err != nil {
 				writeErrorMsgBadRequest(w, err.Error())
 			}
@@ -133,7 +132,6 @@ func writeJSONResponse(w http.ResponseWriter, obj interface{}) {
 
 func writeResponseHeaders(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
-
 }
 
 func writeErrorMsgBadRequest(w http.ResponseWriter, msg string) {

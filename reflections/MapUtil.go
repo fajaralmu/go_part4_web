@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const exactsKeyword string = "[EXACTS]"
+
 //EvaluateFilterMap convert map keys to snake_case
 func EvaluateFilterMap(filter map[string]interface{}, t reflect.Type) {
 	fields := GetDeclaredFields(t)
@@ -15,8 +17,8 @@ func EvaluateFilterMap(filter map[string]interface{}, t reflect.Type) {
 		newKey := key
 		//check if joinColumn
 		var fieldKey string
-		if strings.Contains(key, "[EXACTS]") {
-			fieldKey = strings.Replace(key, "[EXACTS]", "", 1)
+		if strings.Contains(key, exactsKeyword) {
+			fieldKey = strings.Replace(key, exactsKeyword, "", 1)
 		} else {
 			fieldKey = key
 		}

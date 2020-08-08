@@ -14,7 +14,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-var databaseConnection *gorm.DB
+var dbConnection *gorm.DB
+
+const exactsKeywordAfterEvaluate string = "_[exacts_]"
 
 // InitDatabase initialize db connection
 func InitDatabase() {
@@ -26,13 +28,13 @@ func InitDatabase() {
 func dbOperation(operation func()) {
 	println("_______________________________ will init DB")
 	var err error
-	databaseConnection, err = gorm.Open("mysql", "root@(localhost:3306)/base_app_go?charset=utf8&parseTime=True&loc=Local")
+	dbConnection, err = gorm.Open("mysql", "root@(localhost:3306)/base_app_go?charset=utf8&parseTime=True&loc=Local")
 	if nil != err {
 		fmt.Println("Error Opening DB:", err)
 	} else {
-		defer databaseConnection.Close()
-		databaseConnection.SingularTable(true)
-		databaseConnection.LogMode(true)
+		defer dbConnection.Close()
+		dbConnection.SingularTable(true)
+		dbConnection.LogMode(true)
 		println("success init DB, Operation BEGINS*****")
 		operation()
 		println("*****operation ENDS*****")
@@ -43,19 +45,19 @@ func dbOperation(operation func()) {
 
 func autoMigrate(model interface{}) {
 	println("will AutoMigrate ", reflections.GetStructType(model).Name())
-	databaseConnection.AutoMigrate(model)
+	dbConnection.AutoMigrate(model)
 	println("AutoMigrated")
 }
 
 func addNewRecord(model entities.InterfaceEntity) {
-	databaseConnection.NewRecord(model)
+	dbConnection.NewRecord(model)
 
-	databaseConnection.Create(model)
+	dbConnection.Create(model)
 	println("model created")
 }
 func updateRecord(model entities.InterfaceEntity) {
 
-	databaseConnection.Save(model)
+	dbConnection.Save(model)
 	println("model saved")
 }
 
@@ -65,7 +67,7 @@ func FindByID(model interface{}, id interface{}) (entities.InterfaceEntity, bool
 	fmt.Println("model: ", model)
 	count := 0
 	dbOperation(func() {
-		databaseConnection.Find(model, id).Count(&count)
+		dbConnection.Find(model, id).Count(&count)
 
 	})
 	println("count: ", count)
@@ -102,14 +104,14 @@ func FilterLike(resultModels interface{}, filter map[string]interface{}, page in
 		offset := page * limit
 
 		//process count
-		dbCount := databaseConnection.Where(whereClauses[0], whereClauses[1:]...)
+		dbCount := dbConnection.Where(whereClauses[0], whereClauses[1:]...)
 		dbCount = appendJoinColumnQueries(dbCount, joinColumns)
 		dbCount.Find(resultModels).Count(&count)
 		//end count
 		if count == 0 {
 			return
 		}
-		db := createDBConnection(databaseConnection, offset, limit, orderBy, orderType)
+		db := createDBConnection(dbConnection, offset, limit, orderBy, orderType)
 		db = appendJoinColumnQueries(db, joinColumns)
 		db.Find(resultModels, whereClauses...)
 	})
@@ -140,12 +142,12 @@ func FilterMatch(resultModels interface{}, filter map[string]interface{}, page i
 		offset := page * limit
 
 		//process count
-		databaseConnection.Where(filter).Table(tableName).Count(&count)
+		dbConnection.Where(filter).Table(tableName).Count(&count)
 		log.Println("//end count: ", count)
 		if count == 0 {
 			return
 		}
-		db := createDBConnection(databaseConnection, offset, limit, orderBy, orderType)
+		db := createDBConnection(dbConnection, offset, limit, orderBy, orderType)
 		//Finally
 		db.Find(resultModels, filter)
 	})
@@ -204,9 +206,9 @@ func getJoinQueries(filter map[string]interface{}, t reflect.Type) []string {
 		if strings.Contains(key, ".") {
 			splitString := strings.Split(key, ".")
 			var fieldKey string
-			exactSearch := strings.HasSuffix(splitString[0], "_[exacts_]")
+			exactSearch := strings.HasSuffix(splitString[0], exactsKeywordAfterEvaluate)
 			if exactSearch {
-				fieldKey = strings.Replace(splitString[0], "_[exacts_]", "", 1)
+				fieldKey = strings.Replace(splitString[0], exactsKeywordAfterEvaluate, "", 1)
 			} else {
 				fieldKey = splitString[0]
 			}
@@ -281,11 +283,11 @@ func Delete(model entities.InterfaceEntity, softDelete bool) {
 }
 
 func deleteModel(model entities.InterfaceEntity) {
-	databaseConnection.Delete(model)
+	dbConnection.Delete(model)
 	println("model deleted")
 }
 
 func deleteModelPermanently(model entities.InterfaceEntity) {
-	databaseConnection.Unscoped().Delete(model)
+	dbConnection.Unscoped().Delete(model)
 	println("model deleted permanently")
 }

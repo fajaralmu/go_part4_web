@@ -9,7 +9,7 @@ import (
 	"github.com/fajaralmu/go_part4_web/reflections"
 )
 
-const IMG_PATH string = "./public/img/app/"
+const imgPath string = "./public/img/app/"
 
 //WriteBase64Img writes file from base64 string
 func WriteBase64Img(imgRawData string, code string) string {
@@ -34,7 +34,7 @@ func WriteBase64Img(imgRawData string, code string) string {
 	imageType := strings.Replace(imageIdentity, "data:image/", "", 1)
 	imageType = strings.Replace(imageType, ";base64", "", 1)
 	imageName := reflections.RandomNum(10)
-	path := IMG_PATH // webAppConfiguration.getUploadedImageRealPath();
+	path := imgPath // webAppConfiguration.getUploadedImageRealPath();
 
 	imageFileName := code + "_" + imageName + "." + imageType
 

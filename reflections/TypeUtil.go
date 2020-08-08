@@ -86,6 +86,7 @@ func GetDeclaredFields(t reflect.Type) []reflect.StructField {
 			//log.Println("Skip gorm.Model")
 			continue
 		}
+
 		if structField.Type.String() == "entities.InterfaceEntity" {
 			entityInterface = true
 		}
@@ -140,7 +141,7 @@ func GetJoinColumnFields(_model entities.InterfaceEntity, skipNull bool) []refle
 			//fmt.Println("__________________")
 		}
 	} else {
-		//fmt.Println("not a struct")
+		fmt.Println("GetJoinColumnFields not a struct")
 	}
 	return result
 }

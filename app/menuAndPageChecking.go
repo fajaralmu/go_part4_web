@@ -50,7 +50,7 @@ func getPageOnlyByCode(code string) (page entities.Page, ok bool) {
 	list := repository.FilterByKey(&[]entities.Page{}, "Code", code)
 
 	if len(list) != 1 {
-		log.Println("fails END getPageOnlyByCode: ", code)
+		log.Println("fails END getPageOnlyByCode: ", code, " len(list): ", len(list))
 		return page, false
 	}
 	log.Println("success END getPageOnlyByCode: ", code)
@@ -73,14 +73,14 @@ func getPageFromDB(code string, defaultPageIfNotExist *entities.Page) *entities.
 }
 
 func getMenuFromDB(code string, defaultMenuIfNotExist *entities.Menu, menuPage *entities.Page) *entities.Menu {
-	eixsitingPage := getPageFromDB(menuPage.Code, menuPage)
 	existingMenu, ok := getMenuByCode(code) // menuRepository.findByCode(code);
-	if ok {
 
+	if ok {
+		log.Printf("existingMenu with code: %v FOUND! \n", code)
 		return &existingMenu
 	}
-
 	log.Println("WILL SAVE menu with :", code)
+	eixsitingPage := getPageFromDB(menuPage.Code, menuPage)
 
 	menu := defaultMenuIfNotExist
 	menu.MenuPage = &entities.Page{}

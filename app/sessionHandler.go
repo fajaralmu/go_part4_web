@@ -17,6 +17,11 @@ import (
 // Ensure SESSION_KEY exists in the environment, or sessions will fail.
 var store *sessions.CookieStore = sessions.NewCookieStore([]byte("DONT_PUT_THE_KEY_HERE_THIS_IS_TESTING_PURPOSE"))
 
+const appSession string = "APP_SESSION"
+const requestURI string = "request-uri"
+const keyLoggedUser string = "logged_user"
+const keyAuthValid string = "valid"
+
 func registerSessions() {
 	gob.Register(&entities.User{})
 }
@@ -30,7 +35,7 @@ func getSessionValue(r *http.Request, sessionName string) (*sessions.Session, er
 }
 
 func getLatestURI(w http.ResponseWriter, r *http.Request) string {
-	savedURI := getSessionVal(w, r, "APP_SESSION", "request-uri")
+	savedURI := getSessionVal(w, r, appSession, requestURI)
 	if savedURI == nil {
 		return ""
 	}
@@ -41,7 +46,7 @@ func getLatestURI(w http.ResponseWriter, r *http.Request) string {
 }
 
 func setLatestURI(w http.ResponseWriter, r *http.Request, path string) bool {
-	sessionUpdated := setSessionValue(w, r, "APP_SESSION", "request-uri", path)
+	sessionUpdated := setSessionValue(w, r, appSession, requestURI, path)
 	log.Println("setLatestURI:", path, " sessionUpdated: ", sessionUpdated)
 	return sessionUpdated
 }
@@ -63,12 +68,12 @@ func getSessionVal(w http.ResponseWriter, r *http.Request, sessionName string, s
 }
 
 func getUserFromSession(w http.ResponseWriter, r *http.Request) *entities.User {
-	session, err := getSessionValue(r, "APP_SESSION")
+	session, err := getSessionValue(r, appSession)
 	if err != nil {
 		return nil
 	}
 
-	sessVal := session.Values["logged_user"]
+	sessVal := session.Values[keyLoggedUser]
 
 	if _, ok := sessVal.(*entities.User); !ok {
 		// Handle the case that it's not an expected type
@@ -77,22 +82,22 @@ func getUserFromSession(w http.ResponseWriter, r *http.Request) *entities.User {
 		return nil
 	}
 
-	if session.Values["valid"] == true {
+	if session.Values[keyAuthValid] == true {
 		return sessVal.(*entities.User)
 	}
 	return nil
 }
 
-func setUserToSession(w http.ResponseWriter, r *http.Request, user *entities.User) (sessionUpdated bool) {
+func setUserToSession(w http.ResponseWriter, r *http.Request, user *entities.User) (updated bool) {
 	if nil != user {
-		sessionUpdated = setSessionValue(w, r, "APP_SESSION", "logged_user", user)
-		sessionUpdated = setSessionValue(w, r, "APP_SESSION", "valid", true)
+		updated = setSessionValue(w, r, appSession, keyLoggedUser, user)
+		updated = setSessionValue(w, r, appSession, keyAuthValid, true)
 	} else {
-		sessionUpdated = setSessionValue(w, r, "APP_SESSION", "valid", false)
+		updated = setSessionValue(w, r, appSession, keyAuthValid, false)
 	}
 
-	log.Printf("sessionUpdated: %v", sessionUpdated)
-	return sessionUpdated
+	log.Printf("sessionUpdated: %v", updated)
+	return updated
 }
 
 func setSessionValue(w http.ResponseWriter, r *http.Request, sessionName string, sessionKey string, sessionValue interface{}) bool {
@@ -103,10 +108,10 @@ func setSessionValue(w http.ResponseWriter, r *http.Request, sessionName string,
 	}
 
 	session.Values[sessionKey] = sessionValue
-	err2 := session.Save(r, w)
-	if err2 != nil {
-		log.Printf("Save err: %v", err2.Error())
+	err = session.Save(r, w)
+	if err != nil {
+		log.Printf("Save err: %v", err.Error())
 	}
-	log.Printf("Saving session : %v", err2 == nil)
-	return err2 == nil
+	log.Printf("Saving session : %v", err == nil)
+	return err == nil
 }

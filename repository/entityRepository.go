@@ -29,10 +29,10 @@ func doCreate(model entities.InterfaceEntity, withValidation bool) {
 	}
 
 	if ok {
-		println("Creating Model")
+		fmt.Println("Creating Model")
 		dataaccess.CreateNew(model)
 	} else {
-		println("Entity Invalid!")
+		fmt.Println("Entity Invalid!")
 	}
 }
 
@@ -43,7 +43,7 @@ func Delete(model entities.InterfaceEntity, softDelete bool) bool {
 	if existInDB {
 		dataaccess.Delete(model, softDelete)
 	} else {
-		println("Record does not exist!")
+		fmt.Println("Record does not exist!")
 		return existInDB
 	}
 
@@ -70,7 +70,7 @@ func doSave(model entities.InterfaceEntity, validate bool) interface{} {
 			result := dataaccess.Save(model)
 			return result
 		} else {
-			println("Entity Invalid!")
+			fmt.Println("Entity Invalid!")
 		}
 	}
 	return model
@@ -90,9 +90,9 @@ func SaveWihoutValidation(model entities.InterfaceEntity) interface{} {
 
 func isExistInDB(model entities.InterfaceEntity) (entities.InterfaceEntity, bool) {
 	ID := reflections.GetIDValue(model)
-	duplicate := reflections.Dereference(model).Interface()
-	duplicatePtr := reflections.CreateNewType(reflect.TypeOf(duplicate))
-	obj, ok := dataaccess.FindByID(duplicatePtr, ID)
+	modelDereferenced := reflections.Dereference(model).Interface()
+	duplicatedPtr := reflections.CreateNewType(reflect.TypeOf(modelDereferenced))
+	obj, ok := dataaccess.FindByID(duplicatedPtr, ID)
 	return obj, ok
 }
 
@@ -110,10 +110,12 @@ func FindByID(model entities.InterfaceEntity, ID uint) entities.InterfaceEntity 
 //FilterByKey get list of obj by key match given value, models must be a slice
 func FilterByKey(models interface{}, key string, val interface{}) []interface{} {
 	log.Println("FilterByKey: ", key, " val: ", val)
+
 	var list []interface{}
 	list, count := dataaccess.FilterMatch(models, map[string]interface{}{
 		key: val,
 	}, 0, 0, "", "")
+
 	log.Println("res size: ", len(list), count)
 	return list
 }
@@ -147,9 +149,9 @@ func Filter(models interface{}, filter entities.Filter) ([]interface{}, int) {
 }
 
 func validateResultObject(model entities.InterfaceEntity) interface{} {
-	log.Println("START_VALIDATE_RESULT_OBJECT")
+
 	structFields := reflections.GetJoinColumnFields(model, false)
-	fmt.Println("JOIN COLUMN FIELD size: ", len(structFields))
+	fmt.Println("START_VALIDATE_RESULT_OBJECT\nJOIN COLUMN FIELD size: ", len(structFields))
 
 	for _, field := range structFields {
 
@@ -191,8 +193,7 @@ func processForeignKey(foreignKey string, field reflect.StructField, model entit
 		return nil, false
 	}
 	result, ok := dataaccess.FindByID(entity, foreignKeyID)
-	fmt.Println("result FIND BY ID: ", result)
-	println("end process foreign key")
+	fmt.Println("result FIND BY ID: ", result, "\n end process foreign key")
 
 	return result, ok
 }
