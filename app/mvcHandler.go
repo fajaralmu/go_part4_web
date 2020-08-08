@@ -76,7 +76,7 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 	}
 	entityProperty := appConfig.CreateEntityProperty(entityConf.SingleType, entityConf.FormInputColumn)
 
-	pageData := pageData{
+	data := pageData{
 		PageCode:       "entityManagementPage",
 		Title:          "Management Page",
 		Message:        "Manage Models",
@@ -85,11 +85,11 @@ func managementRoute(w http.ResponseWriter, r *http.Request) error {
 			"./templates/entity-management-component/detail-element.html", "./templates/entity-management-component/form-element.html",
 		},
 	}
-	pageData.setStylePath("entitymanagement")
-	return executeWebContents(pageData, w, r)
+	data.setStylePath("entitymanagement")
+	return executeWebContents(data, w, r)
 }
 
-func resetMenus(w http.ResponseWriter, r *http.Request) (err error) {
+func resetMenusRoute(w http.ResponseWriter, r *http.Request) (err error) {
 
 	resetAllMenus()
 	sendRedirect(w, r, "/admin/home")
@@ -107,11 +107,13 @@ func executeWebContents(p pageData, w http.ResponseWriter, r *http.Request) erro
 		p.prepareWebData()
 		tmpl.ExecuteTemplate(w, "layout", p)
 		return nil
-	} else {
-		writeResponseHeaders(w)
-		writeErrorMsgBadRequest(w, err.Error())
-		return err
 	}
+
+	//if INVALID
+	writeResponseHeaders(w)
+	writeErrorMsgBadRequest(w, err.Error())
+	return err
+
 }
 
 func commonPageRoute(w http.ResponseWriter, r *http.Request) error {
@@ -119,13 +121,13 @@ func commonPageRoute(w http.ResponseWriter, r *http.Request) error {
 	pageCode := getMuxParam(r, "code")
 	selectedPage := getPageByCode(pageCode)
 
-	pageData := pageData{
+	data := pageData{
 		PageCode: "commonPage",
 		Title:    "Common Page",
 		Message:  "Hello World",
 		Page:     selectedPage,
 	}
-	return executeWebContents(pageData, w, r)
+	return executeWebContents(data, w, r)
 
 }
 
@@ -135,11 +137,11 @@ func loginRoute(w http.ResponseWriter, r *http.Request) error {
 		sendRedirect(w, r, "/admin/home")
 	}
 
-	pageData := pageData{
+	data := pageData{
 		PageCode: "login",
 		Title:    "Login Page",
 	}
-	return executeWebContents(pageData, w, r)
+	return executeWebContents(data, w, r)
 }
 func logoutRoute(w http.ResponseWriter, r *http.Request) error {
 
@@ -149,30 +151,30 @@ func logoutRoute(w http.ResponseWriter, r *http.Request) error {
 }
 func registerRoute(w http.ResponseWriter, r *http.Request) error {
 
-	pageData := pageData{
+	data := pageData{
 		PageCode: "register",
 		Title:    "Register Page",
 	}
-	return executeWebContents(pageData, w, r)
+	return executeWebContents(data, w, r)
 }
 
 func pageSettingRoute(w http.ResponseWriter, r *http.Request) error {
 
-	pageData := pageData{
+	data := pageData{
 		PageCode: "pageSequence",
 		Title:    "Page Setting",
 	}
-	pageData.setStylePath("pagesequence")
-	return executeWebContents(pageData, w, r)
+	data.setStylePath("pagesequence")
+	return executeWebContents(data, w, r)
 }
 
 func homeRoute(w http.ResponseWriter, r *http.Request) error {
 
-	pageData := pageData{
+	data := pageData{
 		PageCode: "about",
 		Title:    "About Us",
 		Message:  "Hello World",
 	}
-	pageData.setStylePath("about")
-	return executeWebContents(pageData, w, r)
+	data.setStylePath("about")
+	return executeWebContents(data, w, r)
 }

@@ -15,7 +15,7 @@ func mvcPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bo
 	return true
 }
 func apiPreHandle(w http.ResponseWriter, r *http.Request, authenticated bool) bool {
-	log.Println("apiPreHandle: ", r.RequestURI)
+	log.Println("API PreHandle: ", r.RequestURI)
 	if authenticated {
 		sessionValid := validateSessionn(w, r)
 		log.Println("Session IS VALID: ", sessionValid)

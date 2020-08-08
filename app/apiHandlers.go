@@ -12,7 +12,7 @@ import (
 
 /////////////////////////MODEL CRUD///////////////////////////
 
-func getEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func getEntitiesREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
@@ -20,13 +20,13 @@ func getEntities(w http.ResponseWriter, r *http.Request) (res entities.WebRespon
 	if err != nil {
 		return res, err
 	}
-	res, err = Filter(req)
+	res, err = filterEntity(req)
 	sendBroadcastMessage("end GET entities")
 	return res, err
 
 }
 
-func deleteEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func deleteEntitiesREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
@@ -35,13 +35,13 @@ func deleteEntities(w http.ResponseWriter, r *http.Request) (res entities.WebRes
 		return res, err
 	}
 
-	res = Delete(req)
+	res = deleteEntity(req)
 	writeWebResponse(w, res)
 	return res, nil
 
 }
 
-func addEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func addEntitiesREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
@@ -49,11 +49,11 @@ func addEntities(w http.ResponseWriter, r *http.Request) (res entities.WebRespon
 	if err != nil {
 		return res, err
 	}
-	res = AddEntity(req)
+	res = addEntity(req)
 	return res, err
 }
 
-func updateEntities(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func updateEntitiesREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
@@ -61,11 +61,11 @@ func updateEntities(w http.ResponseWriter, r *http.Request) (res entities.WebRes
 	if err != nil {
 		return res, err
 	}
-	res = UpdateEntity(req)
+	res = updateEntity(req)
 	return res, err
 }
 
-func savePageSequence(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func savePageSequenceREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 
@@ -77,7 +77,7 @@ func savePageSequence(w http.ResponseWriter, r *http.Request) (res entities.WebR
 
 }
 
-func checkUserName(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func checkUserNameREST(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 
@@ -91,7 +91,7 @@ func checkUserName(w http.ResponseWriter, r *http.Request) (response entities.We
 	}
 	return webResponse("01", "username unavailable"), nil
 }
-func register(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+func registerREST(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 
@@ -106,7 +106,7 @@ func register(w http.ResponseWriter, r *http.Request) (response entities.WebResp
 }
 
 /////////////////ACCOUNT////////////////
-func login(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
+func loginREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {
 
 	var req entities.WebRequest
 	err = json.NewDecoder(r.Body).Decode(&req)

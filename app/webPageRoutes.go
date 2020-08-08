@@ -49,7 +49,7 @@ func registerWebPageRoutes() {
 		return pageSettingRoute(w, r)
 	}
 	appRoute.ResetMenusRoute = func(w http.ResponseWriter, r *http.Request) error {
-		return resetMenus(w, r)
+		return resetMenusRoute(w, r)
 	}
 	appRoute.RegisterRoute = func(w http.ResponseWriter, r *http.Request) error {
 		return registerRoute(w, r)

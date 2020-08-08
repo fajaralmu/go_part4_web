@@ -33,7 +33,7 @@ func handleAPI(path string, handler func(w http.ResponseWriter, r *http.Request)
 					return
 				}
 
-				log.Println("api-END////////////URI: ", path)
+				log.Println("API-END////////////URI: ", path)
 				return
 			}
 			response, err := handler(w, r)
@@ -80,7 +80,7 @@ func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request)
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
-			log.Println("mvc-START///////////URI: ", r.RequestURI)
+			log.Println("MVC-START///////////URI: ", r.RequestURI)
 
 			preHandleResult := mvcPreHandle(w, r, authenticated)
 			if preHandleResult == false {
@@ -90,14 +90,14 @@ func handleMvc(path string, handler func(w http.ResponseWriter, r *http.Request)
 					return
 				}
 
-				log.Println("mvc-END////////////URI: ", path)
+				log.Println("MVC-END////////////URI: ", path)
 				return
 			}
 			err := handler(w, r)
 			if err != nil {
 				writeErrorMsgBadRequest(w, err.Error())
 			}
-			log.Println("mvc-END////////////URI: ", r.RequestURI)
+			log.Println("MVC-END////////////URI: ", r.RequestURI)
 		},
 	}
 

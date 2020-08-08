@@ -44,19 +44,6 @@ func Run() {
 	go handleMessages()
 	initWebApp()
 
-	// webReq := entities.WebRequest{
-	// 	Filter: entities.Filter{
-	// 		EntityName: "user",
-	// 		Page:       0,
-	// 		Limit:      3,
-	// 		FieldsFilter: map[string]interface{}{
-	// 			"Username":    "Fajar",
-	// 			"DisplayName": "Fajr2",
-	// 		},
-	// 	},
-	// }
-	// Filter(webReq)
-
 }
 
 func initWebApp() {

@@ -13,57 +13,55 @@ import (
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
-func UpdateEntity(request entities.WebRequest) entities.WebResponse {
+func updateEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	log.Println("entityName: ", entityName)
+	log.Println("UPDATE entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 
 	repository.SaveAndValidate(fieldValue.(entities.InterfaceEntity))
 	fmt.Println("SAVED Entity: ", fieldValue)
 
-	response := entities.WebResponse{
+	res := entities.WebResponse{
 		Result: fieldValue,
 	}
-	return response
+	return res
 }
 
-func Delete(request entities.WebRequest) entities.WebResponse {
+func deleteEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	log.Println("entityName: ", entityName)
+	log.Println("DEL entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 
 	deleted := repository.Delete(fieldValue.(entities.InterfaceEntity), true)
 	fmt.Println("Deleted Entity: ", deleted)
 
-	response := entities.WebResponse{
+	res := entities.WebResponse{
 		Result: deleted,
 	}
-	return response
+	return res
 }
 
-func AddEntity(request entities.WebRequest) entities.WebResponse {
+func addEntity(request entities.WebRequest) entities.WebResponse {
 	entityName := request.Filter.EntityName
-	log.Println("entityName: ", entityName)
+	log.Println("ADD entityName: ", entityName)
 	fieldValue, _ := reflections.GetFieldValue(entityName, &request)
 
 	repository.CreateNew(fieldValue.(entities.InterfaceEntity))
 	fmt.Println("created Entity: ", fieldValue)
 
-	response := entities.WebResponse{
+	res := entities.WebResponse{
 		Result: fieldValue,
 	}
-	return response
+	return res
 }
 
-//Filter returns entities by given keywords
-func Filter(request entities.WebRequest) (entities.WebResponse, error) {
+func filterEntity(request entities.WebRequest) (res entities.WebResponse, err error) {
 
 	filter := request.Filter
 	entityConf := appConfig.GetEntityConf(filter.EntityName)
-	var response entities.WebResponse
 
 	if nil == entityConf {
-		return response, errors.New("Invalid entityName")
+		return res, errors.New("Invalid entityName")
 	}
 
 	createdSlice := reflections.CreateNewType(entityConf.ListType)
@@ -71,12 +69,12 @@ func Filter(request entities.WebRequest) (entities.WebResponse, error) {
 
 	list, totalData := repository.Filter(createdSlice, filter)
 
-	response = entities.WebResponse{
+	res = entities.WebResponse{
 		ResultList: list,
 		TotalData:  totalData,
 		Filter:     filter,
 		//AdditionalData: appConfig.CreateEntityProperty(reflect.TypeOf(entities.User{})),
 	}
 	// fmt.Println("RESPONSE: ", response)
-	return response, nil
+	return res, nil
 }

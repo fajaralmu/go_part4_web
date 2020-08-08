@@ -21,29 +21,29 @@ type webAPIRoute struct {
 func registerWebAPIRoutes() {
 	appRoute := webAPIRoute{
 		GetEntities: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return getEntities(w, r)
+			return getEntitiesREST(w, r)
 		},
 		AddEntities: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return addEntities(w, r)
+			return addEntitiesREST(w, r)
 		},
 		UpdateEntities: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return updateEntities(w, r)
+			return updateEntitiesREST(w, r)
 		},
 		DeleteEntities: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return deleteEntities(w, r)
+			return deleteEntitiesREST(w, r)
 		},
 		SavePageSequence: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return savePageSequence(w, r)
+			return savePageSequenceREST(w, r)
 		},
 
 		Login: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return login(w, r)
+			return loginREST(w, r)
 		},
 		CheckUserName: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return checkUserName(w, r)
+			return checkUserNameREST(w, r)
 		},
 		Register: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
-			return register(w, r)
+			return registerREST(w, r)
 		},
 	}
 	registerHandlers(appRoute, "api")
