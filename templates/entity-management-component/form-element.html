@@ -34,7 +34,7 @@
             id="form_input_{{.ID}}"
             groupName="{{.InputGroupname }}"
             class="entity-input-form ${element.isGrouped() == 'true' ? 'grouped' : '' }"
-            style="grid-template-columns:{{$.EntityProperty.GridAutoColumns}}"
+           
           >
             <div class="entity-input-label">
               <label>{{.LableName }}</label>
@@ -263,6 +263,7 @@
 <script>
   const groupedInputs = getGroupedInputs();
   const entityForm = _byId("entity-form");
+  const inputFormWrappers = document.getElementsByClassName("entity-input-form")
   var groupNames = "{{.EntityProperty.GroupNames}}";
 
   function arrangeInputs() {
@@ -341,10 +342,18 @@
     });
     return h3;
   }
-
+// style="grid-template-columns:{{$.EntityProperty.GridAutoColumns}}"
+  function updateGridLayout(){
+    for (let i = 0; i < inputFormWrappers.length; i++) {
+      const element = inputFormWrappers[i];
+      element.style.gridTemplateColumns = "{{$.EntityProperty.GridAutoColumns}}"
+    }
+  }
+  updateGridLayout()
   if (groupedInputs && groupedInputs.length > 1) {
     arrangeInputs();
   }
+  
 </script>
 
 
