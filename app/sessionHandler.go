@@ -103,15 +103,15 @@ func setUserToSession(w http.ResponseWriter, r *http.Request, user *entities.Use
 func setSessionValue(w http.ResponseWriter, r *http.Request, sessionName string, sessionKey string, sessionValue interface{}) bool {
 	session, err := getSessionValue(r, sessionName)
 	if err != nil {
-		log.Printf("getSessionValue err: %v", err.Error())
+		log.Printf("get Session Value err: %v", err.Error())
 		return false
 	}
 
 	session.Values[sessionKey] = sessionValue
 	err = session.Save(r, w)
 	if err != nil {
-		log.Printf("Save err: %v", err.Error())
+		log.Printf("Save session err: %v", err.Error())
 	}
-	log.Printf("Saving session : %v", err == nil)
+	log.Printf("Session updated : %v", err == nil)
 	return err == nil
 }

@@ -25,7 +25,7 @@ func WriteBase64Img(imgRawData string, code string) string {
 
 	dec, err := base64.StdEncoding.DecodeString(imageString)
 	if err != nil {
-		panic(err)
+		log.Println("Error DecodeString: ", err.Error())
 		return ""
 	}
 
@@ -42,17 +42,17 @@ func WriteBase64Img(imgRawData string, code string) string {
 
 	f, err := os.Create(path + imageFileName)
 	if err != nil {
-		panic(err)
+		log.Println("Error Create File: ", err.Error())
 		return ""
 	}
 	defer f.Close()
 
 	if _, err := f.Write(dec); err != nil {
-		panic(err)
+		log.Println("Error Write File: ", err.Error())
 		return ""
 	}
 	if err := f.Sync(); err != nil {
-		panic(err)
+		log.Println("Error Sync File: ", err.Error())
 		return ""
 	}
 
