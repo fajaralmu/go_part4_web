@@ -11,17 +11,24 @@ import (
 	"github.com/fajaralmu/go_part4_web/entities"
 )
 
-func getEntitiesReport(request entities.WebRequest) {
-	log.Println("generateEntityReport")
+func getEntitiesReport(request entities.WebRequest) []byte {
+	log.Println("generate Entity Report")
 	//		request.getFilter().setLimit(0);
 
 	filtered, _ := filterEntity(request)
 	entityProp := getEntityProperty(request)
 
 	list := reflections.ConvertInterfaceToSlice(filtered.ResultList)
-	report.GetEntityReport(list, entityProp)
+	file := report.GetEntityReport(list, entityProp)
+	if nil != file {
+		buffer, err := file.WriteToBuffer()
+		if err == nil {
 
+			return buffer.Bytes()
+		}
+	}
 	// return file;
+	return nil
 }
 
 func getEntityProperty(request entities.WebRequest) appConfig.EntityProperty {

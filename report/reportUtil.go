@@ -71,8 +71,8 @@ func mapEntityValue(entity interface{}, element appConfig.EntityElement) interfa
 				// Field converterField = getDeclaredField(field.getType(), optionItemName);
 				// Object converterValue = converterField.get(value);
 				converterValue, _ := reflections.GetFieldValue(optionItemName, value)
-				log.Println("converterValue: ", converterValue)
-				if value != nil {
+
+				if converterValue != nil {
 					value = converterValue
 				} else {
 					value = "-"
@@ -132,7 +132,6 @@ func getTableContentMap(columCount int, values ...interface{}) map[int][]interfa
 	}
 
 	log.Println("rowNum: ", rowNum, " columCount: ", columCount)
-	log.Println("tableContent: ", tableContent)
 	return tableContent
 }
 
@@ -184,10 +183,6 @@ func createRow(sheetName string, rownum int, offsetIndex int,
 	// XSSFCellStyle style = sheet.getWorkbook().createCellStyle();
 	// setAllBorder(style, THIN);
 	row = fillRows(row, offsetIndex /*style, */, values...)
-
-	// for (int i = 0; i < values.length; i++) {
-	// 	sheet.autoSizeColumn(i);
-	// }
 
 	return row
 }

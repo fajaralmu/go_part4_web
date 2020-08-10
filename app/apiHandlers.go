@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -112,9 +113,14 @@ func printModelReportREST(w http.ResponseWriter, r *http.Request) (response enti
 		return response, err
 	}
 
-	getEntitiesReport(req)
+	bytes := getEntitiesReport(req)
+	if bytes != nil {
+		w.Header().Add("Content-disposition", "attachment; filename=report.xlsx")
+		w.Write(bytes)
+		return response, nil
+	}
 
-	return webResponse("00", "success"), nil
+	return response, errors.New("error creating report")
 }
 
 /////////////////ACCOUNT////////////////

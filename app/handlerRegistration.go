@@ -19,7 +19,7 @@ func registerAPIs() {
 	log.Println("END registerAPIs")
 }
 
-func handleAPI(path string, handlerMethod func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string, authenticated bool) {
+func handleAPI(path string, handlerMethod func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error), method string, authenticated bool, notJSONResponse bool) {
 
 	h := appHandler{
 		handler: func(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +39,12 @@ func handleAPI(path string, handlerMethod func(w http.ResponseWriter, r *http.Re
 			if nil != err {
 				writeErrorMsgBadRequest(w, err.Error())
 			} else {
-				writeWebResponse(w, response)
+				if notJSONResponse {
+
+				} else {
+					writeWebResponse(w, response)
+				}
+
 			}
 			log.Println("API-END////////////URI: ", r.RequestURI)
 		},

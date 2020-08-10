@@ -38,19 +38,18 @@ func GetCellName(col, row int) string {
 }
 
 //GetEntityReport generate excel report for list of models
-func GetEntityReport(entities []interface{}, entityProp appConfig.EntityProperty) {
+func GetEntityReport(entities []interface{}, entityProp appConfig.EntityProperty) *excelize.File {
 	f := excelize.NewFile()
-	// Create a new sheet.
-
-	// Set value of a cell.
-	// f.SetCellValue(sheetName, "A2", "Hello world.")
 	// Set active sheet of the workbook.
 	writeCellValues(f, entities, entityProp)
 	// Save xlsx file by the given path.
 	random := reflections.RandomNum(30)
 	if err := f.SaveAs("./reports/" + entityProp.EntityName + random + ".xlsx"); err != nil {
 		println(err.Error())
+		return nil
 	}
+
+	return f
 }
 
 func writeCellValues(file *excelize.File, entities []interface{}, entityProperty appConfig.EntityProperty) {

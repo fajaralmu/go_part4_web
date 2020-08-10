@@ -75,7 +75,13 @@ func registerHandlers(appRoute interface{}, handleType string) {
 			case "mvc":
 				handleMvc(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) error), "GET", authenticated)
 			case "api":
-				handleAPI(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error)), "POST", authenticated)
+				notJSONResponse := false
+				if customTag["jsonResponse"] == "false" {
+					notJSONResponse = true
+				}
+
+				handleAPI(path, fieldValue.(func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error)),
+					"POST", authenticated, notJSONResponse)
 			default:
 				log.Println("Handle type unknown")
 			}
