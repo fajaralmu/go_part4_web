@@ -53,11 +53,12 @@ func mapEntityValue(entity interface{}, element appConfig.EntityElement) interfa
 
 	var value interface{}
 
-	value, ok := reflections.GetFieldValue(element.ID, entity)
-	if !ok {
+	value, _ = reflections.GetFieldValue(element.ID, entity)
+	if value == nil {
+		log.Println("GetFieldValue (", element.ID, ") NOT OK, value is NIL")
 		return value
 	}
-
+	// log.Println("GetFieldValue (", element.ID, ")   OK")
 	fieldType := element.Type
 	if nil != value && "" != value {
 
@@ -69,11 +70,12 @@ func mapEntityValue(entity interface{}, element appConfig.EntityElement) interfa
 
 				// Field converterField = getDeclaredField(field.getType(), optionItemName);
 				// Object converterValue = converterField.get(value);
-				converterValue, ok := reflections.GetFieldValue(optionItemName, value)
-				if ok {
+				converterValue, _ := reflections.GetFieldValue(optionItemName, value)
+				log.Println("converterValue: ", converterValue)
+				if value != nil {
 					value = converterValue
 				} else {
-					value = "[error]"
+					value = "-"
 				}
 
 			} else {

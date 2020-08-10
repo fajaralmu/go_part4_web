@@ -4,6 +4,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/fajaralmu/go_part4_web/reflections"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/fajaralmu/go_part4_web/appConfig"
 )
@@ -45,7 +47,8 @@ func GetEntityReport(entities []interface{}, entityProp appConfig.EntityProperty
 	// Set active sheet of the workbook.
 	writeCellValues(f, entities, entityProp)
 	// Save xlsx file by the given path.
-	if err := f.SaveAs("./reports/" + entityProp.EntityName + ".xlsx"); err != nil {
+	random := reflections.RandomNum(30)
+	if err := f.SaveAs("./reports/" + entityProp.EntityName + random + ".xlsx"); err != nil {
 		println(err.Error())
 	}
 }
