@@ -104,6 +104,18 @@ func registerREST(w http.ResponseWriter, r *http.Request) (response entities.Web
 	return webResponse("00", "success"), nil
 
 }
+func printModelReportREST(w http.ResponseWriter, r *http.Request) (response entities.WebResponse, err error) {
+	var req entities.WebRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
+
+	if err != nil {
+		return response, err
+	}
+
+	getEntitiesReport(req)
+
+	return webResponse("00", "success"), nil
+}
 
 /////////////////ACCOUNT////////////////
 func loginREST(w http.ResponseWriter, r *http.Request) (res entities.WebResponse, err error) {

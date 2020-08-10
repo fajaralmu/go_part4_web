@@ -1,6 +1,7 @@
 package reflections
 
 import (
+	"log"
 	"reflect"
 )
 
@@ -32,6 +33,6 @@ func ConvertInterfaceToSlice(rawSlice interface{}) []interface{} {
 			result = append(result, s.Index(i).Interface())
 		}
 	}
-
+	log.Println("result size: ", len(result))
 	return result
 }

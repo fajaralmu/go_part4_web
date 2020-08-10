@@ -5,6 +5,12 @@ import "github.com/360EntSecGroup-Skylar/excelize"
 type excelCell struct {
 	hIndex int
 	vIndex int
+	value  interface{}
+}
+
+type excelRow struct {
+	index int
+	cells []excelCell
 }
 
 type customCell interface {

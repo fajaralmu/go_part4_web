@@ -38,6 +38,8 @@ func main() {
 	app.Init()
 	app.Run()
 	// testFilter()
+	// cellname := report.GetCellName(87, 10)
+	// log.Println("CellName: ", cellname)
 }
 
 func testFilter() {

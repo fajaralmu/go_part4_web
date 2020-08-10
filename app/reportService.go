@@ -17,6 +17,7 @@ func getEntitiesReport(request entities.WebRequest) {
 
 	filtered, _ := filterEntity(request)
 	entityProp := getEntityProperty(request)
+
 	list := reflections.ConvertInterfaceToSlice(filtered.ResultList)
 	report.GetEntityReport(list, entityProp)
 

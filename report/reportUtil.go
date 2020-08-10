@@ -2,6 +2,7 @@ package report
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/fajaralmu/go_part4_web/appConfig"
@@ -107,4 +108,83 @@ func objectEquals(obj interface{}, compares ...interface{}) bool {
 	}
 
 	return false
+}
+
+func getTableContentMap(columCount int, values ...interface{}) map[int][]interface{} {
+	log.Println("list size: ", len(values))
+	var tableContent map[int][]interface{} = map[int][]interface{}{}
+	var rowNum int
+	for i, value := range values {
+
+		if tableContent[rowNum] == nil {
+			tableContent[rowNum] = []interface{}{}
+		}
+		tempSlize := tableContent[rowNum]
+		tempSlize = append(tempSlize, value)
+		tableContent[rowNum] = tempSlize
+
+		if (i+1)%columCount == 0 {
+			rowNum++
+		}
+	}
+
+	log.Println("rowNum: ", rowNum, " columCount: ", columCount)
+	log.Println("tableContent: ", tableContent)
+	return tableContent
+}
+
+func createCell(row excelRow, col int) excelCell {
+	return excelCell{
+		vIndex: row.index,
+		hIndex: col,
+	}
+}
+
+/**
+ * fill row with values
+ *
+ * @param parentRow
+ * @param offsetIndex
+ * @param sourceStyle
+ * @param values
+ */
+func fillRows(parentRow excelRow, offsetIndex int, values ...interface{}) (row excelRow) {
+	// DataFormat fmt = parentRow.getSheet().getWorkbook().createDataFormat();
+	// XSSFCell[] cells = new XSSFCell[values.length];
+	var cells []excelCell
+	for i, cellValue := range values {
+		if cellValue == nil {
+			cellValue = ""
+		}
+		cell := createCell(parentRow, offsetIndex+i)
+		cell.value = cellValue
+		// CellStyle cellStyle = createCellStyle(parentRow.getSheet().getWorkbook());
+
+		// if (sourceStyle != null) {
+		// 	cellStyle.cloneStyleFrom(sourceStyle);
+		// 	cell.setCellStyle(cellStyle);
+		// }
+
+		cell.value = cellValue
+		cells = append(cells, cell)
+	}
+	parentRow.cells = cells
+	return parentRow
+}
+
+func createRow(sheetName string, rownum int, offsetIndex int,
+	values ...interface{}) (row excelRow) {
+
+	// final XSSFRow existingRow = sheet.getRow(rownum);
+	// XSSFRow row = existingRow == null ? sheet.createRow(rownum) : existingRow;
+	row = excelRow{index: rownum}
+	// XSSFCellStyle style = sheet.getWorkbook().createCellStyle();
+	// setAllBorder(style, THIN);
+	row = fillRows(row, offsetIndex /*style, */, values...)
+
+	// for (int i = 0; i < values.length; i++) {
+	// 	sheet.autoSizeColumn(i);
+	// }
+
+	return row
 }

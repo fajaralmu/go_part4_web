@@ -223,10 +223,10 @@
       return;
     }
 
-    requestObject.Filter.Limit = limit;
+    requestObject.Filter.Limit = parseInt(limit);
 
     postReq(
-      "/api/report/entity",
+      "/api/report/entities",
       requestObject,
       function (xhr) {
         downloadFileFromResponse(xhr);
