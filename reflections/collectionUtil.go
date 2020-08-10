@@ -1,6 +1,8 @@
 package reflections
 
-import "reflect"
+import (
+	"reflect"
+)
 
 //SliceOfFieldToMap convert slice of structFields to map[fieldName][fields]
 func SliceOfFieldToMap(fields []reflect.StructField) map[string]reflect.StructField {
@@ -16,5 +18,20 @@ func SliceOfFieldToMap(fields []reflect.StructField) map[string]reflect.StructFi
 	for _, field := range fields {
 		result[field.Name] = field
 	}
+	return result
+}
+
+//ConvertInterfaceToSlice converts interface to []interface
+func ConvertInterfaceToSlice(rawSlice interface{}) []interface{} {
+	result := []interface{}{}
+	switch reflect.TypeOf(rawSlice).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(rawSlice)
+
+		for i := 0; i < s.Len(); i++ {
+			result = append(result, s.Index(i).Interface())
+		}
+	}
+
 	return result
 }
