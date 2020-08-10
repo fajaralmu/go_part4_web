@@ -56,13 +56,15 @@ func writeCellValues(file *excelize.File, entities []interface{}, entityProperty
 	index := file.NewSheet(sheetName)
 	entityValues := getEntitiesTableValues(entities, entityProperty)
 	log.Println("entityValues: ", len(entityValues))
+
 	rows := createTable(sheetName, len(entityProperty.Elements)+1, 2, 2, entityValues...)
 	log.Println("rows: ", len(rows))
-	for rowIdx, row := range rows {
+
+	for _, row := range rows {
 		cells := row.cells
-		for cellIdex, cell := range cells {
-			cellName := GetCellName(cellIdex, rowIdx)
-			file.SetCellValue(sheetName, cellName, cell.value)
+		for _, col := range cells {
+			cellName := GetCellName(col.hIndex, row.index)
+			file.SetCellValue(sheetName, cellName, col.value)
 		}
 	}
 

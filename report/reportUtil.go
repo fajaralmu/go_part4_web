@@ -24,6 +24,7 @@ func getEntitiesTableValues(entities []interface{}, entityProperty appConfig.Ent
 		values = append(values, element.LableName)
 		seqNum++
 	}
+	log.Println("values: ", len(values))
 
 	/**
 	 * table content

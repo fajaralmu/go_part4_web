@@ -13,14 +13,14 @@ type webAPIRoute struct {
 	DeleteEntities    func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/entities/delete;authenticated:true"`
 	SavePageSequence  func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/admin/savepagesequence;authenticated:true"`
 	PrintModelsReport func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/report/entities;authenticated:true"`
-
-	Login         func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/login;authenticated:false"`
-	CheckUserName func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/checkusername;authenticated:false"`
-	Register      func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/register;authenticated:false"`
+	Login             func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/login;authenticated:false"`
+	CheckUserName     func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/checkusername;authenticated:false"`
+	Register          func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) `custom:"path:/api/account/register;authenticated:false"`
 }
 
 func registerWebAPIRoutes() {
 	appRoute := webAPIRoute{
+
 		GetEntities: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
 			return getEntitiesREST(w, r)
 		},
@@ -36,7 +36,6 @@ func registerWebAPIRoutes() {
 		SavePageSequence: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
 			return savePageSequenceREST(w, r)
 		},
-
 		Login: func(w http.ResponseWriter, r *http.Request) (entities.WebResponse, error) {
 			return loginREST(w, r)
 		},
